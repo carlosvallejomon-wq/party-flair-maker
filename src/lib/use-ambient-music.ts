@@ -39,8 +39,9 @@ export function useAmbientMusic() {
     master.gain.setTargetAtTime(0.16, ctx.currentTime, 0.4);
 
     const playNote = () => {
-      const freq = NOTES[stepRef.current % NOTES.length];
+      const freq = NOTES[stepRef.current % NOTES.length] ?? 440;
       stepRef.current += 1;
+
       const now = ctx.currentTime;
       const osc = ctx.createOscillator();
       const env = ctx.createGain();
