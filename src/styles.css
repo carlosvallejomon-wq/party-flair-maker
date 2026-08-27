@@ -204,3 +204,91 @@
     color: var(--color-foreground);
   }
 }
+
+@keyframes flotar {
+  0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+  15% { opacity: 0.5; }
+  100% { transform: translateY(-15vh) rotate(180deg); opacity: 0; }
+}
+
+@keyframes titilar {
+  0%, 100% { opacity: 0.15; transform: scale(0.7); }
+  50% { opacity: 0.9; transform: scale(1.15); }
+}
+
+@keyframes zoom-in {
+  from { opacity: 0; transform: scale(1.12); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes cortina {
+  from { opacity: 0; clip-path: inset(0 0 100% 0); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); }
+}
+
+@utility deco-petalo {
+  position: absolute;
+  pointer-events: none;
+  width: 10px;
+  height: 10px;
+  background: var(--primary);
+  border-radius: 100% 0 100% 0;
+  opacity: 0;
+  animation: drift linear infinite;
+}
+
+@utility deco-corazon {
+  position: absolute;
+  pointer-events: none;
+  width: 12px;
+  height: 12px;
+  background: var(--primary);
+  clip-path: path("M6 11S0.5 7 0.5 3.6A3 3 0 0 1 6 2a3 3 0 0 1 5.5 1.6C11.5 7 6 11 6 11Z");
+  opacity: 0;
+  animation: flotar linear infinite;
+}
+
+@utility deco-confeti {
+  position: absolute;
+  pointer-events: none;
+  width: 6px;
+  height: 12px;
+  background: var(--primary);
+  border-radius: 2px;
+  opacity: 0;
+  animation: drift linear infinite;
+}
+
+@utility deco-estrella {
+  position: absolute;
+  pointer-events: none;
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  opacity: 0;
+  animation: drift linear infinite;
+}
+
+@utility deco-burbuja {
+  position: absolute;
+  pointer-events: none;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--primary);
+  border-radius: 9999px;
+  opacity: 0;
+  animation: flotar linear infinite;
+}
+
+@utility portada-fade {
+  animation: fade-up 1.4s var(--ease-out-expo) both;
+}
+
+@utility portada-zoom {
+  animation: zoom-in 1.6s var(--ease-out-expo) both;
+}
+
+@utility portada-cortina {
+  animation: cortina 1.6s var(--ease-out-expo) both;
+}

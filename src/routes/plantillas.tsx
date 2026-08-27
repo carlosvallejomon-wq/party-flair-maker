@@ -2,10 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 import botanical from "@/assets/botanical-hero.jpg";
 import { Reveal } from "@/components/Reveal";
+import { PLANTILLAS, TEMAS } from "@/lib/invitacion";
 
 const TITULO = "Plantillas de invitaciones digitales | Votos & Seda";
 const DESCRIPCION =
-  "Elige una plantilla de invitación digital interactiva para bodas, XV años o bautizos: música, cuenta regresiva y confirmación de asistencia.";
+  "Seis plantillas de invitación digital interactiva para bodas, XV años, bautizos, cumpleaños y aniversarios, todas editables con música y decoración animada.";
 
 export const Route = createFileRoute("/plantillas")({
   head: () => ({
@@ -21,27 +22,6 @@ export const Route = createFileRoute("/plantillas")({
   component: Plantillas,
 });
 
-const PLANTILLAS = [
-  {
-    evento: "Boda",
-    nombre: "Olivo Botánico",
-    detalle: "Verde olivo, oro y papel marfil. Ceremonia, itinerario y mesa de regalos.",
-    disponible: true,
-  },
-  {
-    evento: "XV Años",
-    nombre: "Rosa Ceremonial",
-    detalle: "Portada con vals, galería de la quinceañera y lista de chambelanes.",
-    disponible: false,
-  },
-  {
-    evento: "Bautizo",
-    nombre: "Lino Sereno",
-    detalle: "Diseño sobrio con padrinos, misa y recepción familiar.",
-    disponible: false,
-  },
-];
-
 function Plantillas() {
   return (
     <div className="min-h-screen bg-background font-sans text-foreground">
@@ -53,52 +33,59 @@ function Plantillas() {
           <span className="font-display text-xl font-semibold italic">Votos &amp; Seda</span>
         </Link>
         <Link
-          to="/"
-          className="text-[10px] tracking-widest text-olive uppercase hover:text-foreground"
+          to="/editor"
+          search={{ p: undefined }}
+          className="rounded-full bg-foreground px-4 py-2 text-xs font-medium text-background hover:opacity-85"
         >
-          Ver demo
+          Crear Invitación
         </Link>
       </header>
 
-      <main className="mx-auto max-w-[430px] px-8 pt-16 pb-24">
+      <main className="mx-auto max-w-5xl px-6 pt-16 pb-24">
         <h1 className="font-display text-4xl leading-tight">
           Plantillas <span className="text-primary italic">interactivas</span>
         </h1>
-        <p className="mt-4 text-sm text-foreground/70">
-          Cada plantilla incluye música, cuenta regresiva, itinerario, ubicación y confirmación de
-          asistencia.
+        <p className="mt-4 max-w-xl text-sm text-foreground/70">
+          Elige un punto de partida y edítalo por completo: colores, decoración animada, música,
+          itinerario y confirmación de asistencia.
         </p>
 
-        <div className="mt-12 space-y-6">
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {PLANTILLAS.map((p, i) => (
-            <Reveal key={p.nombre} delay={i * 100}>
-              <article className="overflow-hidden border border-foreground/10">
-                <img
-                  src={botanical}
-                  alt={`Vista previa de la plantilla ${p.nombre}`}
-                  loading="lazy"
-                  width={864}
-                  height={1600}
-                  className="h-40 w-full object-cover opacity-70"
-                />
-                <div className="p-6">
+            <Reveal key={p.slug} delay={i * 80}>
+              <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-foreground/10">
+                <div className="relative">
+                  <img
+                    src={botanical}
+                    alt={`Vista previa de la plantilla ${p.plantilla}`}
+                    loading="lazy"
+                    width={864}
+                    height={1600}
+                    className="h-36 w-full object-cover opacity-70"
+                  />
+                  <span className="absolute right-3 bottom-3 flex gap-1">
+                    {TEMAS[p.tema].swatch.map((c) => (
+                      <span
+                        key={c}
+                        className="size-4 rounded-full border border-background/60"
+                        style={{ backgroundColor: c }}
+                      />
+                    ))}
+                  </span>
+                </div>
+                <div className="flex flex-1 flex-col p-6">
                   <span className="text-[10px] tracking-widest text-olive uppercase">
                     {p.evento}
                   </span>
-                  <h2 className="mt-1 font-display text-2xl italic">{p.nombre}</h2>
-                  <p className="mt-3 text-xs text-foreground/60">{p.detalle}</p>
-                  {p.disponible ? (
-                    <Link
-                      to="/"
-                      className="mt-6 inline-block border border-primary px-6 py-3 text-[10px] tracking-widest text-primary uppercase transition-colors hover:bg-primary hover:text-background"
-                    >
-                      Abrir plantilla
-                    </Link>
-                  ) : (
-                    <span className="mt-6 inline-block border border-foreground/15 px-6 py-3 text-[10px] tracking-widest text-foreground/40 uppercase">
-                      Próximamente
-                    </span>
-                  )}
+                  <h2 className="mt-1 font-display text-2xl italic">{p.plantilla}</h2>
+                  <p className="mt-3 flex-1 text-xs text-foreground/60">{p.descripcion}</p>
+                  <Link
+                    to="/editor"
+                    search={{ p: p.slug }}
+                    className="mt-6 inline-block border border-primary px-6 py-3 text-center text-[10px] tracking-widest text-primary uppercase transition-colors hover:bg-primary hover:text-background"
+                  >
+                    Editar esta plantilla
+                  </Link>
                 </div>
               </article>
             </Reveal>

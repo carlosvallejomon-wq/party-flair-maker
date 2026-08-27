@@ -1,17 +1,41 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-/**
- * Melodía ambiental generada con Web Audio (sin archivos externos).
- * Arpegio suave y romántico en bucle, ideal como música de fondo de la invitación.
- */
-const NOTES = [392, 493.88, 587.33, 493.88, 523.25, 659.25, 783.99, 659.25];
+import type { Melodia } from "@/lib/invitacion";
 
-export function useAmbientMusic() {
+/**
+ * Melodías ambientales generadas con Web Audio (sin archivos externos).
+ */
+const MELODIAS: Record<Melodia, { notas: number[]; tempo: number; tipo: OscillatorType }> = {
+  romantica: {
+    notas: [392, 493.88, 587.33, 493.88, 523.25, 659.25, 783.99, 659.25],
+    tempo: 900,
+    tipo: "triangle",
+  },
+  vals: {
+    notas: [440, 554.37, 659.25, 554.37, 493.88, 587.33, 739.99, 587.33],
+    tempo: 700,
+    tipo: "sine",
+  },
+  alegre: {
+    notas: [523.25, 587.33, 659.25, 783.99, 880, 783.99, 659.25, 587.33],
+    tempo: 520,
+    tipo: "square",
+  },
+  serena: {
+    notas: [349.23, 392, 440, 523.25, 440, 392],
+    tempo: 1300,
+    tipo: "sine",
+  },
+};
+
+export function useAmbientMusic(melodia: Melodia = "romantica") {
   const [playing, setPlaying] = useState(false);
   const ctxRef = useRef<AudioContext | null>(null);
   const gainRef = useRef<GainNode | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const stepRef = useRef(0);
+  const melodiaRef = useRef(melodia);
+  melodiaRef.current = melodia;
 
   const stop = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -36,19 +60,22 @@ export function useAmbientMusic() {
     const ctx = ctxRef.current;
     const master = gainRef.current!;
     void ctx.resume();
-    master.gain.setTargetAtTime(0.16, ctx.currentTime, 0.4);
+    master.gain.setTargetAtTime(0.14, ctx.currentTime, 0.4);
+
+    const cfg = MELODIAS[melodiaRef.current] ?? MELODIAS.romantica;
 
     const playNote = () => {
-      const freq = NOTES[stepRef.current % NOTES.length] ?? 440;
+      const actual = MELODIAS[melodiaRef.current] ?? MELODIAS.romantica;
+      const freq = actual.notas[stepRef.current % actual.notas.length] ?? 440;
       stepRef.current += 1;
 
       const now = ctx.currentTime;
       const osc = ctx.createOscillator();
       const env = ctx.createGain();
-      osc.type = "triangle";
+      osc.type = actual.tipo;
       osc.frequency.value = freq;
       env.gain.setValueAtTime(0, now);
-      env.gain.linearRampToValueAtTime(0.5, now + 0.08);
+      env.gain.linearRampToValueAtTime(0.4, now + 0.08);
       env.gain.exponentialRampToValueAtTime(0.0001, now + 2.4);
       osc.connect(env).connect(master);
       osc.start(now);
@@ -59,7 +86,7 @@ export function useAmbientMusic() {
       pad.type = "sine";
       pad.frequency.value = freq / 2;
       padEnv.gain.setValueAtTime(0, now);
-      padEnv.gain.linearRampToValueAtTime(0.18, now + 0.5);
+      padEnv.gain.linearRampToValueAtTime(0.16, now + 0.5);
       padEnv.gain.exponentialRampToValueAtTime(0.0001, now + 3);
       pad.connect(padEnv).connect(master);
       pad.start(now);
@@ -67,7 +94,7 @@ export function useAmbientMusic() {
     };
 
     playNote();
-    timerRef.current = setInterval(playNote, 900);
+    timerRef.current = setInterval(playNote, cfg.tempo);
     setPlaying(true);
   }, []);
 
