@@ -127,8 +127,15 @@ export const DECORACIONES: { id: Decoracion; nombre: string }[] = [
   { id: "confeti", nombre: "Confeti" },
   { id: "estrellas", nombre: "Estrellas" },
   { id: "burbujas", nombre: "Burbujas" },
+  { id: "mariposas", nombre: "Mariposas" },
+  { id: "hojas", nombre: "Hojas" },
+  { id: "luces", nombre: "Luces / luciérnagas" },
+  { id: "notas", nombre: "Notas musicales" },
+  { id: "globos", nombre: "Globos" },
+  { id: "nieve", nombre: "Destellos de nieve" },
   { id: "ninguna", nombre: "Sin decoración" },
 ];
+
 
 export const MELODIAS: { id: Melodia; nombre: string }[] = [
   { id: "romantica", nombre: "Romántica" },
