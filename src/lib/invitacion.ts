@@ -326,11 +326,24 @@ export const PLANTILLAS: (Invitacion & { slug: string; descripcion: string })[] 
 
 export const CLAVE_STORAGE = "invitacion-borrador";
 
+const EXTRAS: Partial<Invitacion> = {
+  intensidadDeco: 2,
+  musicaUrl: "",
+  sobreActivo: true,
+  direccion: "",
+  wazeUrl: "",
+  albumTitulo: "Álbum de fotos",
+  albumUrl: "https://photos.app.goo.gl/",
+  hashtag: "",
+  whatsapp: "",
+};
+
 export function plantillaPorSlug(slug?: string | null): Invitacion {
   const base = PLANTILLAS.find((p) => p.slug === slug) ?? PLANTILLAS[0]!;
   const { slug: _s, descripcion: _d, ...resto } = base;
-  return structuredClone(resto);
+  return structuredClone({ ...EXTRAS, ...resto } as Invitacion);
 }
+
 
 export function cargarBorrador(): Invitacion | null {
   if (typeof window === "undefined") return null;
