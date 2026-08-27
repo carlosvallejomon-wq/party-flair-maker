@@ -34,6 +34,7 @@ function Plantillas() {
         </Link>
         <Link
           to="/editor"
+          search={{ p: undefined }}
           className="rounded-full bg-foreground px-4 py-2 text-xs font-medium text-background hover:opacity-85"
         >
           Crear Invitación

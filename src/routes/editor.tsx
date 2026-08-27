@@ -33,7 +33,7 @@ export const Route = createFileRoute("/editor")({
     ],
   }),
   validateSearch: (search: Record<string, unknown>) => ({
-    p: typeof search.p === "string" ? search.p : undefined,
+    p: typeof search["p"] === "string" ? (search["p"] as string) : undefined,
   }),
   component: Editor,
 });

@@ -48,6 +48,7 @@ function Inicio() {
           </Link>
           <Link
             to="/editor"
+            search={{ p: undefined }}
             className="rounded-full bg-foreground px-4 py-2 text-xs font-medium tracking-tight text-background transition-opacity hover:opacity-85"
           >
             Crear Invitación
