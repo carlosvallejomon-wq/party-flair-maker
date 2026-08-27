@@ -50,10 +50,26 @@ export function useAmbientMusic(melodia: Melodia = "romantica", url?: string) {
 
 
   const start = useCallback(() => {
+    const pista = urlRef.current?.trim();
+    if (pista) {
+      if (!audioRef.current) {
+        const el = new Audio(pista);
+        el.loop = true;
+        el.volume = 0.6;
+        audioRef.current = el;
+      } else if (audioRef.current.src !== pista) {
+        audioRef.current.src = pista;
+      }
+      void audioRef.current.play().catch(() => undefined);
+      setPlaying(true);
+      return;
+    }
+
     const Ctx =
       window.AudioContext ??
       (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!Ctx) return;
+
     if (!ctxRef.current) {
       const ctx = new Ctx();
       const master = ctx.createGain();
