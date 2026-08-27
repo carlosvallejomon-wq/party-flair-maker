@@ -28,21 +28,26 @@ const MELODIAS: Record<Melodia, { notas: number[]; tempo: number; tipo: Oscillat
   },
 };
 
-export function useAmbientMusic(melodia: Melodia = "romantica") {
+export function useAmbientMusic(melodia: Melodia = "romantica", url?: string) {
   const [playing, setPlaying] = useState(false);
   const ctxRef = useRef<AudioContext | null>(null);
   const gainRef = useRef<GainNode | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const stepRef = useRef(0);
   const melodiaRef = useRef(melodia);
   melodiaRef.current = melodia;
+  const urlRef = useRef(url);
+  urlRef.current = url;
 
   const stop = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = null;
     gainRef.current?.gain.setTargetAtTime(0, ctxRef.current?.currentTime ?? 0, 0.2);
+    audioRef.current?.pause();
     setPlaying(false);
   }, []);
+
 
   const start = useCallback(() => {
     const Ctx =
