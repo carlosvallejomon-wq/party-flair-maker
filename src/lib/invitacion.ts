@@ -369,3 +369,76 @@ export function fechaLarga(iso: string) {
     .toUpperCase()
     .replace(/ DE /g, " . ");
 }
+
+export function fechaHoraCorta(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleString("es-MX", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function utc(d: Date) {
+  return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+}
+
+/** Enlace a Google Calendar con el evento precargado. */
+export function enlaceCalendario(inv: Invitacion) {
+  const inicio = new Date(inv.fecha);
+  if (Number.isNaN(inicio.getTime())) return "";
+  const fin = new Date(inicio.getTime() + 5 * 3600000);
+  const titulo = [inv.frase, [inv.nombre1, inv.nombre2].filter(Boolean).join(" & ")]
+    .filter(Boolean)
+    .join(" · ");
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: titulo,
+    dates: `${utc(inicio)}/${utc(fin)}`,
+    details: inv.historia.slice(0, 300),
+    location: [inv.lugar, inv.direccion, inv.ciudad].filter(Boolean).join(", "),
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+/** Archivo .ics descargable para Apple/Outlook. */
+export function archivoIcs(inv: Invitacion) {
+  const inicio = new Date(inv.fecha);
+  if (Number.isNaN(inicio.getTime())) return "";
+  const fin = new Date(inicio.getTime() + 5 * 3600000);
+  const titulo = [inv.frase, [inv.nombre1, inv.nombre2].filter(Boolean).join(" & ")]
+    .filter(Boolean)
+    .join(" - ");
+  const cuerpo = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "BEGIN:VEVENT",
+    `DTSTART:${utc(inicio)}`,
+    `DTEND:${utc(fin)}`,
+    `SUMMARY:${titulo}`,
+    `LOCATION:${[inv.lugar, inv.ciudad].filter(Boolean).join(", ")}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+  return `data:text/calendar;charset=utf-8,${encodeURIComponent(cuerpo)}`;
+}
+
+export function enlaceWhatsapp(numero: string | undefined, mensaje: string) {
+  const limpio = (numero ?? "").replace(/\D/g, "");
+  const texto = encodeURIComponent(mensaje);
+  return limpio ? `https://wa.me/${limpio}?text=${texto}` : `https://wa.me/?text=${texto}`;
+}
+
+export function enlaceMapa(inv: Invitacion) {
+  if (inv.mapsUrl.trim()) return inv.mapsUrl;
+  const q = encodeURIComponent([inv.lugar, inv.direccion, inv.ciudad].filter(Boolean).join(", "));
+  return `https://maps.google.com/?q=${q}`;
+}
+
+export function mapaEmbebido(inv: Invitacion) {
+  const q = encodeURIComponent([inv.lugar, inv.direccion, inv.ciudad].filter(Boolean).join(", "));
+  return `https://maps.google.com/maps?q=${q}&z=15&output=embed`;
+}
