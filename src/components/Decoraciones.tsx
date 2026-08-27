@@ -1,15 +1,6 @@
-import type { Decoracion } from "@/lib/invitacion";
+import { useMemo } from "react";
 
-const PIEZAS = [
-  { left: "6%", duration: 11, delay: 0, scale: 1 },
-  { left: "19%", duration: 14, delay: 2, scale: 0.7 },
-  { left: "31%", duration: 9, delay: 4, scale: 1.2 },
-  { left: "44%", duration: 13, delay: 1, scale: 0.85 },
-  { left: "57%", duration: 10, delay: 6, scale: 1.1 },
-  { left: "68%", duration: 15, delay: 3, scale: 0.75 },
-  { left: "79%", duration: 12, delay: 5, scale: 0.95 },
-  { left: "91%", duration: 16, delay: 7, scale: 1.05 },
-];
+import type { Decoracion } from "@/lib/invitacion";
 
 const CLASES: Record<Exclude<Decoracion, "ninguna">, string> = {
   petalos: "deco-petalo",
@@ -17,23 +8,52 @@ const CLASES: Record<Exclude<Decoracion, "ninguna">, string> = {
   confeti: "deco-confeti",
   estrellas: "deco-estrella",
   burbujas: "deco-burbuja",
+  mariposas: "deco-mariposa",
+  hojas: "deco-hoja",
+  luces: "deco-luz",
+  notas: "deco-nota",
+  globos: "deco-globo",
+  nieve: "deco-nieve",
 };
 
-export function Decoraciones({ tipo }: { tipo: Decoracion }) {
+/** Pseudoaleatorio estable para que el render del servidor y del cliente coincidan. */
+function pieza(i: number) {
+  const r = (n: number) => ((Math.sin((i + 1) * n) + 1) / 2) as number;
+  return {
+    left: `${Math.round(r(12.9898) * 94)}%`,
+    duration: 8 + r(78.233) * 10,
+    delay: r(43.123) * 12,
+    scale: 0.6 + r(93.77) * 0.9,
+  };
+}
+
+export function Decoraciones({
+  tipo,
+  intensidad = 2,
+}: {
+  tipo: Decoracion;
+  intensidad?: number;
+}) {
+  const total = intensidad >= 3 ? 24 : intensidad <= 1 ? 8 : 15;
+  const piezas = useMemo(
+    () => Array.from({ length: total }, (_, i) => pieza(i)),
+    [total],
+  );
+
   if (tipo === "ninguna") return null;
   const clase = CLASES[tipo];
 
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      {PIEZAS.map((p, i) => (
+      {piezas.map((p, i) => (
         <span
           key={i}
           className={clase}
           style={{
             left: p.left,
-            animationDuration: `${p.duration}s`,
-            animationDelay: `${p.delay}s`,
-            scale: p.scale,
+            animationDuration: `${p.duration.toFixed(2)}s`,
+            animationDelay: `${p.delay.toFixed(2)}s`,
+            scale: p.scale.toFixed(2),
           }}
         />
       ))}

@@ -1,6 +1,18 @@
 export type ItemItinerario = { hora: string; titulo: string; lugar: string };
 
-export type Decoracion = "petalos" | "corazones" | "confeti" | "estrellas" | "burbujas" | "ninguna";
+export type Decoracion =
+  | "petalos"
+  | "corazones"
+  | "confeti"
+  | "estrellas"
+  | "burbujas"
+  | "mariposas"
+  | "hojas"
+  | "luces"
+  | "notas"
+  | "globos"
+  | "nieve"
+  | "ninguna";
 export type Tema = "olivo" | "rosa" | "azul" | "noche" | "durazno" | "esmeralda";
 export type Melodia = "romantica" | "vals" | "alegre" | "serena";
 
@@ -25,7 +37,19 @@ export type Invitacion = {
   decoracion: Decoracion;
   melodia: Melodia;
   animacionPortada: "fade" | "zoom" | "cortina";
+  // Extras opcionales (compatibles con borradores antiguos)
+  intensidadDeco?: number; // 1 = sutil, 2 = normal, 3 = intensa
+  musicaUrl?: string; // enlace a un mp3 propio
+  sobreActivo?: boolean; // intro con sobre que se abre
+  direccion?: string;
+  wazeUrl?: string;
+  albumTitulo?: string;
+  albumUrl?: string; // enlace del álbum de fotos para el QR
+  hashtag?: string;
+  whatsapp?: string; // número para recibir confirmaciones
+  coloresSugeridos?: string[];
 };
+
 
 export const TEMAS: Record<Tema, { nombre: string; swatch: string[]; vars: Record<string, string> }> =
   {
@@ -103,8 +127,15 @@ export const DECORACIONES: { id: Decoracion; nombre: string }[] = [
   { id: "confeti", nombre: "Confeti" },
   { id: "estrellas", nombre: "Estrellas" },
   { id: "burbujas", nombre: "Burbujas" },
+  { id: "mariposas", nombre: "Mariposas" },
+  { id: "hojas", nombre: "Hojas" },
+  { id: "luces", nombre: "Luces / luciérnagas" },
+  { id: "notas", nombre: "Notas musicales" },
+  { id: "globos", nombre: "Globos" },
+  { id: "nieve", nombre: "Destellos de nieve" },
   { id: "ninguna", nombre: "Sin decoración" },
 ];
+
 
 export const MELODIAS: { id: Melodia; nombre: string }[] = [
   { id: "romantica", nombre: "Romántica" },
@@ -295,11 +326,24 @@ export const PLANTILLAS: (Invitacion & { slug: string; descripcion: string })[] 
 
 export const CLAVE_STORAGE = "invitacion-borrador";
 
+const EXTRAS: Partial<Invitacion> = {
+  intensidadDeco: 2,
+  musicaUrl: "",
+  sobreActivo: true,
+  direccion: "",
+  wazeUrl: "",
+  albumTitulo: "Álbum de fotos",
+  albumUrl: "https://photos.app.goo.gl/",
+  hashtag: "",
+  whatsapp: "",
+};
+
 export function plantillaPorSlug(slug?: string | null): Invitacion {
   const base = PLANTILLAS.find((p) => p.slug === slug) ?? PLANTILLAS[0]!;
   const { slug: _s, descripcion: _d, ...resto } = base;
-  return structuredClone(resto);
+  return structuredClone({ ...EXTRAS, ...resto } as Invitacion);
 }
+
 
 export function cargarBorrador(): Invitacion | null {
   if (typeof window === "undefined") return null;
@@ -324,4 +368,77 @@ export function fechaLarga(iso: string) {
     .toLocaleDateString("es-MX", { day: "2-digit", month: "long", year: "numeric" })
     .toUpperCase()
     .replace(/ DE /g, " . ");
+}
+
+export function fechaHoraCorta(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleString("es-MX", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function utc(d: Date) {
+  return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+}
+
+/** Enlace a Google Calendar con el evento precargado. */
+export function enlaceCalendario(inv: Invitacion) {
+  const inicio = new Date(inv.fecha);
+  if (Number.isNaN(inicio.getTime())) return "";
+  const fin = new Date(inicio.getTime() + 5 * 3600000);
+  const titulo = [inv.frase, [inv.nombre1, inv.nombre2].filter(Boolean).join(" & ")]
+    .filter(Boolean)
+    .join(" · ");
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: titulo,
+    dates: `${utc(inicio)}/${utc(fin)}`,
+    details: inv.historia.slice(0, 300),
+    location: [inv.lugar, inv.direccion, inv.ciudad].filter(Boolean).join(", "),
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+/** Archivo .ics descargable para Apple/Outlook. */
+export function archivoIcs(inv: Invitacion) {
+  const inicio = new Date(inv.fecha);
+  if (Number.isNaN(inicio.getTime())) return "";
+  const fin = new Date(inicio.getTime() + 5 * 3600000);
+  const titulo = [inv.frase, [inv.nombre1, inv.nombre2].filter(Boolean).join(" & ")]
+    .filter(Boolean)
+    .join(" - ");
+  const cuerpo = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "BEGIN:VEVENT",
+    `DTSTART:${utc(inicio)}`,
+    `DTEND:${utc(fin)}`,
+    `SUMMARY:${titulo}`,
+    `LOCATION:${[inv.lugar, inv.ciudad].filter(Boolean).join(", ")}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+  return `data:text/calendar;charset=utf-8,${encodeURIComponent(cuerpo)}`;
+}
+
+export function enlaceWhatsapp(numero: string | undefined, mensaje: string) {
+  const limpio = (numero ?? "").replace(/\D/g, "");
+  const texto = encodeURIComponent(mensaje);
+  return limpio ? `https://wa.me/${limpio}?text=${texto}` : `https://wa.me/?text=${texto}`;
+}
+
+export function enlaceMapa(inv: Invitacion) {
+  if (inv.mapsUrl.trim()) return inv.mapsUrl;
+  const q = encodeURIComponent([inv.lugar, inv.direccion, inv.ciudad].filter(Boolean).join(", "));
+  return `https://maps.google.com/?q=${q}`;
+}
+
+export function mapaEmbebido(inv: Invitacion) {
+  const q = encodeURIComponent([inv.lugar, inv.direccion, inv.ciudad].filter(Boolean).join(", "));
+  return `https://maps.google.com/maps?q=${q}&z=15&output=embed`;
 }
