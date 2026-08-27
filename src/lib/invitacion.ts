@@ -1,6 +1,18 @@
 export type ItemItinerario = { hora: string; titulo: string; lugar: string };
 
-export type Decoracion = "petalos" | "corazones" | "confeti" | "estrellas" | "burbujas" | "ninguna";
+export type Decoracion =
+  | "petalos"
+  | "corazones"
+  | "confeti"
+  | "estrellas"
+  | "burbujas"
+  | "mariposas"
+  | "hojas"
+  | "luces"
+  | "notas"
+  | "globos"
+  | "nieve"
+  | "ninguna";
 export type Tema = "olivo" | "rosa" | "azul" | "noche" | "durazno" | "esmeralda";
 export type Melodia = "romantica" | "vals" | "alegre" | "serena";
 
@@ -25,7 +37,19 @@ export type Invitacion = {
   decoracion: Decoracion;
   melodia: Melodia;
   animacionPortada: "fade" | "zoom" | "cortina";
+  // Extras opcionales (compatibles con borradores antiguos)
+  intensidadDeco?: number; // 1 = sutil, 2 = normal, 3 = intensa
+  musicaUrl?: string; // enlace a un mp3 propio
+  sobreActivo?: boolean; // intro con sobre que se abre
+  direccion?: string;
+  wazeUrl?: string;
+  albumTitulo?: string;
+  albumUrl?: string; // enlace del álbum de fotos para el QR
+  hashtag?: string;
+  whatsapp?: string; // número para recibir confirmaciones
+  coloresSugeridos?: string[];
 };
+
 
 export const TEMAS: Record<Tema, { nombre: string; swatch: string[]; vars: Record<string, string> }> =
   {
