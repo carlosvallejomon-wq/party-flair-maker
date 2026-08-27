@@ -261,7 +261,6 @@
 
 @utility deco-estrella {
   position: absolute;
-  top: calc(var(--tw-empty, 0px) + 0px);
   pointer-events: none;
   width: 8px;
   height: 8px;

@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
 
 import botanical from "@/assets/botanical-hero.jpg";
 import pareja1 from "@/assets/pareja-1.jpg";
@@ -61,7 +61,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
   return (
     <div
-      style={TEMAS[inv.tema].vars as React.CSSProperties}
+      style={TEMAS[inv.tema].vars as CSSProperties}
       className="bg-background font-sans text-foreground selection:bg-primary/20"
     >
       <main className="relative mx-auto max-w-[430px] bg-background shadow-2xl">
