@@ -219,7 +219,46 @@ function Editor() {
                   ))}
                 </select>
               </div>
+              <div>
+                <label className={etiqueta} htmlFor="intensidad">
+                  Intensidad de la decoración
+                </label>
+                <select
+                  id="intensidad"
+                  className={campo}
+                  value={String(inv.intensidadDeco ?? 2)}
+                  onChange={(e) => set("intensidadDeco", Number(e.target.value))}
+                >
+                  <option value="1">Sutil</option>
+                  <option value="2">Normal</option>
+                  <option value="3">Intensa</option>
+                </select>
+              </div>
+              <div className="sm:col-span-2">
+                <label className={etiqueta} htmlFor="musicaUrl">
+                  Enlace de tu canción (mp3, opcional)
+                </label>
+                <input
+                  id="musicaUrl"
+                  className={campo}
+                  placeholder="https://.../cancion.mp3"
+                  value={inv.musicaUrl ?? ""}
+                  onChange={(e) => set("musicaUrl", e.target.value)}
+                />
+              </div>
+              <div className="sm:col-span-3">
+                <label className="flex items-center gap-3 text-sm">
+                  <input
+                    type="checkbox"
+                    className="size-4 accent-[var(--primary)]"
+                    checked={inv.sobreActivo ?? true}
+                    onChange={(e) => set("sobreActivo", e.target.checked)}
+                  />
+                  Iniciar con un sobre que el invitado abre (activa la música al tocarlo)
+                </label>
+              </div>
             </div>
+
           </section>
 
           {/* Datos */}
