@@ -471,7 +471,78 @@ function Editor() {
                   onChange={(e) => set("rsvpLimite", e.target.value)}
                 />
               </div>
+              <div>
+                <label className={etiqueta} htmlFor="dir">
+                  Dirección exacta
+                </label>
+                <input
+                  id="dir"
+                  className={campo}
+                  placeholder="Calle, número, colonia"
+                  value={inv.direccion ?? ""}
+                  onChange={(e) => set("direccion", e.target.value)}
+                />
+              </div>
+              <div>
+                <label className={etiqueta} htmlFor="waze">
+                  Enlace de Waze (opcional)
+                </label>
+                <input
+                  id="waze"
+                  className={campo}
+                  value={inv.wazeUrl ?? ""}
+                  onChange={(e) => set("wazeUrl", e.target.value)}
+                />
+              </div>
+              <div>
+                <label className={etiqueta} htmlFor="wa">
+                  WhatsApp para confirmaciones
+                </label>
+                <input
+                  id="wa"
+                  className={campo}
+                  placeholder="521 55 1234 5678"
+                  value={inv.whatsapp ?? ""}
+                  onChange={(e) => set("whatsapp", e.target.value)}
+                />
+              </div>
+              <div>
+                <label className={etiqueta} htmlFor="albt">
+                  Título del álbum de fotos
+                </label>
+                <input
+                  id="albt"
+                  className={campo}
+                  value={inv.albumTitulo ?? ""}
+                  onChange={(e) => set("albumTitulo", e.target.value)}
+                />
+              </div>
+              <div>
+                <label className={etiqueta} htmlFor="albu">
+                  Enlace del álbum (se convierte en QR)
+                </label>
+                <input
+                  id="albu"
+                  className={campo}
+                  placeholder="https://photos.app.goo.gl/..."
+                  value={inv.albumUrl ?? ""}
+                  onChange={(e) => set("albumUrl", e.target.value)}
+                />
+              </div>
+              <div>
+                <label className={etiqueta} htmlFor="hash">
+                  Hashtag del evento
+                </label>
+                <input
+                  id="hash"
+                  className={campo}
+                  placeholder="#ValentinaYMateo2026"
+                  value={inv.hashtag ?? ""}
+                  onChange={(e) => set("hashtag", e.target.value)}
+                />
+              </div>
             </div>
+
           </section>
         </div>
 
