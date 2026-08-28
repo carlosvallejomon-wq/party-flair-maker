@@ -127,9 +127,11 @@ export function useAmbientMusic(melodia: Melodia = "romantica", url?: string) {
   useEffect(() => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      audioRef.current?.pause();
       void ctxRef.current?.close();
     };
   }, []);
 
-  return { playing, toggle };
+  return { playing, toggle, start, stop };
+
 }
