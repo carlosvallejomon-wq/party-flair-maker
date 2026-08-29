@@ -179,7 +179,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             </p>
           </div>
 
-          <div className="absolute bottom-8 z-10 w-full px-8">
+          <div className="absolute bottom-24 z-10 w-full px-8">
             <p className="mb-3 text-[9px] tracking-[0.3em] text-olive uppercase">
               Falta poco para el gran día
             </p>
