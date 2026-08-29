@@ -1,6 +1,7 @@
 import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
 
 import botanical from "@/assets/botanical-hero.jpg";
+import marcoFloral from "@/assets/marco-floral.png";
 import pareja1 from "@/assets/pareja-1.jpg";
 import pareja2 from "@/assets/pareja-2.jpg";
 import { Decoraciones } from "@/components/Decoraciones";
