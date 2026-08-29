@@ -140,8 +140,19 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             height={1600}
             className="absolute inset-0 h-full w-full object-cover opacity-30"
           />
-          <div key={`${inv.animacionPortada}-${abierto}`} className={`z-10 ${ANIM[inv.animacionPortada]}`}>
-            <span className="mb-8 block text-xs tracking-[0.3em] text-olive uppercase">
+          <img
+            src={marcoFloral}
+            alt=""
+            aria-hidden
+            width={1024}
+            height={1536}
+            className="pointer-events-none absolute inset-0 z-[5] h-full w-full object-cover opacity-80"
+          />
+          <div
+            key={`${inv.animacionPortada}-${abierto}`}
+            className={`z-10 ${ANIM[inv.animacionPortada]}`}
+          >
+            <span className="mb-6 block text-[10px] tracking-[0.35em] text-olive uppercase">
               {inv.frase}
             </span>
             <h1 className="mb-4 font-display text-5xl leading-none sm:text-6xl">
@@ -155,7 +166,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 </>
               )}
             </h1>
-            <div className="mx-auto my-8 h-14 w-px bg-primary/40" />
+            <div className="mx-auto my-6 flex items-center justify-center gap-3">
+              <span className="h-px w-10 bg-primary/40" />
+              <span className="text-primary">✦</span>
+              <span className="h-px w-10 bg-primary/40" />
+            </div>
             <p className="font-mono text-sm tracking-tighter">{fechaLarga(inv.fecha)}</p>
             <p className="mt-2 text-xs tracking-widest uppercase opacity-60">
               {inv.lugar}
@@ -163,17 +178,25 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             </p>
           </div>
 
-          <div className="absolute bottom-10 z-10 flex gap-6 font-mono">
-            {cifras.map((c) => (
-              <div key={c.etiqueta} className="text-center">
-                <span className="block text-xl tabular-nums">
-                  {String(c.valor).padStart(2, "0")}
-                </span>
-                <span className="text-[9px] uppercase opacity-50">{c.etiqueta}</span>
-              </div>
-            ))}
+          <div className="absolute bottom-8 z-10 w-full px-8">
+            <p className="mb-3 text-[9px] tracking-[0.3em] text-olive uppercase">
+              Falta poco para el gran día
+            </p>
+            <div className="grid grid-cols-4 gap-2 rounded-2xl border border-primary/20 bg-background/70 p-3 backdrop-blur-sm">
+              {cifras.map((c) => (
+                <div key={c.etiqueta} className="text-center">
+                  <span className="block font-mono text-xl tabular-nums">
+                    {String(c.valor).padStart(2, "0")}
+                  </span>
+                  <span className="text-[8px] tracking-widest uppercase opacity-50">
+                    {c.etiqueta}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
+
 
         {/* Accesos rápidos + recordatorio */}
         <section className="border-b border-foreground/5 px-6 py-8">
