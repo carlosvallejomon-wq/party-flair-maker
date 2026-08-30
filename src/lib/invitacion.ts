@@ -1,19 +1,18 @@
 export type ItemItinerario = { hora: string; titulo: string; lugar: string };
 
-export type Decoracion =
-  | "petalos"
-  | "corazones"
-  | "confeti"
-  | "estrellas"
-  | "burbujas"
-  | "mariposas"
-  | "hojas"
-  | "luces"
-  | "notas"
-  | "globos"
-  | "nieve"
-  | "ninguna";
-export type Tema = "olivo" | "rosa" | "azul" | "noche" | "durazno" | "esmeralda";
+export type Tema =
+  | "olivo"
+  | "rosa"
+  | "azul"
+  | "noche"
+  | "durazno"
+  | "esmeralda"
+  | "lavanda"
+  | "vino"
+  | "arena"
+  | "coral"
+  | "cielo"
+  | "carbon";
 export type Melodia = "romantica" | "vals" | "alegre" | "serena";
 
 export type Invitacion = {
@@ -34,22 +33,38 @@ export type Invitacion = {
   mapsUrl: string;
   rsvpLimite: string;
   tema: Tema;
-  decoracion: Decoracion;
   melodia: Melodia;
   animacionPortada: "fade" | "zoom" | "cortina";
-  // Extras opcionales (compatibles con borradores antiguos)
-  intensidadDeco?: number; // 1 = sutil, 2 = normal, 3 = intensa
-  musicaUrl?: string; // enlace a un mp3 propio
-  sobreActivo?: boolean; // intro con sobre que se abre
+
+  // Adornos: marcos, coronas y texturas (galería + subida propia)
+  marco?: string; // id de MARCOS o "ninguno"
+  marcoUrl?: string; // PNG propio subido
+  corona?: string; // id de CORONAS o "ninguno"
+  coronaUrl?: string;
+  textura?: string; // id de TEXTURAS o "ninguno"
+  texturaUrl?: string;
+  decoracionUrl?: string; // PNG propio que se superpone a toda la invitación
+  decoracionOpacidad?: number; // 0 a 100
+  relieve?: boolean; // sombras y relieve en textos y tarjetas
+
+  // Multimedia
+  fotoPortadaUrl?: string;
+  videoSobreUrl?: string; // se reproduce al abrir el sobre
+  videoPortadaUrl?: string; // video dentro de la corona de portada
+  videoGaleriaUrl?: string; // video en la sección de historia/galería
+
+  // Extras
+  musicaUrl?: string;
+  sobreActivo?: boolean;
   direccion?: string;
   wazeUrl?: string;
   albumTitulo?: string;
-  albumUrl?: string; // enlace del álbum de fotos para el QR
+  albumUrl?: string;
   hashtag?: string;
-  whatsapp?: string; // número para recibir confirmaciones
+  instagramUrl?: string;
+  whatsapp?: string;
   coloresSugeridos?: string[];
 };
-
 
 export const TEMAS: Record<Tema, { nombre: string; swatch: string[]; vars: Record<string, string> }> =
   {
@@ -119,23 +134,73 @@ export const TEMAS: Record<Tema, { nombre: string; swatch: string[]; vars: Recor
         "--olive": "oklch(0.56 0.08 160)",
       },
     },
+    lavanda: {
+      nombre: "Lavanda suave",
+      swatch: ["#f7f4fb", "#a98bd0", "#7a5ca8", "#2f2540"],
+      vars: {
+        "--background": "oklch(0.975 0.012 300)",
+        "--foreground": "oklch(0.32 0.05 300)",
+        "--card": "oklch(0.99 0.008 300)",
+        "--primary": "oklch(0.68 0.11 300)",
+        "--olive": "oklch(0.6 0.09 300)",
+      },
+    },
+    vino: {
+      nombre: "Vino borgoña",
+      swatch: ["#fbf3f3", "#a83a4a", "#7a2532", "#30161b"],
+      vars: {
+        "--background": "oklch(0.972 0.01 20)",
+        "--foreground": "oklch(0.3 0.06 20)",
+        "--card": "oklch(0.99 0.006 20)",
+        "--primary": "oklch(0.55 0.15 20)",
+        "--olive": "oklch(0.5 0.12 20)",
+      },
+    },
+    arena: {
+      nombre: "Arena y lino",
+      swatch: ["#faf7f1", "#cbb89a", "#9d8a6c", "#3b352b"],
+      vars: {
+        "--background": "oklch(0.978 0.01 85)",
+        "--foreground": "oklch(0.35 0.02 85)",
+        "--card": "oklch(0.99 0.006 85)",
+        "--primary": "oklch(0.75 0.05 85)",
+        "--olive": "oklch(0.65 0.045 85)",
+      },
+    },
+    coral: {
+      nombre: "Coral tropical",
+      swatch: ["#fff5f2", "#f0836b", "#cf5a44", "#40211a"],
+      vars: {
+        "--background": "oklch(0.982 0.012 35)",
+        "--foreground": "oklch(0.34 0.05 30)",
+        "--card": "oklch(0.99 0.008 35)",
+        "--primary": "oklch(0.7 0.15 35)",
+        "--olive": "oklch(0.62 0.13 32)",
+      },
+    },
+    cielo: {
+      nombre: "Cielo bebé",
+      swatch: ["#f5fbff", "#9ecfe8", "#5fa6c9", "#25404f"],
+      vars: {
+        "--background": "oklch(0.985 0.01 225)",
+        "--foreground": "oklch(0.34 0.04 230)",
+        "--card": "oklch(0.995 0.006 225)",
+        "--primary": "oklch(0.75 0.08 225)",
+        "--olive": "oklch(0.66 0.07 225)",
+      },
+    },
+    carbon: {
+      nombre: "Carbón y plata",
+      swatch: ["#17181b", "#c9ccd1", "#8c9095", "#f2f3f5"],
+      vars: {
+        "--background": "oklch(0.2 0.004 260)",
+        "--foreground": "oklch(0.95 0.003 260)",
+        "--card": "oklch(0.25 0.005 260)",
+        "--primary": "oklch(0.85 0.005 260)",
+        "--olive": "oklch(0.75 0.005 260)",
+      },
+    },
   };
-
-export const DECORACIONES: { id: Decoracion; nombre: string }[] = [
-  { id: "petalos", nombre: "Pétalos" },
-  { id: "corazones", nombre: "Corazones" },
-  { id: "confeti", nombre: "Confeti" },
-  { id: "estrellas", nombre: "Estrellas" },
-  { id: "burbujas", nombre: "Burbujas" },
-  { id: "mariposas", nombre: "Mariposas" },
-  { id: "hojas", nombre: "Hojas" },
-  { id: "luces", nombre: "Luces / luciérnagas" },
-  { id: "notas", nombre: "Notas musicales" },
-  { id: "globos", nombre: "Globos" },
-  { id: "nieve", nombre: "Destellos de nieve" },
-  { id: "ninguna", nombre: "Sin decoración" },
-];
-
 
 export const MELODIAS: { id: Melodia; nombre: string }[] = [
   { id: "romantica", nombre: "Romántica" },
@@ -177,13 +242,15 @@ export const PLANTILLAS: (Invitacion & { slug: string; descripcion: string })[] 
     mapsUrl: "https://maps.google.com/?q=Hacienda+San+Jose+Mexico",
     rsvpLimite: "12 de septiembre",
     tema: "olivo",
-    decoracion: "petalos",
     melodia: "romantica",
     animacionPortada: "fade",
+    marco: "verde",
+    corona: "flores",
+    textura: "papel",
   },
   {
     slug: "rosa-ceremonial",
-    descripcion: "Portada con vals, corazones flotantes y lista de chambelanes.",
+    descripcion: "Portada con vals, corona de flores y lista de chambelanes.",
     plantilla: "Rosa Ceremonial",
     evento: "XV Años",
     nombre1: "Camila",
@@ -206,9 +273,11 @@ export const PLANTILLAS: (Invitacion & { slug: string; descripcion: string })[] 
     mapsUrl: "https://maps.google.com/?q=Guadalajara",
     rsvpLimite: "1 de junio",
     tema: "rosa",
-    decoracion: "corazones",
     melodia: "vals",
     animacionPortada: "zoom",
+    marco: "rosas",
+    corona: "flores",
+    textura: "papel",
   },
   {
     slug: "lino-sereno",
@@ -233,14 +302,16 @@ export const PLANTILLAS: (Invitacion & { slug: string; descripcion: string })[] 
     regalosUrl: "",
     mapsUrl: "https://maps.google.com/?q=Puebla",
     rsvpLimite: "1 de abril",
-    tema: "azul",
-    decoracion: "burbujas",
+    tema: "cielo",
     melodia: "serena",
     animacionPortada: "fade",
+    marco: "floral",
+    corona: "flores",
+    textura: "papel",
   },
   {
     slug: "noche-dorada",
-    descripcion: "Fondo oscuro con destellos dorados para bodas y fiestas de noche.",
+    descripcion: "Fondo oscuro con filigrana dorada para bodas y fiestas de noche.",
     plantilla: "Noche Dorada",
     evento: "Boda",
     nombre1: "Renata",
@@ -263,13 +334,15 @@ export const PLANTILLAS: (Invitacion & { slug: string; descripcion: string })[] 
     mapsUrl: "https://maps.google.com/?q=Monterrey",
     rsvpLimite: "15 de noviembre",
     tema: "noche",
-    decoracion: "estrellas",
     melodia: "romantica",
     animacionPortada: "cortina",
+    marco: "deco",
+    corona: "dorada",
+    textura: "ninguno",
   },
   {
     slug: "durazno-fiesta",
-    descripcion: "Confeti y color cálido para cumpleaños y fiestas infantiles.",
+    descripcion: "Color cálido y girasoles para cumpleaños y fiestas familiares.",
     plantilla: "Durazno Fiesta",
     evento: "Cumpleaños",
     nombre1: "Sofía",
@@ -290,9 +363,11 @@ export const PLANTILLAS: (Invitacion & { slug: string; descripcion: string })[] 
     mapsUrl: "https://maps.google.com/?q=Merida",
     rsvpLimite: "1 de mayo",
     tema: "durazno",
-    decoracion: "confeti",
     melodia: "alegre",
     animacionPortada: "zoom",
+    marco: "dorado",
+    corona: "girasoles",
+    textura: "papel",
   },
   {
     slug: "esmeralda-jardin",
@@ -318,24 +393,40 @@ export const PLANTILLAS: (Invitacion & { slug: string; descripcion: string })[] 
     mapsUrl: "https://maps.google.com/?q=Queretaro",
     rsvpLimite: "1 de agosto",
     tema: "esmeralda",
-    decoracion: "petalos",
     melodia: "serena",
     animacionPortada: "fade",
+    marco: "verde",
+    corona: "flores",
+    textura: "marmol",
   },
 ];
 
 export const CLAVE_STORAGE = "invitacion-borrador";
 
+/** Valores por omisión que reciben TODAS las plantillas. */
 const EXTRAS: Partial<Invitacion> = {
-  intensidadDeco: 2,
   musicaUrl: "",
   sobreActivo: true,
+  relieve: true,
+  decoracionOpacidad: 70,
   direccion: "",
   wazeUrl: "",
   albumTitulo: "Álbum de fotos",
   albumUrl: "https://photos.app.goo.gl/",
   hashtag: "",
+  instagramUrl: "",
   whatsapp: "",
+  marco: "dorado",
+  corona: "flores",
+  textura: "papel",
+  marcoUrl: "",
+  coronaUrl: "",
+  texturaUrl: "",
+  decoracionUrl: "",
+  fotoPortadaUrl: "",
+  videoSobreUrl: "",
+  videoPortadaUrl: "",
+  videoGaleriaUrl: "",
 };
 
 export function plantillaPorSlug(slug?: string | null): Invitacion {
@@ -343,7 +434,6 @@ export function plantillaPorSlug(slug?: string | null): Invitacion {
   const { slug: _s, descripcion: _d, ...resto } = base;
   return structuredClone({ ...EXTRAS, ...resto } as Invitacion);
 }
-
 
 export function cargarBorrador(): Invitacion | null {
   if (typeof window === "undefined") return null;
@@ -357,8 +447,14 @@ export function cargarBorrador(): Invitacion | null {
 }
 
 export function guardarBorrador(inv: Invitacion) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(CLAVE_STORAGE, JSON.stringify(inv));
+  if (typeof window === "undefined") return true;
+  try {
+    window.localStorage.setItem(CLAVE_STORAGE, JSON.stringify(inv));
+    return true;
+  } catch {
+    // Las imágenes o videos subidos pueden superar el espacio del navegador.
+    return false;
+  }
 }
 
 export function fechaLarga(iso: string) {
