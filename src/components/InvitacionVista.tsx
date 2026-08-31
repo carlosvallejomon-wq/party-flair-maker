@@ -1,10 +1,21 @@
+import {
+  CalendarPlus,
+  CheckCircle2,
+  Clock3,
+  Gift,
+  Images,
+  Instagram,
+  MapPin,
+  Music2,
+  Pause,
+  Share2,
+} from "lucide-react";
 import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
 
 import botanical from "@/assets/botanical-hero.jpg";
-import marcoFloral from "@/assets/marco-floral.png";
 import pareja1 from "@/assets/pareja-1.jpg";
 import pareja2 from "@/assets/pareja-2.jpg";
-import { Decoraciones } from "@/components/Decoraciones";
+import { DecoracionPropia, Marco, Textura, coronaDe, marcoDe } from "@/components/Capas";
 import { QrAlbum } from "@/components/QrAlbum";
 import { Reveal } from "@/components/Reveal";
 import { Sobre } from "@/components/Sobre";
@@ -50,8 +61,6 @@ const ANIM = {
   cortina: "portada-cortina",
 } as const;
 
-const GALERIA = [pareja1, pareja2, botanical];
-
 export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; embebido?: boolean }) {
   const restante = useCuentaRegresiva(inv.fecha);
   const { playing, toggle, start } = useAmbientMusic(inv.melodia, inv.musicaUrl);
@@ -59,12 +68,15 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
   const [abierto, setAbierto] = useState(!inv.sobreActivo);
   const [foto, setFoto] = useState<string | null>(null);
 
-  // Si se cambia la opción del sobre en el editor, refleja el cambio al instante.
   useEffect(() => {
     setAbierto(!inv.sobreActivo);
   }, [inv.sobreActivo]);
 
   const nombres = [inv.nombre1, inv.nombre2].filter((n) => n.trim()).join(" & ");
+  const corona = coronaDe(inv);
+  const fondoPortada = inv.fotoPortadaUrl?.trim() || botanical;
+  const galeria = [inv.fotoPortadaUrl?.trim() || pareja1, pareja2, botanical];
+  const relieve = inv.relieve !== false;
 
   const confirmar = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -104,10 +116,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
   const tieneDos = inv.nombre2.trim().length > 0;
   const accesos = [
-    { id: "ubicacion", icono: "◈", texto: "Ubicación" },
-    { id: "rsvp", icono: "✓", texto: "Confirmar" },
-    { id: "itinerario", icono: "◷", texto: "Itinerario" },
-    { id: "album", icono: "▣", texto: "Álbum" },
+    { id: "ubicacion", Icono: MapPin, texto: "Cómo llegar" },
+    { id: "rsvp", Icono: CheckCircle2, texto: "Confirmar" },
+    { id: "itinerario", Icono: Clock3, texto: "Itinerario" },
+    { id: "album", Icono: Images, texto: "Álbum" },
+    { id: "regalos", Icono: Gift, texto: "Regalos" },
   ];
 
   return (
@@ -116,16 +129,19 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
       className="bg-background font-sans text-foreground selection:bg-primary/20"
     >
       <main className="relative mx-auto max-w-[430px] overflow-hidden bg-background shadow-2xl">
-        <Decoraciones tipo={inv.decoracion} intensidad={inv.intensidadDeco ?? 2} />
+        <Textura inv={inv} />
+        <DecoracionPropia inv={inv} />
 
         {/* Portada */}
         <section
-          className={`relative flex flex-col items-center justify-center border-b border-primary/10 px-8 text-center ${embebido ? "h-[560px]" : "h-[92vh]"}`}
+          className={`relative flex flex-col items-center justify-center overflow-hidden border-b border-primary/10 px-8 text-center ${embebido ? "h-[620px]" : "h-[95vh]"}`}
         >
           {!abierto && (
             <Sobre
               titulo={nombres}
               subtitulo={inv.frase}
+              marcoSrc={marcoDe(inv)}
+              videoUrl={inv.videoSobreUrl}
               onAbrir={() => {
                 setAbierto(true);
                 start();
@@ -134,29 +150,56 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           )}
 
           <img
-            src={botanical}
+            src={fondoPortada}
             alt=""
             aria-hidden
-            width={864}
-            height={1600}
-            className="absolute inset-0 h-full w-full object-cover opacity-30"
+            className="absolute inset-0 h-full w-full object-cover opacity-25"
           />
-          <img
-            src={marcoFloral}
-            alt=""
-            aria-hidden
-            width={1024}
-            height={1536}
-            className="pointer-events-none absolute inset-0 z-[5] h-full w-full object-cover opacity-80"
-          />
+          <Textura inv={inv} />
+          <Marco inv={inv} />
+
           <div
             key={`${inv.animacionPortada}-${abierto}`}
             className={`z-10 ${ANIM[inv.animacionPortada]}`}
           >
-            <span className="mb-6 block text-[10px] tracking-[0.35em] text-olive uppercase">
+            {/* Corona con foto o video */}
+            {(corona || inv.videoPortadaUrl?.trim()) && (
+              <div className="relative mx-auto mb-6 size-44">
+                <div className="absolute inset-[14%] overflow-hidden rounded-full border border-primary/20 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)]">
+                  {inv.videoPortadaUrl?.trim() ? (
+                    <video
+                      src={inv.videoPortadaUrl}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <img
+                      src={fondoPortada}
+                      alt={`Foto de ${nombres}`}
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+                </div>
+                {corona && (
+                  <img
+                    src={corona}
+                    alt=""
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+                  />
+                )}
+              </div>
+            )}
+
+            <span className="mb-4 block text-[10px] tracking-[0.35em] text-olive uppercase">
               {inv.frase}
             </span>
-            <h1 className="mb-4 font-display text-5xl leading-none sm:text-6xl">
+            <h1
+              className={`mb-4 font-display text-5xl leading-none sm:text-6xl ${relieve ? "texto-relieve" : ""}`}
+            >
               {inv.nombre1}
               {tieneDos && (
                 <>
@@ -167,7 +210,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 </>
               )}
             </h1>
-            <div className="mx-auto my-6 flex items-center justify-center gap-3">
+            <div className="mx-auto my-5 flex items-center justify-center gap-3">
               <span className="h-px w-10 bg-primary/40" />
               <span className="text-primary">✦</span>
               <span className="h-px w-10 bg-primary/40" />
@@ -179,11 +222,13 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             </p>
           </div>
 
-          <div className="absolute bottom-24 z-10 w-full px-8">
+          <div className="absolute bottom-8 z-10 w-full px-10">
             <p className="mb-3 text-[9px] tracking-[0.3em] text-olive uppercase">
               Falta poco para el gran día
             </p>
-            <div className="grid grid-cols-4 gap-2 rounded-2xl border border-primary/20 bg-background/70 p-3 backdrop-blur-sm">
+            <div
+              className={`grid grid-cols-4 gap-2 rounded-2xl border border-primary/20 bg-background/70 p-3 backdrop-blur-sm ${relieve ? "tarjeta-relieve" : ""}`}
+            >
               {cifras.map((c) => (
                 <div key={c.etiqueta} className="text-center">
                   <span className="block font-mono text-xl tabular-nums">
@@ -198,30 +243,36 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           </div>
         </section>
 
-
-        {/* Accesos rápidos + recordatorio */}
-        <section className="border-b border-foreground/5 px-6 py-8">
-          <div className="grid grid-cols-4 gap-2">
+        {/* Accesos rápidos con iconos */}
+        <section className="relative border-b border-foreground/5 px-6 py-10 text-center">
+          <p className="mb-6 font-display text-2xl italic">Haz clic para interactuar</p>
+          <div className="flex flex-wrap justify-center gap-4">
             {accesos.map((a) => (
               <button
                 key={a.id}
                 type="button"
                 onClick={() => irA(a.id)}
-                className="flex flex-col items-center gap-2 rounded-xl border border-foreground/10 py-3 transition-colors hover:border-primary hover:bg-primary/5"
+                className="group flex w-16 flex-col items-center gap-2"
               >
-                <span className="text-lg text-primary">{a.icono}</span>
-                <span className="text-[9px] tracking-widest uppercase opacity-70">{a.texto}</span>
+                <span
+                  className={`flex size-14 items-center justify-center rounded-full border border-primary/30 bg-card text-primary transition-transform group-hover:scale-105 ${relieve ? "icono-relieve" : ""}`}
+                >
+                  <a.Icono size={22} strokeWidth={1.4} />
+                </span>
+                <span className="text-[8px] leading-tight tracking-widest uppercase opacity-70">
+                  {a.texto}
+                </span>
               </button>
             ))}
           </div>
-          <div className="mt-4 flex gap-2">
+          <div className="mt-6 flex gap-2">
             <a
               href={enlaceCalendario(inv)}
               target="_blank"
               rel="noreferrer"
-              className="flex-1 rounded-xl bg-primary/10 py-3 text-center text-[10px] tracking-widest text-primary uppercase hover:bg-primary/20"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary/10 py-3 text-[10px] tracking-widest text-primary uppercase hover:bg-primary/20"
             >
-              Agendar recordatorio
+              <CalendarPlus size={14} /> Agendar recordatorio
             </a>
             <a
               href={archivoIcs(inv)}
@@ -235,22 +286,36 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
         {/* Historia */}
         {inv.historia.trim() && (
-          <section className="px-10 py-20 text-center">
+          <section className="relative px-10 py-20 text-center">
             <Reveal>
               <h2 className="mb-8 font-display text-3xl italic">Nuestra Historia</h2>
               <p className="text-sm leading-relaxed text-pretty text-foreground/80">
                 {inv.historia}
               </p>
             </Reveal>
+
+            {inv.videoGaleriaUrl?.trim() && (
+              <Reveal delay={120}>
+                <video
+                  src={inv.videoGaleriaUrl}
+                  controls
+                  playsInline
+                  className={`mt-10 w-full rounded-2xl border border-primary/20 ${relieve ? "tarjeta-relieve" : ""}`}
+                />
+              </Reveal>
+            )}
+
             <div className="mt-12 grid grid-cols-2 gap-4">
               <Reveal>
-                <button type="button" onClick={() => setFoto(pareja1)} className="block w-full">
+                <button
+                  type="button"
+                  onClick={() => setFoto(galeria[0]!)}
+                  className="block w-full"
+                >
                   <img
-                    src={pareja1}
+                    src={galeria[0]}
                     alt={`Foto de ${inv.nombre1}`}
                     loading="lazy"
-                    width={800}
-                    height={1200}
                     className="aspect-[2/3] w-full rounded-t-full object-cover transition-transform hover:scale-[1.03]"
                   />
                 </button>
@@ -261,8 +326,6 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                     src={pareja2}
                     alt="Foto del evento"
                     loading="lazy"
-                    width={800}
-                    height={1200}
                     className="mt-8 aspect-[2/3] w-full rounded-b-full object-cover transition-transform hover:scale-[1.03]"
                   />
                 </button>
@@ -273,7 +336,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
         {/* Itinerario */}
         {inv.itinerario.length > 0 && (
-          <section id="itinerario" className="bg-foreground px-8 py-16 text-background">
+          <section id="itinerario" className="relative bg-foreground px-8 py-16 text-background">
             <h2 className="mb-14 text-center font-display text-4xl">El Gran Día</h2>
             <div className="relative space-y-12">
               <div className="absolute top-0 bottom-0 left-[11px] w-px bg-background/20" />
@@ -294,7 +357,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
         )}
 
         {/* Ubicación */}
-        <section id="ubicacion" className="px-8 py-16">
+        <section id="ubicacion" className="relative px-8 py-16">
           <Reveal>
             <h2 className="text-center font-display text-3xl italic">Cómo llegar</h2>
             <p className="mt-3 text-center text-xs text-foreground/60">
@@ -313,9 +376,9 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 href={enlaceMapa(inv)}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-xl bg-foreground py-3 text-center text-[10px] tracking-widest text-background uppercase"
+                className="flex items-center justify-center gap-2 rounded-xl bg-foreground py-3 text-[10px] tracking-widest text-background uppercase"
               >
-                Google Maps
+                <MapPin size={14} /> Google Maps
               </a>
               <a
                 href={
@@ -333,17 +396,22 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
         </section>
 
         {/* Detalles */}
-        <section className="space-y-8 px-8 pb-16">
+        <section className="relative space-y-8 px-8 pb-16">
           {inv.dressCode.trim() && (
             <Reveal>
-              <div className="border border-foreground/10 p-8 text-center">
+              <div
+                className={`border border-foreground/10 bg-card p-8 text-center ${relieve ? "tarjeta-relieve" : ""}`}
+              >
                 <span className="mb-4 block text-[10px] tracking-widest text-olive uppercase">
                   Código de Vestimenta
                 </span>
                 <h3 className="font-display text-2xl italic">{inv.dressCode}</h3>
                 <p className="mt-4 text-xs text-foreground/60">{inv.dressDetalle}</p>
                 <div className="mt-5 flex justify-center gap-2">
-                  {TEMAS[inv.tema].swatch.map((c) => (
+                  {(inv.coloresSugeridos?.length
+                    ? inv.coloresSugeridos
+                    : TEMAS[inv.tema].swatch
+                  ).map((c) => (
                     <span
                       key={c}
                       className="size-5 rounded-full border border-foreground/10"
@@ -357,7 +425,10 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
           {inv.regalosTitulo.trim() && (
             <Reveal delay={120}>
-              <div className="bg-primary/5 p-8 text-center">
+              <div
+                id="regalos"
+                className={`bg-primary/5 p-8 text-center ${relieve ? "tarjeta-relieve" : ""}`}
+              >
                 <span className="mb-4 block text-[10px] tracking-widest text-olive uppercase">
                   Mesa de Regalos
                 </span>
@@ -381,11 +452,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
         </section>
 
         {/* Galería */}
-        <section className="px-8 pb-16">
+        <section className="relative px-8 pb-16">
           <Reveal>
             <h2 className="mb-6 text-center font-display text-3xl italic">Galería</h2>
             <div className="grid grid-cols-3 gap-2">
-              {GALERIA.map((src, i) => (
+              {galeria.map((src, i) => (
                 <button key={i} type="button" onClick={() => setFoto(src)}>
                   <img
                     src={src}
@@ -401,7 +472,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
         {/* Álbum con QR */}
         {inv.albumUrl?.trim() && (
-          <section id="album" className="bg-primary/5 px-8 py-16 text-center">
+          <section id="album" className="relative bg-primary/5 px-8 py-16 text-center">
             <Reveal>
               <span className="mb-4 block text-[10px] tracking-widest text-olive uppercase">
                 Comparte tus fotos
@@ -416,22 +487,36 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
               {inv.hashtag?.trim() && (
                 <p className="mt-3 font-mono text-sm text-primary">{inv.hashtag}</p>
               )}
-              <a
-                href={inv.albumUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-6 inline-block border border-primary px-6 py-3 text-[10px] tracking-widest text-primary uppercase hover:bg-primary hover:text-background"
-              >
-                Abrir álbum
-              </a>
+              <div className="mt-6 flex justify-center gap-3">
+                <a
+                  href={inv.albumUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="border border-primary px-6 py-3 text-[10px] tracking-widest text-primary uppercase hover:bg-primary hover:text-background"
+                >
+                  Abrir álbum
+                </a>
+                {inv.instagramUrl?.trim() && (
+                  <a
+                    href={inv.instagramUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 border border-foreground/15 px-6 py-3 text-[10px] tracking-widest uppercase hover:border-primary"
+                  >
+                    <Instagram size={14} /> Filtro
+                  </a>
+                )}
+              </div>
             </Reveal>
           </section>
         )}
 
         {/* RSVP */}
-        <section id="rsvp" className="px-8 py-16">
+        <section id="rsvp" className="relative px-8 py-16">
           <Reveal>
-            <div className="border border-foreground/10 bg-card p-8">
+            <div
+              className={`border border-foreground/10 bg-card p-8 ${relieve ? "tarjeta-relieve" : ""}`}
+            >
               <h2 className="text-center font-display text-3xl italic">Confirma tu Asistencia</h2>
               <p className="mt-3 text-center text-xs text-foreground/60">
                 Agradecemos tu respuesta antes del {inv.rsvpLimite}.
@@ -455,129 +540,89 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                       name="nombre"
                       required
                       className="w-full border-b border-foreground/20 bg-transparent py-2 text-sm outline-none focus:border-primary"
-                      placeholder="Tu nombre"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="asistencia"
-                        className="text-[10px] tracking-widest text-olive uppercase"
-                      >
-                        Asistencia
-                      </label>
-                      <select
-                        id="asistencia"
-                        name="asistencia"
-                        className="w-full appearance-none border-b border-foreground/20 bg-transparent py-2 text-sm outline-none focus:border-primary"
-                      >
-                        <option>Sí, ahí estaré</option>
-                        <option>No podré asistir</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="pases"
-                        className="text-[10px] tracking-widest text-olive uppercase"
-                      >
-                        Pases
-                      </label>
-                      <input
-                        id="pases"
-                        name="pases"
-                        type="number"
-                        min={1}
-                        max={6}
-                        defaultValue={2}
-                        className="w-full border-b border-foreground/20 bg-transparent py-2 text-sm outline-none focus:border-primary"
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="pases"
+                      className="text-[10px] tracking-widest text-olive uppercase"
+                    >
+                      Número de pases
+                    </label>
+                    <input
+                      id="pases"
+                      name="pases"
+                      type="number"
+                      min={1}
+                      defaultValue={1}
+                      className="w-full border-b border-foreground/20 bg-transparent py-2 text-sm outline-none focus:border-primary"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="asistencia"
+                      className="text-[10px] tracking-widest text-olive uppercase"
+                    >
+                      ¿Nos acompañas?
+                    </label>
+                    <select
+                      id="asistencia"
+                      name="asistencia"
+                      className="w-full border-b border-foreground/20 bg-transparent py-2 text-sm outline-none focus:border-primary"
+                    >
+                      <option>Sí, ahí estaré</option>
+                      <option>Lamento no poder asistir</option>
+                    </select>
                   </div>
                   <button
                     type="submit"
-                    className="w-full bg-foreground py-4 text-[10px] tracking-[0.3em] text-background uppercase transition-colors hover:bg-primary"
+                    className="w-full bg-foreground py-4 text-[10px] tracking-widest text-background uppercase transition-opacity hover:opacity-85"
                   >
                     Enviar confirmación
                   </button>
                 </form>
               )}
-
-              <button
-                type="button"
-                onClick={compartir}
-                className="mt-6 w-full rounded-xl border border-primary py-3 text-[10px] tracking-widest text-primary uppercase hover:bg-primary/10"
-              >
-                Compartir invitación
-              </button>
             </div>
           </Reveal>
         </section>
 
-        <div className={embebido ? "h-8" : "h-32"} />
-      </main>
+        {/* Pie */}
+        <footer className="relative border-t border-foreground/10 px-8 py-12 text-center">
+          <p className="font-display text-2xl italic">{nombres}</p>
+          <p className="mt-2 text-[10px] tracking-widest text-olive uppercase">
+            {fechaLarga(inv.fecha)}
+          </p>
+          <button
+            type="button"
+            onClick={compartir}
+            className="mt-6 inline-flex items-center gap-2 rounded-full border border-foreground/15 px-5 py-2 text-[10px] tracking-widest uppercase hover:border-primary hover:text-primary"
+          >
+            <Share2 size={13} /> Compartir invitación
+          </button>
+        </footer>
 
-      {/* Visor de fotos */}
-      {foto && (
+        {/* Música */}
         <button
           type="button"
-          aria-label="Cerrar foto"
-          onClick={() => setFoto(null)}
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-6 backdrop-blur-sm"
+          onClick={toggle}
+          aria-label={playing ? "Pausar música" : "Reproducir música"}
+          className="sticky bottom-5 left-[calc(100%-4.5rem)] z-40 flex size-12 items-center justify-center rounded-full border border-primary/30 bg-card text-primary shadow-lg backdrop-blur"
         >
-          <img src={foto} alt="Foto ampliada" className="max-h-[80vh] rounded-2xl object-contain" />
+          {playing ? <Pause size={18} /> : <Music2 size={18} />}
         </button>
-      )}
 
-      {/* Barra flotante */}
-      <nav
-        className={
-          embebido
-            ? "sticky bottom-2 z-40 mx-auto w-[92%] max-w-[380px]"
-            : "fixed bottom-6 left-1/2 z-[100] w-[90%] max-w-[380px] -translate-x-1/2"
-        }
-      >
-        <div className="flex items-center justify-between rounded-2xl border border-foreground/5 bg-background/90 p-2 shadow-2xl backdrop-blur-xl">
+        {/* Lightbox */}
+        {foto && (
           <button
             type="button"
-            onClick={toggle}
-            aria-label={playing ? "Pausar música" : "Reproducir música"}
-            aria-pressed={playing}
-            className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all hover:bg-primary/20"
+            aria-label="Cerrar foto"
+            onClick={() => setFoto(null)}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-6"
           >
-            <div className="flex h-4 items-end gap-[2px]">
-              <div
-                className={`w-1 bg-current ${playing ? "h-2 animate-[pulse_1s_infinite]" : "h-1.5"}`}
-              />
-              <div
-                className={`w-1 bg-current ${playing ? "h-4 animate-[pulse_1.2s_infinite]" : "h-1.5"}`}
-              />
-              <div
-                className={`w-1 bg-current ${playing ? "h-3 animate-[pulse_0.8s_infinite]" : "h-1.5"}`}
-              />
-            </div>
+            <img src={foto} alt="" className="max-h-full w-auto rounded-xl object-contain" />
           </button>
-
-          <button
-            type="button"
-            onClick={() => irA("rsvp")}
-            className="mx-2 h-12 flex-1 rounded-xl bg-foreground text-xs font-semibold tracking-widest text-background uppercase transition-colors hover:bg-primary"
-          >
-            Confirmar Asistencia
-          </button>
-
-          <a
-            href={enlaceMapa(inv)}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Ver ubicación en el mapa"
-            className="flex size-12 items-center justify-center rounded-xl border border-foreground/10 text-foreground"
-          >
-            <span className="flex size-5 rotate-45 items-center justify-center rounded-sm border-2 border-current">
-              <span className="size-1 rounded-full bg-current" />
-            </span>
-          </a>
-        </div>
-      </nav>
+        )}
+      </main>
     </div>
   );
 }

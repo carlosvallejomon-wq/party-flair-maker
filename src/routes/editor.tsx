@@ -2,16 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { InvitacionVista } from "@/components/InvitacionVista";
+import { SubirArchivo } from "@/components/SubirArchivo";
+import { CORONAS, MARCOS, TEXTURAS, type Adorno } from "@/lib/adornos";
 import {
   ANIMACIONES,
-  DECORACIONES,
   MELODIAS,
   PLANTILLAS,
   TEMAS,
   cargarBorrador,
   guardarBorrador,
   plantillaPorSlug,
-  type Decoracion,
   type Invitacion,
   type Melodia,
   type Tema,
@@ -41,6 +41,50 @@ export const Route = createFileRoute("/editor")({
 const etiqueta = "mb-1 block text-[10px] tracking-widest text-olive uppercase";
 const campo =
   "w-full rounded-lg border border-foreground/15 bg-card px-3 py-2 text-sm outline-none focus:border-primary";
+
+/** Galería de adornos (marcos, coronas o texturas) con opción "sin adorno". */
+function Galeria({
+  titulo,
+  lista,
+  valor,
+  onElegir,
+}: {
+  titulo: string;
+  lista: Adorno[];
+  valor?: string;
+  onElegir: (id: string) => void;
+}) {
+  const opciones = [{ id: "ninguno", nombre: "Sin adorno", src: "" }, ...lista];
+  return (
+    <div className="mb-4">
+      <span className={etiqueta}>{titulo}</span>
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+        {opciones.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            onClick={() => onElegir(o.id)}
+            aria-pressed={valor === o.id}
+            className={`rounded-xl border p-2 ${
+              valor === o.id ? "border-primary bg-primary/5" : "border-foreground/10"
+            }`}
+          >
+            {o.src ? (
+              <img src={o.src} alt="" className="mx-auto h-16 w-full object-contain" />
+            ) : (
+              <span className="flex h-16 items-center justify-center text-[10px] text-foreground/40">
+                —
+              </span>
+            )}
+            <span className="mt-1 block text-[9px] leading-tight text-foreground/70">
+              {o.nombre}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function Editor() {
   const { p } = Route.useSearch();
@@ -167,23 +211,6 @@ function Editor() {
 
             <div className="grid gap-4 sm:grid-cols-3">
               <div>
-                <label className={etiqueta} htmlFor="deco">
-                  Decoración animada
-                </label>
-                <select
-                  id="deco"
-                  className={campo}
-                  value={inv.decoracion}
-                  onChange={(e) => set("decoracion", e.target.value as Decoracion)}
-                >
-                  {DECORACIONES.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.nombre}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
                 <label className={etiqueta} htmlFor="melodia">
                   Música
                 </label>
@@ -220,23 +247,8 @@ function Editor() {
                 </select>
               </div>
               <div>
-                <label className={etiqueta} htmlFor="intensidad">
-                  Intensidad de la decoración
-                </label>
-                <select
-                  id="intensidad"
-                  className={campo}
-                  value={String(inv.intensidadDeco ?? 2)}
-                  onChange={(e) => set("intensidadDeco", Number(e.target.value))}
-                >
-                  <option value="1">Sutil</option>
-                  <option value="2">Normal</option>
-                  <option value="3">Intensa</option>
-                </select>
-              </div>
-              <div className="sm:col-span-2">
                 <label className={etiqueta} htmlFor="musicaUrl">
-                  Enlace de tu canción (mp3, opcional)
+                  Enlace de tu canción (mp3)
                 </label>
                 <input
                   id="musicaUrl"
@@ -246,7 +258,7 @@ function Editor() {
                   onChange={(e) => set("musicaUrl", e.target.value)}
                 />
               </div>
-              <div className="sm:col-span-3">
+              <div className="sm:col-span-3 flex flex-wrap gap-6">
                 <label className="flex items-center gap-3 text-sm">
                   <input
                     type="checkbox"
@@ -254,11 +266,123 @@ function Editor() {
                     checked={inv.sobreActivo ?? true}
                     onChange={(e) => set("sobreActivo", e.target.checked)}
                   />
-                  Iniciar con un sobre que el invitado abre (activa la música al tocarlo)
+                  Iniciar con un sobre que el invitado abre
+                </label>
+                <label className="flex items-center gap-3 text-sm">
+                  <input
+                    type="checkbox"
+                    className="size-4 accent-[var(--primary)]"
+                    checked={inv.relieve !== false}
+                    onChange={(e) => set("relieve", e.target.checked)}
+                  />
+                  Relieve y sombras elegantes
                 </label>
               </div>
             </div>
+          </section>
 
+          {/* Marcos, coronas y texturas */}
+          <section className="rounded-2xl border border-foreground/10 bg-background p-6">
+            <h2 className="mb-1 font-display text-2xl italic">Marcos, coronas y texturas</h2>
+            <p className="mb-5 text-xs text-foreground/60">
+              Elige un adorno de la galería o sube el tuyo (PNG con fondo transparente).
+            </p>
+
+            <Galeria
+              titulo="Marco de la invitación"
+              lista={MARCOS}
+              valor={inv.marco}
+              onElegir={(id) => set("marco", id)}
+            />
+            <div className="mb-8">
+              <SubirArchivo
+                etiqueta="Subir mi propio marco (PNG)"
+                valor={inv.marcoUrl}
+                onCambio={(v) => set("marcoUrl", v)}
+                ayuda="Si subes uno, reemplaza al marco de la galería."
+              />
+            </div>
+
+            <Galeria
+              titulo="Corona de la portada"
+              lista={CORONAS}
+              valor={inv.corona}
+              onElegir={(id) => set("corona", id)}
+            />
+            <div className="mb-8">
+              <SubirArchivo
+                etiqueta="Subir mi propia corona (PNG)"
+                valor={inv.coronaUrl}
+                onCambio={(v) => set("coronaUrl", v)}
+              />
+            </div>
+
+            <Galeria
+              titulo="Textura de fondo"
+              lista={TEXTURAS}
+              valor={inv.textura}
+              onElegir={(id) => set("textura", id)}
+            />
+            <div className="mb-8">
+              <SubirArchivo
+                etiqueta="Subir mi propia textura"
+                valor={inv.texturaUrl}
+                onCambio={(v) => set("texturaUrl", v)}
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <SubirArchivo
+                etiqueta="Mi decoración (PNG que se superpone)"
+                valor={inv.decoracionUrl}
+                onCambio={(v) => set("decoracionUrl", v)}
+                ayuda="Flores, esquinas, brillos… lo que tú subas."
+              />
+              <div>
+                <label className={etiqueta} htmlFor="opa">
+                  Opacidad de mi decoración ({inv.decoracionOpacidad ?? 70}%)
+                </label>
+                <input
+                  id="opa"
+                  type="range"
+                  min={10}
+                  max={100}
+                  className="w-full accent-[var(--primary)]"
+                  value={inv.decoracionOpacidad ?? 70}
+                  onChange={(e) => set("decoracionOpacidad", Number(e.target.value))}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Fotos y videos */}
+          <section className="rounded-2xl border border-foreground/10 bg-background p-6">
+            <h2 className="mb-5 font-display text-2xl italic">Fotos y videos</h2>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <SubirArchivo
+                etiqueta="Foto de portada"
+                valor={inv.fotoPortadaUrl}
+                onCambio={(v) => set("fotoPortadaUrl", v)}
+              />
+              <SubirArchivo
+                etiqueta="Video al abrir el sobre"
+                acepta="video/*"
+                valor={inv.videoSobreUrl}
+                onCambio={(v) => set("videoSobreUrl", v)}
+              />
+              <SubirArchivo
+                etiqueta="Video dentro de la corona"
+                acepta="video/*"
+                valor={inv.videoPortadaUrl}
+                onCambio={(v) => set("videoPortadaUrl", v)}
+              />
+              <SubirArchivo
+                etiqueta="Video de la historia"
+                acepta="video/*"
+                valor={inv.videoGaleriaUrl}
+                onCambio={(v) => set("videoGaleriaUrl", v)}
+              />
+            </div>
           </section>
 
           {/* Datos */}
