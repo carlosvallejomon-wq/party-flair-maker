@@ -2,16 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { InvitacionVista } from "@/components/InvitacionVista";
+import { SubirArchivo } from "@/components/SubirArchivo";
+import { CORONAS, MARCOS, TEXTURAS, type Adorno } from "@/lib/adornos";
 import {
   ANIMACIONES,
-  DECORACIONES,
   MELODIAS,
   PLANTILLAS,
   TEMAS,
   cargarBorrador,
   guardarBorrador,
   plantillaPorSlug,
-  type Decoracion,
   type Invitacion,
   type Melodia,
   type Tema,
