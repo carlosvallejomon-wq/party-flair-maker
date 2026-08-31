@@ -42,6 +42,50 @@ const etiqueta = "mb-1 block text-[10px] tracking-widest text-olive uppercase";
 const campo =
   "w-full rounded-lg border border-foreground/15 bg-card px-3 py-2 text-sm outline-none focus:border-primary";
 
+/** Galería de adornos (marcos, coronas o texturas) con opción "sin adorno". */
+function Galeria({
+  titulo,
+  lista,
+  valor,
+  onElegir,
+}: {
+  titulo: string;
+  lista: Adorno[];
+  valor?: string;
+  onElegir: (id: string) => void;
+}) {
+  const opciones = [{ id: "ninguno", nombre: "Sin adorno", src: "" }, ...lista];
+  return (
+    <div className="mb-4">
+      <span className={etiqueta}>{titulo}</span>
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+        {opciones.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            onClick={() => onElegir(o.id)}
+            aria-pressed={valor === o.id}
+            className={`rounded-xl border p-2 ${
+              valor === o.id ? "border-primary bg-primary/5" : "border-foreground/10"
+            }`}
+          >
+            {o.src ? (
+              <img src={o.src} alt="" className="mx-auto h-16 w-full object-contain" />
+            ) : (
+              <span className="flex h-16 items-center justify-center text-[10px] text-foreground/40">
+                —
+              </span>
+            )}
+            <span className="mt-1 block text-[9px] leading-tight text-foreground/70">
+              {o.nombre}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Editor() {
   const { p } = Route.useSearch();
   const [inv, setInv] = useState<Invitacion>(() => plantillaPorSlug(p));
