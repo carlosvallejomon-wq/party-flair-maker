@@ -436,7 +436,14 @@ const EXTRAS: Partial<Invitacion> = {
   videoSobreUrl: "",
   videoPortadaUrl: "",
   videoGaleriaUrl: "",
+  fondoUrl: "",
+  videoFondoUrl: "",
+  fondoOpacidad: 25,
+  fondoAjuste: "cubrir",
+  fondoPosX: 50,
+  fondoPosY: 50,
 };
+
 
 export function plantillaPorSlug(slug?: string | null): Invitacion {
   const base = PLANTILLAS.find((p) => p.slug === slug) ?? PLANTILLAS[0]!;
