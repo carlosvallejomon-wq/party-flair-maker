@@ -665,6 +665,18 @@ function Editor() {
                   onChange={(e) => set("hashtag", e.target.value)}
                 />
               </div>
+              <div>
+                <label className={etiqueta} htmlFor="ig">
+                  Filtro / perfil de Instagram
+                </label>
+                <input
+                  id="ig"
+                  className={campo}
+                  placeholder="https://instagram.com/..."
+                  value={inv.instagramUrl ?? ""}
+                  onChange={(e) => set("instagramUrl", e.target.value)}
+                />
+              </div>
             </div>
 
           </section>
