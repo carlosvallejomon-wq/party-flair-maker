@@ -90,6 +90,7 @@ function Editor() {
   const { p } = Route.useSearch();
   const [inv, setInv] = useState<Invitacion>(() => plantillaPorSlug(p));
   const [guardado, setGuardado] = useState(false);
+  const [aviso, setAviso] = useState("");
 
   useEffect(() => {
     if (p) {
