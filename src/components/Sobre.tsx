@@ -17,8 +17,8 @@ export function Sobre({
 }: {
   titulo: string;
   subtitulo: string;
-  marcoSrc?: string;
-  videoUrl?: string;
+  marcoSrc?: string | undefined;
+  videoUrl?: string | undefined;
   onAbrir: () => void;
 }) {
   const [abriendo, setAbriendo] = useState(false);

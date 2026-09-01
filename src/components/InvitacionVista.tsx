@@ -177,7 +177,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                     />
                   ) : (
                     <img
-                      src={fondoPortada}
+                      src={inv.fotoPortadaUrl?.trim() || pareja1}
                       alt={`Foto de ${nombres}`}
                       className="h-full w-full object-cover"
                     />

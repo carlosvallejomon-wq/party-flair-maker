@@ -51,7 +51,7 @@ function Galeria({
 }: {
   titulo: string;
   lista: Adorno[];
-  valor?: string;
+  valor?: string | undefined;
   onElegir: (id: string) => void;
 }) {
   const opciones = [{ id: "ninguno", nombre: "Sin adorno", src: "" }, ...lista];
@@ -90,6 +90,7 @@ function Editor() {
   const { p } = Route.useSearch();
   const [inv, setInv] = useState<Invitacion>(() => plantillaPorSlug(p));
   const [guardado, setGuardado] = useState(false);
+  const [aviso, setAviso] = useState("");
 
   useEffect(() => {
     if (p) {
@@ -110,8 +111,10 @@ function Editor() {
     }));
 
   const guardar = () => {
-    guardarBorrador(inv);
+    const ok = guardarBorrador(inv);
     setGuardado(true);
+    if (!ok) setAviso("No se pudo guardar: los archivos subidos son muy pesados para el navegador.");
+    else setAviso("");
     setTimeout(() => setGuardado(false), 2500);
   };
 
@@ -148,9 +151,10 @@ function Editor() {
               Personaliza tu <span className="text-primary italic">invitación</span>
             </h1>
             <p className="mt-3 max-w-lg text-sm text-foreground/70">
-              Cambia textos, colores, decoración animada y música. La vista previa se actualiza al
-              instante.
+              Cambia textos, colores, marcos, coronas, texturas, música y videos. Sube tu propia
+              decoración y mira la vista previa al instante.
             </p>
+            {aviso && <p className="mt-3 text-xs text-destructive">{aviso}</p>}
           </div>
 
           {/* Plantilla base */}
@@ -663,6 +667,18 @@ function Editor() {
                   placeholder="#ValentinaYMateo2026"
                   value={inv.hashtag ?? ""}
                   onChange={(e) => set("hashtag", e.target.value)}
+                />
+              </div>
+              <div>
+                <label className={etiqueta} htmlFor="ig">
+                  Filtro / perfil de Instagram
+                </label>
+                <input
+                  id="ig"
+                  className={campo}
+                  placeholder="https://instagram.com/..."
+                  value={inv.instagramUrl ?? ""}
+                  onChange={(e) => set("instagramUrl", e.target.value)}
                 />
               </div>
             </div>

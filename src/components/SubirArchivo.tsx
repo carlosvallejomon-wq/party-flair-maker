@@ -13,9 +13,9 @@ export function SubirArchivo({
   onCambio,
 }: {
   etiqueta: string;
-  valor?: string;
-  acepta?: string;
-  ayuda?: string;
+  valor?: string | undefined;
+  acepta?: string | undefined;
+  ayuda?: string | undefined;
   onCambio: (dataUrl: string) => void;
 }) {
   const ref = useRef<HTMLInputElement | null>(null);
