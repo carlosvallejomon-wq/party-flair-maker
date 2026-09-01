@@ -110,8 +110,10 @@ function Editor() {
     }));
 
   const guardar = () => {
-    guardarBorrador(inv);
+    const ok = guardarBorrador(inv);
     setGuardado(true);
+    if (!ok) setAviso("No se pudo guardar: los archivos subidos son muy pesados para el navegador.");
+    else setAviso("");
     setTimeout(() => setGuardado(false), 2500);
   };
 
