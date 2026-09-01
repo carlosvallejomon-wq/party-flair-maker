@@ -386,8 +386,77 @@ function Editor() {
                 valor={inv.videoGaleriaUrl}
                 onCambio={(v) => set("videoGaleriaUrl", v)}
               />
+              <SubirArchivo
+                etiqueta="Imagen de fondo de la portada"
+                ayuda="Se muestra a pantalla completa detrás de los nombres."
+                valor={inv.fondoUrl}
+                onCambio={(v) => set("fondoUrl", v)}
+              />
+              <SubirArchivo
+                etiqueta="Video de fondo de la portada"
+                acepta="video/*"
+                ayuda="Si lo subes, reemplaza a la imagen de fondo."
+                valor={inv.videoFondoUrl}
+                onCambio={(v) => set("videoFondoUrl", v)}
+              />
+            </div>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <label className="block">
+                <span className="mb-1 block text-[10px] tracking-widest text-olive uppercase">
+                  Ajuste del fondo
+                </span>
+                <select
+                  value={inv.fondoAjuste ?? "cubrir"}
+                  onChange={(e) => set("fondoAjuste", e.target.value as "cubrir" | "contener")}
+                  className="w-full rounded-lg border border-foreground/15 bg-background px-3 py-2 text-sm"
+                >
+                  <option value="cubrir">Cubrir (recomendado en celular)</option>
+                  <option value="contener">Contener (ver imagen completa)</option>
+                </select>
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-[10px] tracking-widest text-olive uppercase">
+                  Opacidad del fondo ({inv.fondoOpacidad ?? 25}%)
+                </span>
+                <input
+                  type="range"
+                  min={5}
+                  max={100}
+                  value={inv.fondoOpacidad ?? 25}
+                  onChange={(e) => set("fondoOpacidad", Number(e.target.value))}
+                  className="w-full accent-[var(--primary)]"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-[10px] tracking-widest text-olive uppercase">
+                  Encuadre horizontal ({inv.fondoPosX ?? 50}%)
+                </span>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={inv.fondoPosX ?? 50}
+                  onChange={(e) => set("fondoPosX", Number(e.target.value))}
+                  className="w-full accent-[var(--primary)]"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-[10px] tracking-widest text-olive uppercase">
+                  Encuadre vertical ({inv.fondoPosY ?? 50}%)
+                </span>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={inv.fondoPosY ?? 50}
+                  onChange={(e) => set("fondoPosY", Number(e.target.value))}
+                  className="w-full accent-[var(--primary)]"
+                />
+              </label>
             </div>
           </section>
+
 
           {/* Datos */}
           <section className="rounded-2xl border border-foreground/10 bg-background p-6">

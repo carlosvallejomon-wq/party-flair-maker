@@ -74,7 +74,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
   const nombres = [inv.nombre1, inv.nombre2].filter((n) => n.trim()).join(" & ");
   const corona = coronaDe(inv);
-  const fondoPortada = inv.fotoPortadaUrl?.trim() || botanical;
+  const fondoPortada = inv.fondoUrl?.trim() || inv.fotoPortadaUrl?.trim() || botanical;
+  const ajusteFondo = inv.fondoAjuste === "contener" ? "object-contain" : "object-cover";
+  const posicionFondo = `${inv.fondoPosX ?? 50}% ${inv.fondoPosY ?? 50}%`;
+  const opacidadFondo = (inv.fondoOpacidad ?? 25) / 100;
+
   const galeria = [inv.fotoPortadaUrl?.trim() || pareja1, pareja2, botanical];
   const relieve = inv.relieve !== false;
 
@@ -134,7 +138,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
         {/* Portada */}
         <section
-          className={`relative flex flex-col items-center justify-center overflow-hidden border-b border-primary/10 px-8 text-center ${embebido ? "h-[620px]" : "h-[95vh]"}`}
+          className={`relative flex flex-col items-center justify-center overflow-hidden border-b border-primary/10 px-8 text-center ${embebido ? "h-[620px]" : "h-[100svh] min-h-[560px]"}`}
         >
           {!abierto && (
             <Sobre
@@ -149,12 +153,28 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             />
           )}
 
-          <img
-            src={fondoPortada}
-            alt=""
-            aria-hidden
-            className="absolute inset-0 h-full w-full object-cover opacity-25"
-          />
+          <div className="pointer-events-none absolute inset-0 overflow-hidden bg-background">
+            {inv.videoFondoUrl?.trim() ? (
+              <video
+                src={inv.videoFondoUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className={`absolute inset-0 h-full w-full ${ajusteFondo}`}
+                style={{ objectPosition: posicionFondo, opacity: opacidadFondo }}
+              />
+            ) : (
+              <img
+                src={fondoPortada}
+                alt=""
+                aria-hidden
+                className={`absolute inset-0 h-full w-full ${ajusteFondo}`}
+                style={{ objectPosition: posicionFondo, opacity: opacidadFondo }}
+              />
+            )}
+          </div>
+
           <Textura inv={inv} />
           <Marco inv={inv} />
 
