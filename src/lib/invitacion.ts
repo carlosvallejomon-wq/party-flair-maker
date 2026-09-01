@@ -53,6 +53,15 @@ export type Invitacion = {
   videoPortadaUrl?: string; // video dentro de la corona de portada
   videoGaleriaUrl?: string; // video en la sección de historia/galería
 
+  // Fondo de la portada (hero)
+  fondoUrl?: string; // imagen de fondo propia
+  videoFondoUrl?: string; // video de fondo (tiene prioridad sobre la imagen)
+  fondoOpacidad?: number; // 0 a 100
+  fondoAjuste?: "cubrir" | "contener"; // object-fit
+  fondoPosX?: number; // 0 a 100 (encuadre horizontal)
+  fondoPosY?: number; // 0 a 100 (encuadre vertical)
+
+
   // Extras
   musicaUrl?: string;
   sobreActivo?: boolean;
