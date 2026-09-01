@@ -51,7 +51,7 @@ function Galeria({
 }: {
   titulo: string;
   lista: Adorno[];
-  valor?: string;
+  valor?: string | undefined;
   onElegir: (id: string) => void;
 }) {
   const opciones = [{ id: "ninguno", nombre: "Sin adorno", src: "" }, ...lista];
