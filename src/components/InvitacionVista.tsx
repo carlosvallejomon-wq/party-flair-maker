@@ -74,7 +74,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
   const nombres = [inv.nombre1, inv.nombre2].filter((n) => n.trim()).join(" & ");
   const corona = coronaDe(inv);
-  const fondoPortada = inv.fotoPortadaUrl?.trim() || botanical;
+  const fondoPortada = inv.fondoUrl?.trim() || inv.fotoPortadaUrl?.trim() || botanical;
+  const ajusteFondo = inv.fondoAjuste === "contener" ? "object-contain" : "object-cover";
+  const posicionFondo = `${inv.fondoPosX ?? 50}% ${inv.fondoPosY ?? 50}%`;
+  const opacidadFondo = (inv.fondoOpacidad ?? 25) / 100;
+
   const galeria = [inv.fotoPortadaUrl?.trim() || pareja1, pareja2, botanical];
   const relieve = inv.relieve !== false;
 
