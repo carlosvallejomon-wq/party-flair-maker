@@ -151,9 +151,10 @@ function Editor() {
               Personaliza tu <span className="text-primary italic">invitación</span>
             </h1>
             <p className="mt-3 max-w-lg text-sm text-foreground/70">
-              Cambia textos, colores, decoración animada y música. La vista previa se actualiza al
-              instante.
+              Cambia textos, colores, marcos, coronas, texturas, música y videos. Sube tu propia
+              decoración y mira la vista previa al instante.
             </p>
+            {aviso && <p className="mt-3 text-xs text-destructive">{aviso}</p>}
           </div>
 
           {/* Plantilla base */}
