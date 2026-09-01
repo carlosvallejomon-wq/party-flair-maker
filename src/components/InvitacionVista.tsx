@@ -134,7 +134,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
         {/* Portada */}
         <section
-          className={`relative flex flex-col items-center justify-center overflow-hidden border-b border-primary/10 px-8 text-center ${embebido ? "h-[620px]" : "h-[95vh]"}`}
+          className={`relative flex flex-col items-center justify-center overflow-hidden border-b border-primary/10 px-8 text-center ${embebido ? "h-[620px]" : "h-[100svh] min-h-[560px]"}`}
         >
           {!abierto && (
             <Sobre
@@ -149,12 +149,28 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             />
           )}
 
-          <img
-            src={fondoPortada}
-            alt=""
-            aria-hidden
-            className="absolute inset-0 h-full w-full object-cover opacity-25"
-          />
+          <div className="pointer-events-none absolute inset-0 overflow-hidden bg-background">
+            {inv.videoFondoUrl?.trim() ? (
+              <video
+                src={inv.videoFondoUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className={`absolute inset-0 h-full w-full ${ajusteFondo}`}
+                style={{ objectPosition: posicionFondo, opacity: opacidadFondo }}
+              />
+            ) : (
+              <img
+                src={fondoPortada}
+                alt=""
+                aria-hidden
+                className={`absolute inset-0 h-full w-full ${ajusteFondo}`}
+                style={{ objectPosition: posicionFondo, opacity: opacidadFondo }}
+              />
+            )}
+          </div>
+
           <Textura inv={inv} />
           <Marco inv={inv} />
 
