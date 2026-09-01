@@ -507,45 +507,6 @@
   animation: destello 1.4s 0.7s ease-out forwards;
 }
 
-@utility sobre-mariposa {
-  position: absolute;
-  z-index: 46;
-  top: 45%;
-  left: 50%;
-  width: 14px;
-  height: 12px;
-  background: var(--primary);
-  clip-path: polygon(50% 50%, 0 0, 6% 55%, 50% 50%, 100% 0, 94% 55%);
-  opacity: 0;
-  pointer-events: none;
-  animation: escapar 1.6s 0.6s ease-out forwards;
-}
-
-@utility sobre-mariposa-0 {
-  --dx: -120px;
-  --dy: -150px;
-}
-@utility sobre-mariposa-1 {
-  --dx: 110px;
-  --dy: -180px;
-  animation-delay: 0.75s;
-}
-@utility sobre-mariposa-2 {
-  --dx: -60px;
-  --dy: -220px;
-  animation-delay: 0.9s;
-}
-@utility sobre-mariposa-3 {
-  --dx: 160px;
-  --dy: -110px;
-  animation-delay: 1.05s;
-}
-@utility sobre-mariposa-4 {
-  --dx: 20px;
-  --dy: -250px;
-  animation-delay: 1.2s;
-}
-
 @keyframes sello-romper {
   60% { transform: scale(1.25) rotate(8deg); }
   100% { transform: scale(0.4) rotate(-25deg) translateY(40px); opacity: 0; }
@@ -563,9 +524,24 @@
   100% { opacity: 0; box-shadow: 0 0 220px 160px rgba(255, 255, 255, 0); }
 }
 
-@keyframes escapar {
-  0% { opacity: 0; transform: translate(0, 0) rotate(0deg) scale(0.6); }
-  20% { opacity: 0.9; }
-  100% { opacity: 0; transform: translate(var(--dx, 0), var(--dy, -160px)) rotate(35deg) scale(1.1); }
+/* Relieves elegantes */
+@utility texto-relieve {
+  text-shadow:
+    0 1px 0 color-mix(in oklab, var(--background) 80%, white),
+    0 2px 10px color-mix(in oklab, var(--foreground) 25%, transparent);
 }
+
+@utility tarjeta-relieve {
+  box-shadow:
+    0 1px 0 color-mix(in oklab, var(--background) 85%, white) inset,
+    0 18px 40px -26px color-mix(in oklab, var(--foreground) 55%, transparent);
+}
+
+@utility icono-relieve {
+  box-shadow:
+    0 1px 1px color-mix(in oklab, var(--background) 90%, white) inset,
+    0 -1px 2px color-mix(in oklab, var(--foreground) 12%, transparent) inset,
+    0 8px 18px -10px color-mix(in oklab, var(--foreground) 55%, transparent);
+}
+
 
