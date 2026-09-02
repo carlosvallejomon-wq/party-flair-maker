@@ -324,6 +324,35 @@ function Editor() {
             </div>
 
             <Galeria
+              titulo="Decoración de esquinas"
+              lista={ESQUINAS}
+              valor={inv.esquinas}
+              onElegir={(id) => set("esquinas", id)}
+            />
+            <div className="mb-8 grid gap-4 sm:grid-cols-2">
+              <SubirArchivo
+                etiqueta="Subir mi propia esquina (PNG)"
+                valor={inv.esquinasUrl}
+                onCambio={(v) => set("esquinasUrl", v)}
+                ayuda="Se repite espejada en las 4 esquinas."
+              />
+              <div>
+                <label className={etiqueta} htmlFor="esq-tam">
+                  Tamaño de las esquinas ({inv.esquinasTamano ?? 32}%)
+                </label>
+                <input
+                  id="esq-tam"
+                  type="range"
+                  min={15}
+                  max={60}
+                  value={inv.esquinasTamano ?? 32}
+                  onChange={(e) => set("esquinasTamano", Number(e.target.value))}
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            <Galeria
               titulo="Textura de fondo"
               lista={TEXTURAS}
               valor={inv.textura}
