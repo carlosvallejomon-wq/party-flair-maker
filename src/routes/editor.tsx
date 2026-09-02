@@ -57,8 +57,10 @@ function Galeria({
   const opciones = [{ id: "ninguno", nombre: "Sin adorno", src: "" }, ...lista];
   return (
     <div className="mb-4">
-      <span className={etiqueta}>{titulo}</span>
-      <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+      <span className={etiqueta}>
+        {titulo} ({lista.length} opciones)
+      </span>
+      <div className="grid max-h-80 grid-cols-3 gap-3 overflow-y-auto rounded-xl border border-foreground/10 p-2 sm:grid-cols-6">
         {opciones.map((o) => (
           <button
             key={o.id}
