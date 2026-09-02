@@ -30,6 +30,7 @@ export const CORONAS: Adorno[] = [
   { id: "flores", nombre: "Corona de flores", src: coronaFlores },
   { id: "dorada", nombre: "Corona dorada", src: coronaDorada },
   { id: "girasoles", nombre: "Corona de girasoles", src: coronaGirasoles },
+  ...ADORNOS_CDN.map((a) => ({ ...a, id: `c-${a.id}`, nombre: `Corona ${a.id.split("-")[1]}` })),
 ];
 
 /** Texturas de fondo con relieve. */
