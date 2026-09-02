@@ -177,6 +177,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
           <Textura inv={inv} />
           <Marco inv={inv} />
+          <Esquinas inv={inv} />
 
           <div
             key={`${inv.animacionPortada}-${abierto}`}
