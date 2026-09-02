@@ -19,7 +19,11 @@ export const MARCOS: Adorno[] = [
   { id: "rosas", nombre: "Rosas blush", src: marcoRosas },
   { id: "deco", nombre: "Art déco", src: marcoDeco },
   { id: "verde", nombre: "Olivo verde", src: marcoVerde },
+  ...ADORNOS_CDN.map((a) => ({ ...a, id: `m-${a.id}`, nombre: `Marco ${a.id.split("-")[1]}` })),
 ];
+
+/** Decoraciones de esquina (se repiten en las 4 esquinas de la invitación). */
+export const ESQUINAS: Adorno[] = ESQUINAS_CDN;
 
 /** Coronas (marcos circulares) para la foto o el video de portada. */
 export const CORONAS: Adorno[] = [
