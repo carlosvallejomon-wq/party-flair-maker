@@ -12,14 +12,13 @@ import { ADORNOS_CDN, ESQUINAS_CDN } from "./adornos-cdn";
 
 export type Adorno = { id: string; nombre: string; src: string };
 
-/** Marcos elegantes que enmarcan toda la invitación. */
+/** Marcos elegantes que enmarcan toda la invitación (bordes, no coronas). */
 export const MARCOS: Adorno[] = [
   { id: "dorado", nombre: "Filigrana dorada", src: marcoDorado },
   { id: "floral", nombre: "Acuarela floral", src: marcoFloral },
   { id: "rosas", nombre: "Rosas blush", src: marcoRosas },
   { id: "deco", nombre: "Art déco", src: marcoDeco },
   { id: "verde", nombre: "Olivo verde", src: marcoVerde },
-  ...ADORNOS_CDN.map((a) => ({ ...a, id: `m-${a.id}`, nombre: `Marco ${a.id.split("-")[1]}` })),
 ];
 
 /** Decoraciones de esquina (se repiten en las 4 esquinas de la invitación). */
@@ -32,6 +31,7 @@ export const CORONAS: Adorno[] = [
   { id: "girasoles", nombre: "Corona de girasoles", src: coronaGirasoles },
   ...ADORNOS_CDN.map((a) => ({ ...a, id: `c-${a.id}`, nombre: `Corona ${a.id.split("-")[1]}` })),
 ];
+
 
 /** Texturas de fondo con relieve. */
 export const TEXTURAS: Adorno[] = [
