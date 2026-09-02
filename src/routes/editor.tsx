@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { InvitacionVista } from "@/components/InvitacionVista";
 import { SubirArchivo } from "@/components/SubirArchivo";
-import { CORONAS, MARCOS, TEXTURAS, type Adorno } from "@/lib/adornos";
+import { CORONAS, ESQUINAS, MARCOS, TEXTURAS, type Adorno } from "@/lib/adornos";
 import {
   ANIMACIONES,
   MELODIAS,
@@ -57,8 +57,10 @@ function Galeria({
   const opciones = [{ id: "ninguno", nombre: "Sin adorno", src: "" }, ...lista];
   return (
     <div className="mb-4">
-      <span className={etiqueta}>{titulo}</span>
-      <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+      <span className={etiqueta}>
+        {titulo} ({lista.length} opciones)
+      </span>
+      <div className="grid max-h-80 grid-cols-3 gap-3 overflow-y-auto rounded-xl border border-foreground/10 p-2 sm:grid-cols-6">
         {opciones.map((o) => (
           <button
             key={o.id}
@@ -319,6 +321,35 @@ function Editor() {
                 valor={inv.coronaUrl}
                 onCambio={(v) => set("coronaUrl", v)}
               />
+            </div>
+
+            <Galeria
+              titulo="Decoración de esquinas"
+              lista={ESQUINAS}
+              valor={inv.esquinas}
+              onElegir={(id) => set("esquinas", id)}
+            />
+            <div className="mb-8 grid gap-4 sm:grid-cols-2">
+              <SubirArchivo
+                etiqueta="Subir mi propia esquina (PNG)"
+                valor={inv.esquinasUrl}
+                onCambio={(v) => set("esquinasUrl", v)}
+                ayuda="Se repite espejada en las 4 esquinas."
+              />
+              <div>
+                <label className={etiqueta} htmlFor="esq-tam">
+                  Tamaño de las esquinas ({inv.esquinasTamano ?? 32}%)
+                </label>
+                <input
+                  id="esq-tam"
+                  type="range"
+                  min={15}
+                  max={60}
+                  value={inv.esquinasTamano ?? 32}
+                  onChange={(e) => set("esquinasTamano", Number(e.target.value))}
+                  className="w-full"
+                />
+              </div>
             </div>
 
             <Galeria

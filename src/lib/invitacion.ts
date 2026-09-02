@@ -43,6 +43,9 @@ export type Invitacion = {
   coronaUrl?: string;
   textura?: string; // id de TEXTURAS o "ninguno"
   texturaUrl?: string;
+  esquinas?: string; // id de ESQUINAS o "ninguno"
+  esquinasUrl?: string; // PNG propio para las esquinas
+  esquinasTamano?: number; // % del ancho que ocupa cada esquina (15 a 60)
   decoracionUrl?: string; // PNG propio que se superpone a toda la invitación
   decoracionOpacidad?: number; // 0 a 100
   relieve?: boolean; // sombras y relieve en textos y tarjetas
@@ -428,6 +431,9 @@ const EXTRAS: Partial<Invitacion> = {
   marco: "dorado",
   corona: "flores",
   textura: "papel",
+  esquinas: "ninguno",
+  esquinasUrl: "",
+  esquinasTamano: 32,
   marcoUrl: "",
   coronaUrl: "",
   texturaUrl: "",
