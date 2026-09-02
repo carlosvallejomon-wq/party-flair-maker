@@ -8,6 +8,7 @@ import marcoRosas from "@/assets/marco-rosas.png";
 import marcoVerde from "@/assets/marco-verde.png";
 import texturaMarmol from "@/assets/textura-marmol.jpg";
 import texturaPapel from "@/assets/textura-papel.jpg";
+import { ADORNOS_CDN, ESQUINAS_CDN } from "./adornos-cdn";
 
 export type Adorno = { id: string; nombre: string; src: string };
 
