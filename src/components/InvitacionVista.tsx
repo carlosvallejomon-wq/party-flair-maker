@@ -15,7 +15,7 @@ import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
 import botanical from "@/assets/botanical-hero.jpg";
 import pareja1 from "@/assets/pareja-1.jpg";
 import pareja2 from "@/assets/pareja-2.jpg";
-import { DecoracionPropia, Marco, Textura, coronaDe, marcoDe } from "@/components/Capas";
+import { DecoracionPropia, Esquinas, Marco, Textura, coronaDe, marcoDe } from "@/components/Capas";
 import { QrAlbum } from "@/components/QrAlbum";
 import { Reveal } from "@/components/Reveal";
 import { Sobre } from "@/components/Sobre";
