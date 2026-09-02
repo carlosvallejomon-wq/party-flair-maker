@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { InvitacionVista } from "@/components/InvitacionVista";
 import { SubirArchivo } from "@/components/SubirArchivo";
-import { CORONAS, MARCOS, TEXTURAS, type Adorno } from "@/lib/adornos";
+import { CORONAS, ESQUINAS, MARCOS, TEXTURAS, type Adorno } from "@/lib/adornos";
 import {
   ANIMACIONES,
   MELODIAS,
