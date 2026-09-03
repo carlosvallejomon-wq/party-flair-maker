@@ -437,6 +437,9 @@ const EXTRAS: Partial<Invitacion> = {
   esquinas: "ninguno",
   esquinasUrl: "",
   esquinasTamano: 32,
+  esquinasEspejo: true,
+  esquinasGiro: 0,
+
   marcoUrl: "",
   coronaUrl: "",
   texturaUrl: "",
