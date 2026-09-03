@@ -452,6 +452,38 @@ const EXTRAS: Partial<Invitacion> = {
   esquinasTamano: 32,
   esquinasEspejo: true,
   esquinasGiro: 0,
+  esquinasModo: "espejo",
+
+  familia: "Con la bendición de Dios y de nuestros padres",
+  muroActivo: true,
+  hitos: [
+    { anio: "2019", titulo: "Nos conocimos", texto: "Una tarde cualquiera que lo cambió todo." },
+    { anio: "2022", titulo: "El primer viaje", texto: "Descubrimos que juntos todo es más bonito." },
+    { anio: "2025", titulo: "La propuesta", texto: "Y dijimos que sí, para toda la vida." },
+  ],
+  sedes: [
+    {
+      etiqueta: "Ceremonia",
+      nombre: "",
+      hora: "",
+      direccion: "",
+      mapsUrl: "",
+    },
+    {
+      etiqueta: "Recepción",
+      nombre: "",
+      hora: "",
+      direccion: "",
+      mapsUrl: "",
+    },
+  ],
+  notas: [
+    { titulo: "Puntualidad", texto: "Te esperamos 15 minutos antes de la hora indicada." },
+    { titulo: "Solo adultos", texto: "Con mucho cariño, hemos reservado esta celebración para adultos." },
+    { titulo: "Fotografías", texto: "Durante la ceremonia te pedimos disfrutar sin celulares." },
+  ],
+
+
 
   marcoUrl: "",
   coronaUrl: "",
