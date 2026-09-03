@@ -1,4 +1,8 @@
 export type ItemItinerario = { hora: string; titulo: string; lugar: string };
+export type Hito = { anio: string; titulo: string; texto: string };
+export type Sede = { etiqueta: string; nombre: string; hora: string; direccion: string; mapsUrl: string };
+export type Nota = { titulo: string; texto: string };
+
 
 export type Tema =
   | "olivo"
