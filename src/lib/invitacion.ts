@@ -52,6 +52,15 @@ export type Invitacion = {
   esquinasTamano?: number; // % del ancho que ocupa cada esquina (15 a 60)
   esquinasEspejo?: boolean; // repetir espejada (si no, todas iguales)
   esquinasGiro?: number; // giro base en grados (0, 90, 180, 270)
+  esquinasModo?: "espejo" | "giro" | "igual"; // cómo se acomoda en cada esquina
+
+  // Contenido extendido (secciones tipo invitación premium)
+  familia?: string; // línea superior: "Con la bendición de nuestros padres"
+  hitos?: Hito[]; // Nuestra historia por años
+  sedes?: Sede[]; // Lugares de la celebración
+  notas?: Nota[]; // A tomar en cuenta
+  muroActivo?: boolean; // muro de felicitaciones
+
 
   decoracionUrl?: string; // PNG propio que se superpone a toda la invitación
   decoracionOpacidad?: number; // 0 a 100
