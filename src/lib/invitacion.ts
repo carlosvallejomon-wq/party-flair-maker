@@ -46,6 +46,9 @@ export type Invitacion = {
   esquinas?: string; // id de ESQUINAS o "ninguno"
   esquinasUrl?: string; // PNG propio para las esquinas
   esquinasTamano?: number; // % del ancho que ocupa cada esquina (15 a 60)
+  esquinasEspejo?: boolean; // repetir espejada (si no, todas iguales)
+  esquinasGiro?: number; // giro base en grados (0, 90, 180, 270)
+
   decoracionUrl?: string; // PNG propio que se superpone a toda la invitación
   decoracionOpacidad?: number; // 0 a 100
   relieve?: boolean; // sombras y relieve en textos y tarjetas
@@ -434,6 +437,9 @@ const EXTRAS: Partial<Invitacion> = {
   esquinas: "ninguno",
   esquinasUrl: "",
   esquinasTamano: 32,
+  esquinasEspejo: true,
+  esquinasGiro: 0,
+
   marcoUrl: "",
   coronaUrl: "",
   texturaUrl: "",
