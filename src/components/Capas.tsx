@@ -11,12 +11,21 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
   const src = esquinasDe(inv);
   if (!src) return null;
   const w = `${inv.esquinasTamano ?? 32}%`;
-  const pos = [
-    { className: "top-0 left-0", transform: "none" },
-    { className: "top-0 right-0", transform: "scaleX(-1)" },
-    { className: "bottom-0 left-0", transform: "scaleY(-1)" },
-    { className: "right-0 bottom-0", transform: "scale(-1,-1)" },
-  ];
+  const giro = inv.esquinasGiro ?? 0;
+  const espejo = inv.esquinasEspejo ?? true;
+  const pos = espejo
+    ? [
+        { className: "top-0 left-0", transform: "none" },
+        { className: "top-0 right-0", transform: "scaleX(-1)" },
+        { className: "bottom-0 left-0", transform: "scaleY(-1)" },
+        { className: "right-0 bottom-0", transform: "scale(-1,-1)" },
+      ]
+    : [
+        { className: "top-0 left-0", transform: "none" },
+        { className: "top-0 right-0", transform: "none" },
+        { className: "bottom-0 left-0", transform: "none" },
+        { className: "right-0 bottom-0", transform: "none" },
+      ];
   return (
     <>
       {pos.map((p) => (
@@ -27,12 +36,13 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
           aria-hidden
           loading="lazy"
           className={`pointer-events-none absolute z-[6] object-contain ${p.className}`}
-          style={{ width: w, transform: p.transform }}
+          style={{ width: w, transform: `rotate(${giro}deg) ${p.transform}` }}
         />
       ))}
     </>
   );
 }
+
 
 /** Textura de papel/mármol con relieve suave sobre el fondo. */
 export function Textura({ inv }: { inv: Invitacion }) {
