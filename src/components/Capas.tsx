@@ -12,36 +12,41 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
   if (!src) return null;
   const w = `${inv.esquinasTamano ?? 32}%`;
   const giro = inv.esquinasGiro ?? 0;
-  const espejo = inv.esquinasEspejo ?? true;
-  const pos = espejo
-    ? [
-        { className: "top-0 left-0", transform: "none" },
-        { className: "top-0 right-0", transform: "scaleX(-1)" },
-        { className: "bottom-0 left-0", transform: "scaleY(-1)" },
-        { className: "right-0 bottom-0", transform: "scale(-1,-1)" },
-      ]
-    : [
-        { className: "top-0 left-0", transform: "none" },
-        { className: "top-0 right-0", transform: "none" },
-        { className: "bottom-0 left-0", transform: "none" },
-        { className: "right-0 bottom-0", transform: "none" },
-      ];
+  const modo = inv.esquinasModo ?? (inv.esquinasEspejo === false ? "igual" : "espejo");
+
+  // El orden importa: primero se gira el adorno y después se voltea/rota
+  // para acomodarlo a su esquina, así nunca queda torcido.
+  const acomodo =
+    modo === "espejo"
+      ? ["none", "scaleX(-1)", "scaleY(-1)", "scale(-1,-1)"]
+      : modo === "giro"
+        ? ["none", "rotate(90deg)", "rotate(-90deg)", "rotate(180deg)"]
+        : ["none", "none", "none", "none"];
+
+  const pos = [
+    "top-0 left-0",
+    "top-0 right-0",
+    "bottom-0 left-0",
+    "right-0 bottom-0",
+  ];
+
   return (
     <>
-      {pos.map((p) => (
+      {pos.map((className, i) => (
         <img
-          key={p.className}
+          key={className}
           src={src}
           alt=""
           aria-hidden
           loading="lazy"
-          className={`pointer-events-none absolute z-[6] object-contain ${p.className}`}
-          style={{ width: w, transform: `rotate(${giro}deg) ${p.transform}` }}
+          className={`pointer-events-none absolute z-[6] object-contain ${className}`}
+          style={{ width: w, transform: `${acomodo[i]} rotate(${giro}deg)` }}
         />
       ))}
     </>
   );
 }
+
 
 
 /** Textura de papel/mármol con relieve suave sobre el fondo. */
