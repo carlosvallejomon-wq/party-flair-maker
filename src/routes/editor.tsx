@@ -334,7 +334,7 @@ function Editor() {
                 etiqueta="Subir mi propia esquina (PNG)"
                 valor={inv.esquinasUrl}
                 onCambio={(v) => set("esquinasUrl", v)}
-                ayuda="Se repite espejada en las 4 esquinas."
+                ayuda="Se repite en las 4 esquinas."
               />
               <div>
                 <label className={etiqueta} htmlFor="esq-tam">
@@ -350,7 +350,32 @@ function Editor() {
                   className="w-full"
                 />
               </div>
+              <div>
+                <label className={etiqueta} htmlFor="esq-giro">
+                  Girar la esquina
+                </label>
+                <select
+                  id="esq-giro"
+                  className={campo}
+                  value={inv.esquinasGiro ?? 0}
+                  onChange={(e) => set("esquinasGiro", Number(e.target.value))}
+                >
+                  <option value={0}>Sin girar</option>
+                  <option value={90}>90°</option>
+                  <option value={180}>180°</option>
+                  <option value={270}>270°</option>
+                </select>
+              </div>
+              <label className="flex items-end gap-2 pb-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={inv.esquinasEspejo ?? true}
+                  onChange={(e) => set("esquinasEspejo", e.target.checked)}
+                />
+                Voltear en espejo cada esquina
+              </label>
             </div>
+
 
             <Galeria
               titulo="Textura de fondo"
