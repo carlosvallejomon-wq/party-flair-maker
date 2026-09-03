@@ -1,14 +1,17 @@
 import {
   CalendarPlus,
   CheckCircle2,
+  ChevronDown,
   Clock3,
   Gift,
   Images,
   Instagram,
   MapPin,
   Music2,
+  Navigation,
   Pause,
   Share2,
+  Sparkles,
 } from "lucide-react";
 import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
 
@@ -16,9 +19,11 @@ import botanical from "@/assets/botanical-hero.jpg";
 import pareja1 from "@/assets/pareja-1.jpg";
 import pareja2 from "@/assets/pareja-2.jpg";
 import { DecoracionPropia, Esquinas, Marco, Textura, coronaDe, marcoDe } from "@/components/Capas";
+import { Muro } from "@/components/Muro";
 import { QrAlbum } from "@/components/QrAlbum";
 import { Reveal } from "@/components/Reveal";
 import { Sobre } from "@/components/Sobre";
+
 import {
   TEMAS,
   archivoIcs,
