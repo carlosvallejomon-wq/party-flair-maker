@@ -120,7 +120,7 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
       try {
         ctx.drawImage(imagen, 0, 0, lado, lado);
         const alpha = ctx.getImageData(0, 0, lado, lado).data;
-        const opaco = (x: number, y: number) => alpha[(y * lado + x) * 4 + 3] > 36;
+        const opaco = (x: number, y: number) => (alpha[(y * lado + x) * 4 + 3] ?? 0) > 36;
         const centro = Math.floor(lado / 2);
         const barrer = (dx: number, dy: number) => {
           for (let paso = 0; paso < centro; paso += 1) {
