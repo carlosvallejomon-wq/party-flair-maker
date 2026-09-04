@@ -204,12 +204,15 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
           <div
             key={`${inv.animacionPortada}-${abierto}`}
-            className={`z-10 ${ANIM[inv.animacionPortada]}`}
+            className={`z-10 flex flex-1 flex-col justify-center py-4 ${ANIM[inv.animacionPortada]}`}
           >
-            {/* Corona con foto o video */}
-            {(corona || inv.videoPortadaUrl?.trim()) && (
-              <div className="relative mx-auto mb-6 size-44">
-                <div className="absolute inset-[14%] overflow-hidden rounded-full border border-primary/20 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)]">
+            {/* Foto o video de portada, encuadrado automáticamente dentro de la corona */}
+            {(corona || inv.videoPortadaUrl?.trim() || inv.fotoPortadaUrl?.trim()) && (
+              <div className="relative mx-auto mb-6 aspect-square w-[74%] max-w-[300px]">
+                <div
+                  className="absolute overflow-hidden rounded-full border border-primary/20 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)]"
+                  style={{ inset: corona ? "17%" : "0%" }}
+                >
                   {inv.videoPortadaUrl?.trim() ? (
                     <video
                       src={inv.videoPortadaUrl}
@@ -217,13 +220,13 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                       loop
                       muted
                       playsInline
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover object-center"
                     />
                   ) : (
                     <img
                       src={inv.fotoPortadaUrl?.trim() || pareja1}
                       alt={`Foto de ${nombres}`}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover object-center"
                     />
                   )}
                 </div>
@@ -283,12 +286,13 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             </p>
           </div>
 
-          <div className="absolute bottom-6 z-10 w-full px-10">
+          {/* Cuenta regresiva: ya no flota encima, vive al final de la portada */}
+          <div className="z-10 w-full shrink-0 pt-6">
             <p className="mb-3 text-[9px] tracking-[0.3em] text-olive uppercase">
               Falta poco para el gran día
             </p>
             <div
-              className={`grid grid-cols-4 gap-2 rounded-2xl border border-primary/20 bg-background/70 p-3 backdrop-blur-sm ${relieve ? "tarjeta-relieve" : ""}`}
+              className={`grid grid-cols-4 gap-2 rounded-full border border-primary/25 bg-card/70 px-4 py-3 backdrop-blur-md ${relieve ? "tarjeta-relieve" : ""}`}
             >
               {cifras.map((c) => (
                 <div key={c.etiqueta} className="text-center">
@@ -310,7 +314,6 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
               <ChevronDown size={16} className="animate-bounce" />
             </button>
           </div>
-
         </section>
 
         {/* Accesos rápidos con iconos */}
