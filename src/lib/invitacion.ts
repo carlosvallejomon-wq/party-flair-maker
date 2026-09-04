@@ -1,7 +1,17 @@
 export type ItemItinerario = { hora: string; titulo: string; lugar: string; icono?: string };
-export type Hito = { anio: string; titulo: string; texto: string };
-export type Sede = { etiqueta: string; nombre: string; hora: string; direccion: string; mapsUrl: string };
+export type Hito = { anio: string; titulo: string; texto: string; foto?: string };
+export type Sede = {
+  etiqueta: string;
+  nombre: string;
+  hora: string;
+  direccion: string;
+  mapsUrl: string;
+  wazeUrl?: string;
+  uberUrl?: string;
+};
 export type Nota = { titulo: string; texto: string };
+export type Regalo = { titulo: string; detalle: string; url?: string; icono?: string };
+
 
 
 export type Tema =
