@@ -736,6 +736,18 @@ function Editor() {
               />
               Mostrar muro de felicitaciones
             </label>
+            <div className="mt-4">
+              <label className={etiqueta} htmlFor="muro-titulo">
+                Título del muro de felicitaciones
+              </label>
+              <input
+                id="muro-titulo"
+                className={campo}
+                value={inv.muroTitulo ?? ""}
+                onChange={(e) => set("muroTitulo", e.target.value)}
+                placeholder="Muro de Felicitaciones & Buenos Deseos"
+              />
+            </div>
           </section>
 
           {/* Fotos y videos */}
@@ -759,7 +771,17 @@ function Editor() {
                 acepta="video/*"
                 valor={inv.videoPortadaUrl}
                 onCambio={(v) => set("videoPortadaUrl", v)}
+                ayuda="Se recorta dentro de la corona."
               />
+              <label className="flex items-center gap-2 self-end text-sm">
+                <input
+                  type="checkbox"
+                  className="size-4 accent-[var(--primary)]"
+                  checked={inv.videoPortadaSonido === true}
+                  onChange={(e) => set("videoPortadaSonido", e.target.checked)}
+                />
+                Reproducir el video de la corona con sonido
+              </label>
               <SubirArchivo
                 etiqueta="Video de la historia"
                 acepta="video/*"
@@ -831,6 +853,19 @@ function Editor() {
                   max={100}
                   value={inv.fondoPosY ?? 50}
                   onChange={(e) => set("fondoPosY", Number(e.target.value))}
+                  className="w-full accent-[var(--primary)]"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-[10px] tracking-widest text-olive uppercase">
+                  Zoom del fondo ({inv.fondoZoom ?? 100}%)
+                </span>
+                <input
+                  type="range"
+                  min={60}
+                  max={200}
+                  value={inv.fondoZoom ?? 100}
+                  onChange={(e) => set("fondoZoom", Number(e.target.value))}
                   className="w-full accent-[var(--primary)]"
                 />
               </label>
@@ -1016,6 +1051,37 @@ function Editor() {
                   value={inv.dressDetalle}
                   onChange={(e) => set("dressDetalle", e.target.value)}
                 />
+              </div>
+              <div className="sm:col-span-2 grid gap-4 sm:grid-cols-2">
+                <SubirArchivo
+                  etiqueta="Guía visual de vestimenta (imagen)"
+                  valor={inv.dressFotoUrl ?? ""}
+                  onCambio={(v) => set("dressFotoUrl", v)}
+                />
+                <div>
+                  <label className={etiqueta} htmlFor="dress-guia">
+                    Enlace de la guía completa
+                  </label>
+                  <input
+                    id="dress-guia"
+                    className={campo}
+                    value={inv.dressGuiaUrl ?? ""}
+                    onChange={(e) => set("dressGuiaUrl", e.target.value)}
+                    placeholder="https://…"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className={etiqueta} htmlFor="dress-nota">
+                    Nota especial de vestimenta
+                  </label>
+                  <input
+                    id="dress-nota"
+                    className={campo}
+                    value={inv.dressNota ?? ""}
+                    onChange={(e) => set("dressNota", e.target.value)}
+                    placeholder="Se reserva el color blanco para la novia."
+                  />
+                </div>
               </div>
               <div className="sm:col-span-2">
                 <span className={etiqueta}>Paleta de colores sugerida para vestimenta</span>
