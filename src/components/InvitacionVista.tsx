@@ -123,7 +123,22 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
       ]
     : [];
 
+  const fechaEvento = new Date(inv.fecha);
+  const valida = !Number.isNaN(fechaEvento.getTime());
+  const fmt = (opts: Intl.DateTimeFormatOptions) =>
+    valida ? fechaEvento.toLocaleDateString("es-MX", opts) : "";
+  const partes = {
+    diaSemana: fmt({ weekday: "long" }),
+    mes: fmt({ month: "long" }),
+    dia: valida ? String(fechaEvento.getDate()).padStart(2, "0") : "",
+    anio: valida ? String(fechaEvento.getFullYear()) : "",
+    hora: valida
+      ? fechaEvento.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })
+      : "",
+  };
+
   const tieneDos = inv.nombre2.trim().length > 0;
+
   const accesos = [
     { id: "ubicacion", Icono: MapPin, texto: "Cómo llegar" },
     { id: "rsvp", Icono: CheckCircle2, texto: "Confirmar" },
@@ -220,6 +235,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
               </div>
             )}
 
+            {inv.familia?.trim() && (
+              <p className="mb-3 text-[9px] leading-relaxed tracking-[0.25em] uppercase opacity-55">
+                {inv.familia}
+              </p>
+            )}
             <span className="mb-4 block text-[10px] tracking-[0.35em] text-olive uppercase">
               {inv.frase}
             </span>
@@ -236,19 +256,31 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 </>
               )}
             </h1>
-            <div className="mx-auto my-5 flex items-center justify-center gap-3">
-              <span className="h-px w-10 bg-primary/40" />
-              <span className="text-primary">✦</span>
-              <span className="h-px w-10 bg-primary/40" />
+
+            {/* Fecha en formato editorial: MES · DÍA · AÑO */}
+            <div className="mx-auto mt-6 flex w-fit items-stretch gap-4 border-y border-primary/30 px-5 py-2">
+              <div className="self-center text-center text-[9px] leading-tight tracking-[0.25em] uppercase opacity-70">
+                {partes.diaSemana}
+                <br />
+                {partes.mes}
+              </div>
+              <span className="w-px bg-primary/25" />
+              <div className="self-center font-display text-4xl leading-none">{partes.dia}</div>
+              <span className="w-px bg-primary/25" />
+              <div className="self-center text-center text-[9px] leading-tight tracking-[0.25em] uppercase opacity-70">
+                {partes.anio}
+                <br />
+                {partes.hora}
+              </div>
             </div>
-            <p className="font-mono text-sm tracking-tighter">{fechaLarga(inv.fecha)}</p>
-            <p className="mt-2 text-xs tracking-widest uppercase opacity-60">
+
+            <p className="mt-4 text-xs tracking-widest uppercase opacity-60">
               {inv.lugar}
               {inv.ciudad ? `, ${inv.ciudad}` : ""}
             </p>
           </div>
 
-          <div className="absolute bottom-8 z-10 w-full px-10">
+          <div className="absolute bottom-6 z-10 w-full px-10">
             <p className="mb-3 text-[9px] tracking-[0.3em] text-olive uppercase">
               Falta poco para el gran día
             </p>
@@ -266,11 +298,24 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 </div>
               ))}
             </div>
+            <button
+              type="button"
+              onClick={() => irA("interactuar")}
+              className="mx-auto mt-4 flex flex-col items-center gap-1 text-olive"
+            >
+              <span className="font-display text-lg italic">Desliza para descubrir</span>
+              <ChevronDown size={16} className="animate-bounce" />
+            </button>
           </div>
+
         </section>
 
         {/* Accesos rápidos con iconos */}
-        <section className="relative border-b border-foreground/5 px-6 py-10 text-center">
+        <section
+          id="interactuar"
+          className="relative border-b border-foreground/5 px-6 py-10 text-center"
+        >
+          <p className="mb-1 text-[9px] tracking-[0.3em] text-olive uppercase">Todo en un toque</p>
           <p className="mb-6 font-display text-2xl italic">Haz clic para interactuar</p>
           <div className="flex flex-wrap justify-center gap-4">
             {accesos.map((a) => (
@@ -281,10 +326,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 className="group flex w-16 flex-col items-center gap-2"
               >
                 <span
-                  className={`flex size-14 items-center justify-center rounded-full border border-primary/30 bg-card text-primary transition-transform group-hover:scale-105 ${relieve ? "icono-relieve" : ""}`}
+                  className={`flex size-14 items-center justify-center rounded-full bg-foreground text-background transition-transform group-hover:scale-110 ${relieve ? "icono-relieve" : ""}`}
                 >
-                  <a.Icono size={22} strokeWidth={1.4} />
+                  <a.Icono size={22} strokeWidth={1.3} />
                 </span>
+
                 <span className="text-[8px] leading-tight tracking-widest uppercase opacity-70">
                   {a.texto}
                 </span>
@@ -319,6 +365,29 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 {inv.historia}
               </p>
             </Reveal>
+
+            {/* Línea de tiempo por años */}
+            {(inv.hitos ?? []).length > 0 && (
+              <div className="relative mt-12 space-y-5 text-left">
+                {(inv.hitos ?? []).map((h, i) => (
+                  <Reveal key={`${h.anio}-${i}`} delay={i * 110}>
+                    <div
+                      className={`flex gap-4 rounded-2xl border border-foreground/10 bg-card p-5 ${relieve ? "tarjeta-relieve" : ""}`}
+                    >
+                      <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10 font-mono text-[11px] text-primary">
+                        {h.anio}
+                      </span>
+                      <div className="min-w-0">
+                        <h3 className="font-display text-xl italic">{h.titulo}</h3>
+                        <p className="mt-1 text-xs leading-relaxed text-foreground/65">{h.texto}</p>
+                      </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            )}
+
+
 
             {inv.videoGaleriaUrl?.trim() && (
               <Reveal delay={120}>
@@ -420,6 +489,83 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             </div>
           </Reveal>
         </section>
+
+        {/* Lugares de la celebración */}
+        {(inv.sedes ?? []).some((s) => s.nombre.trim()) && (
+          <section className="relative bg-primary/5 px-8 py-16">
+            <Reveal>
+              <h2 className="mb-8 text-center font-display text-3xl italic">
+                Lugares de la Celebración
+              </h2>
+            </Reveal>
+            <div className="space-y-5">
+              {(inv.sedes ?? [])
+                .filter((s) => s.nombre.trim())
+                .map((s, i) => (
+                  <Reveal key={`${s.nombre}-${i}`} delay={i * 120}>
+                    <div
+                      className={`rounded-2xl border border-foreground/10 bg-card p-6 text-center ${relieve ? "tarjeta-relieve" : ""}`}
+                    >
+                      <span className="inline-block rounded-full bg-foreground px-4 py-1 text-[9px] tracking-widest text-background uppercase">
+                        {s.etiqueta}
+                      </span>
+                      <h3 className="mt-4 font-display text-2xl italic">{s.nombre}</h3>
+                      {s.hora.trim() && (
+                        <p className="mt-1 font-mono text-xs text-primary">{s.hora}</p>
+                      )}
+                      {s.direccion.trim() && (
+                        <p className="mt-2 text-xs text-foreground/60">{s.direccion}</p>
+                      )}
+                      <a
+                        href={
+                          s.mapsUrl.trim() ||
+                          `https://maps.google.com/?q=${encodeURIComponent(`${s.nombre} ${s.direccion}`)}`
+                        }
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-5 inline-flex items-center gap-2 rounded-full border border-primary px-5 py-2 text-[10px] tracking-widest text-primary uppercase hover:bg-primary hover:text-background"
+                      >
+                        <Navigation size={13} /> Cómo llegar
+                      </a>
+                    </div>
+                  </Reveal>
+                ))}
+            </div>
+          </section>
+        )}
+
+        {/* A tomar en cuenta */}
+        {(inv.notas ?? []).length > 0 && (
+          <section className="relative px-8 py-16">
+            <Reveal>
+              <p className="text-center text-[9px] tracking-[0.3em] text-olive uppercase">
+                Detalles importantes
+              </p>
+              <h2 className="mt-2 mb-8 text-center font-display text-3xl italic">
+                A Tomar en Cuenta
+              </h2>
+            </Reveal>
+            <div className="space-y-4">
+              {(inv.notas ?? []).map((n, i) => (
+                <Reveal key={`${n.titulo}-${i}`} delay={i * 100}>
+                  <div
+                    className={`flex gap-4 rounded-2xl border border-foreground/10 bg-card p-5 ${relieve ? "tarjeta-relieve" : ""}`}
+                  >
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <Sparkles size={15} />
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-medium">{n.titulo}</h3>
+                      <p className="mt-1 text-xs leading-relaxed text-foreground/65">{n.texto}</p>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+        )}
+
+
 
         {/* Detalles */}
         <section className="relative space-y-8 px-8 pb-16">
@@ -537,7 +683,19 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           </section>
         )}
 
+        {/* Muro de felicitaciones */}
+        {inv.muroActivo !== false && (
+          <section className="relative bg-primary/5 px-8 py-16 text-center">
+            <Reveal>
+              <p className="text-[9px] tracking-[0.3em] text-olive uppercase">Déjanos tu huella</p>
+              <h2 className="mt-2 mb-6 font-display text-3xl italic">Muro de Felicitaciones</h2>
+              <Muro clave={`${inv.nombre1}-${inv.fecha}`} relieve={relieve} />
+            </Reveal>
+          </section>
+        )}
+
         {/* RSVP */}
+
         <section id="rsvp" className="relative px-8 py-16">
           <Reveal>
             <div
@@ -627,15 +785,27 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           </button>
         </footer>
 
-        {/* Música */}
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label={playing ? "Pausar música" : "Reproducir música"}
-          className="sticky bottom-5 left-[calc(100%-4.5rem)] z-40 flex size-12 items-center justify-center rounded-full border border-primary/30 bg-card text-primary shadow-lg backdrop-blur"
-        >
-          {playing ? <Pause size={18} /> : <Music2 size={18} />}
-        </button>
+        {/* Barra fija: música + confirmación */}
+        {abierto && (
+          <div className="sticky bottom-0 z-40 flex items-center gap-3 border-t border-foreground/10 bg-background/85 px-5 py-3 backdrop-blur">
+            <button
+              type="button"
+              onClick={toggle}
+              aria-label={playing ? "Pausar música" : "Reproducir música"}
+              className="flex size-11 shrink-0 items-center justify-center rounded-full border border-primary/30 bg-card text-primary"
+            >
+              {playing ? <Pause size={17} /> : <Music2 size={17} />}
+            </button>
+            <button
+              type="button"
+              onClick={() => irA("rsvp")}
+              className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-foreground py-3 text-[10px] tracking-widest text-background uppercase"
+            >
+              <CheckCircle2 size={14} /> Confirmar asistencia
+            </button>
+          </div>
+        )}
+
 
         {/* Lightbox */}
         {foto && (
