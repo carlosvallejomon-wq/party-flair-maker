@@ -75,6 +75,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
   const [abierto, setAbierto] = useState(!inv.sobreActivo);
   const [foto, setFoto] = useState<string | null>(null);
   const [momento, setMomento] = useState<number | null>(0);
+  const [hito, setHito] = useState<number | null>(0);
 
   useEffect(() => {
     setAbierto(!inv.sobreActivo);
@@ -161,7 +162,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
         {/* Portada */}
         <section
-          className={`relative flex flex-col items-center justify-center overflow-hidden border-b border-primary/10 px-8 text-center ${embebido ? "h-[620px]" : "h-[100svh] min-h-[560px]"}`}
+          className={`relative flex flex-col items-center justify-between overflow-hidden border-b border-primary/10 px-8 pt-10 pb-6 text-center ${embebido ? "min-h-[720px]" : "min-h-[100svh]"}`}
         >
           {!abierto && (
             <Sobre
@@ -204,12 +205,15 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
           <div
             key={`${inv.animacionPortada}-${abierto}`}
-            className={`z-10 ${ANIM[inv.animacionPortada]}`}
+            className={`z-10 flex flex-1 flex-col justify-center py-4 ${ANIM[inv.animacionPortada]}`}
           >
-            {/* Corona con foto o video */}
-            {(corona || inv.videoPortadaUrl?.trim()) && (
-              <div className="relative mx-auto mb-6 size-44">
-                <div className="absolute inset-[14%] overflow-hidden rounded-full border border-primary/20 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)]">
+            {/* Foto o video de portada, encuadrado automáticamente dentro de la corona */}
+            {(corona || inv.videoPortadaUrl?.trim() || inv.fotoPortadaUrl?.trim()) && (
+              <div className="relative mx-auto mb-6 aspect-square w-[74%] max-w-[300px]">
+                <div
+                  className="absolute overflow-hidden rounded-full border border-primary/20 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)]"
+                  style={{ inset: corona ? "17%" : "0%" }}
+                >
                   {inv.videoPortadaUrl?.trim() ? (
                     <video
                       src={inv.videoPortadaUrl}
@@ -217,13 +221,13 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                       loop
                       muted
                       playsInline
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover object-center"
                     />
                   ) : (
                     <img
                       src={inv.fotoPortadaUrl?.trim() || pareja1}
                       alt={`Foto de ${nombres}`}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover object-center"
                     />
                   )}
                 </div>
@@ -283,12 +287,13 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             </p>
           </div>
 
-          <div className="absolute bottom-6 z-10 w-full px-10">
+          {/* Cuenta regresiva: ya no flota encima, vive al final de la portada */}
+          <div className="z-10 w-full shrink-0 pt-6">
             <p className="mb-3 text-[9px] tracking-[0.3em] text-olive uppercase">
               Falta poco para el gran día
             </p>
             <div
-              className={`grid grid-cols-4 gap-2 rounded-2xl border border-primary/20 bg-background/70 p-3 backdrop-blur-sm ${relieve ? "tarjeta-relieve" : ""}`}
+              className={`grid grid-cols-4 gap-2 rounded-full border border-primary/25 bg-card/70 px-4 py-3 backdrop-blur-md ${relieve ? "tarjeta-relieve" : ""}`}
             >
               {cifras.map((c) => (
                 <div key={c.etiqueta} className="text-center">
@@ -310,7 +315,6 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
               <ChevronDown size={16} className="animate-bounce" />
             </button>
           </div>
-
         </section>
 
         {/* Accesos rápidos con iconos */}
@@ -329,7 +333,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 className="group flex w-16 flex-col items-center gap-2"
               >
                 <span
-                  className={`flex size-14 items-center justify-center rounded-full bg-foreground text-background transition-transform group-hover:scale-110 ${relieve ? "icono-relieve" : ""}`}
+                  className={`flex size-14 items-center justify-center rounded-full border border-primary/30 bg-primary/12 text-primary transition-all group-hover:scale-110 group-hover:bg-primary group-hover:text-background ${relieve ? "icono-relieve" : ""}`}
                 >
                   <a.Icono size={22} strokeWidth={1.3} />
                 </span>
@@ -345,14 +349,14 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
               href={enlaceCalendario(inv)}
               target="_blank"
               rel="noreferrer"
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary/10 py-3 text-[10px] tracking-widest text-primary uppercase hover:bg-primary/20"
+              className="flex flex-1 items-center justify-center gap-2 rounded-full bg-primary/10 py-3 text-[10px] tracking-widest text-primary uppercase hover:bg-primary/20"
             >
               <CalendarPlus size={14} /> Agendar recordatorio
             </a>
             <a
               href={archivoIcs(inv)}
               download="invitacion.ics"
-              className="rounded-xl border border-foreground/10 px-4 py-3 text-[10px] tracking-widest uppercase opacity-70 hover:opacity-100"
+              className="rounded-full border border-foreground/15 px-4 py-3 text-[10px] tracking-widest uppercase opacity-70 hover:opacity-100"
             >
               .ics
             </a>
@@ -376,17 +380,24 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
               <div className="relative mt-12 space-y-5 text-left">
                 {(inv.hitos ?? []).map((h, i) => (
                   <Reveal key={`${h.anio}-${i}`} delay={i * 110}>
-                    <div
-                      className={`flex gap-4 rounded-2xl border border-foreground/10 bg-card p-5 ${relieve ? "tarjeta-relieve" : ""}`}
+                    <button
+                      type="button"
+                      onClick={() => setHito(hito === i ? null : i)}
+                      aria-expanded={hito === i}
+                      className={`flex w-full gap-4 rounded-3xl border p-5 text-left transition-all ${hito === i ? "border-primary/40 bg-primary/8" : "border-primary/12 bg-card/80"} ${relieve ? "tarjeta-relieve" : ""}`}
                     >
-                      <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10 font-mono text-[11px] text-primary">
+                      <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/15 font-mono text-[11px] text-primary">
                         {h.anio}
                       </span>
                       <div className="min-w-0">
                         <h3 className="font-display text-xl italic">{h.titulo}</h3>
-                        <p className="mt-1 text-xs leading-relaxed text-foreground/65">{h.texto}</p>
+                        <p
+                          className={`text-xs leading-relaxed text-foreground/65 transition-all ${hito === i ? "mt-1 max-h-40 opacity-100" : "max-h-0 overflow-hidden opacity-0"}`}
+                        >
+                          {h.texto}
+                        </p>
                       </div>
-                    </div>
+                    </button>
                   </Reveal>
                 ))}
               </div>
@@ -450,7 +461,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
               <span className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-primary/40" />
               <div className="space-y-8">
                 {inv.itinerario.map((item, i) => {
-                  const Icono = iconoPorId(item.icono);
+                  const Icono = iconoPorId(item.icono, `${item.titulo} ${item.lugar}`);
                   const izquierda = i % 2 === 0;
                   const activo = momento === i;
                   return (
@@ -481,7 +492,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                         </span>
 
                         <span
-                          className={`flex size-20 items-center justify-center rounded-2xl border border-primary/25 bg-card text-primary transition-transform ${activo ? "scale-105" : ""} ${relieve ? "tarjeta-relieve" : ""} ${izquierda ? "order-3 justify-self-start" : "order-1 justify-self-end"}`}
+                          className={`flex size-20 items-center justify-center rounded-full border border-primary/25 bg-primary/8 text-primary transition-transform ${activo ? "scale-105" : ""} ${relieve ? "tarjeta-relieve" : ""} ${izquierda ? "order-3 justify-self-start" : "order-1 justify-self-end"}`}
                         >
                           <Icono size={30} strokeWidth={1.2} />
                         </span>
@@ -516,7 +527,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 href={enlaceMapa(inv)}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center gap-2 rounded-xl bg-foreground py-3 text-[10px] tracking-widest text-background uppercase"
+                className="flex items-center justify-center gap-2 rounded-full bg-primary py-3 text-[10px] tracking-widest text-primary-foreground uppercase"
               >
                 <MapPin size={14} /> Google Maps
               </a>
@@ -527,7 +538,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 }
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-xl border border-primary py-3 text-center text-[10px] tracking-widest text-primary uppercase hover:bg-primary/10"
+                className="rounded-full border border-primary py-3 text-center text-[10px] tracking-widest text-primary uppercase hover:bg-primary/10"
               >
                 Waze
               </a>
@@ -549,9 +560,9 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 .map((s, i) => (
                   <Reveal key={`${s.nombre}-${i}`} delay={i * 120}>
                     <div
-                      className={`rounded-2xl border border-foreground/10 bg-card p-6 text-center ${relieve ? "tarjeta-relieve" : ""}`}
+                      className={`rounded-3xl border border-primary/15 bg-card/80 p-6 text-center backdrop-blur-sm ${relieve ? "tarjeta-relieve" : ""}`}
                     >
-                      <span className="inline-block rounded-full bg-foreground px-4 py-1 text-[9px] tracking-widest text-background uppercase">
+                      <span className="inline-block rounded-full bg-primary px-4 py-1 text-[9px] tracking-widest text-primary-foreground uppercase">
                         {s.etiqueta}
                       </span>
                       <h3 className="mt-4 font-display text-2xl italic">{s.nombre}</h3>
@@ -594,7 +605,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
               {(inv.notas ?? []).map((n, i) => (
                 <Reveal key={`${n.titulo}-${i}`} delay={i * 100}>
                   <div
-                    className={`flex gap-4 rounded-2xl border border-foreground/10 bg-card p-5 ${relieve ? "tarjeta-relieve" : ""}`}
+                    className={`flex gap-4 rounded-3xl border border-primary/12 bg-card/80 p-5 ${relieve ? "tarjeta-relieve" : ""}`}
                   >
                     <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                       <Sparkles size={15} />
@@ -617,7 +628,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           {inv.dressCode.trim() && (
             <Reveal>
               <div
-                className={`border border-foreground/10 bg-card p-8 text-center ${relieve ? "tarjeta-relieve" : ""}`}
+                className={`rounded-3xl border border-primary/15 bg-card/80 p-8 text-center backdrop-blur-sm ${relieve ? "tarjeta-relieve" : ""}`}
               >
                 <span className="mb-4 block text-[10px] tracking-widest text-olive uppercase">
                   Código de Vestimenta
@@ -644,7 +655,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             <Reveal delay={120}>
               <div
                 id="regalos"
-                className={`bg-primary/5 p-8 text-center ${relieve ? "tarjeta-relieve" : ""}`}
+                className={`rounded-3xl border border-primary/15 bg-primary/8 p-8 text-center ${relieve ? "tarjeta-relieve" : ""}`}
               >
                 <span className="mb-4 block text-[10px] tracking-widest text-olive uppercase">
                   Mesa de Regalos
@@ -658,7 +669,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                     href={inv.regalosUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-block border border-primary px-6 py-3 text-[10px] tracking-widest text-primary uppercase transition-colors hover:bg-primary hover:text-background"
+                    className="inline-block rounded-full border border-primary px-7 py-3 text-[10px] tracking-widest text-primary uppercase transition-colors hover:bg-primary hover:text-background"
                   >
                     Ver Mesa de Regalos
                   </a>
@@ -711,7 +722,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                   href={inv.albumUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="border border-primary px-6 py-3 text-[10px] tracking-widest text-primary uppercase hover:bg-primary hover:text-background"
+                  className="rounded-full border border-primary px-7 py-3 text-[10px] tracking-widest text-primary uppercase hover:bg-primary hover:text-background"
                 >
                   Abrir álbum
                 </a>
@@ -720,7 +731,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                     href={inv.instagramUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-2 border border-foreground/15 px-6 py-3 text-[10px] tracking-widest uppercase hover:border-primary"
+                    className="flex items-center gap-2 rounded-full border border-foreground/15 px-6 py-3 text-[10px] tracking-widest uppercase hover:border-primary"
                   >
                     <Instagram size={14} /> Filtro
                   </a>
@@ -748,7 +759,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
         <section id="rsvp" className="relative px-8 py-16">
           <Reveal>
             <div
-              className={`border border-foreground/10 bg-card p-8 ${relieve ? "tarjeta-relieve" : ""}`}
+              className={`rounded-3xl border border-primary/15 bg-card/80 p-8 backdrop-blur-sm ${relieve ? "tarjeta-relieve" : ""}`}
             >
               <h2 className="text-center font-display text-3xl italic">Confirma tu Asistencia</h2>
               <p className="mt-3 text-center text-xs text-foreground/60">
@@ -809,7 +820,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                   </div>
                   <button
                     type="submit"
-                    className="w-full bg-foreground py-4 text-[10px] tracking-widest text-background uppercase transition-opacity hover:opacity-85"
+                    className="w-full rounded-full bg-primary py-4 text-[10px] tracking-widest text-primary-foreground uppercase transition-opacity hover:opacity-85"
                   >
                     Enviar confirmación
                   </button>
@@ -848,7 +859,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             <button
               type="button"
               onClick={() => irA("rsvp")}
-              className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-foreground py-3 text-[10px] tracking-widest text-background uppercase"
+              className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-primary py-3 text-[10px] tracking-widest text-primary-foreground uppercase"
             >
               <CheckCircle2 size={14} /> Confirmar asistencia
             </button>

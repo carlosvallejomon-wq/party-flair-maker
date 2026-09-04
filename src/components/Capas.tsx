@@ -72,7 +72,7 @@ export function Marco({ inv }: { inv: Invitacion }) {
       alt=""
       aria-hidden
       loading="lazy"
-      className="pointer-events-none absolute inset-0 z-[6] h-full w-full object-cover opacity-90"
+      className="pointer-events-none absolute inset-0 z-[6] h-full w-full object-contain opacity-80 mix-blend-multiply"
     />
   );
 }
