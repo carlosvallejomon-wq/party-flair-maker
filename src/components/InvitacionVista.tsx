@@ -220,6 +220,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
               </div>
             )}
 
+            {inv.familia?.trim() && (
+              <p className="mb-3 text-[9px] leading-relaxed tracking-[0.25em] uppercase opacity-55">
+                {inv.familia}
+              </p>
+            )}
             <span className="mb-4 block text-[10px] tracking-[0.35em] text-olive uppercase">
               {inv.frase}
             </span>
@@ -236,19 +241,31 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 </>
               )}
             </h1>
-            <div className="mx-auto my-5 flex items-center justify-center gap-3">
-              <span className="h-px w-10 bg-primary/40" />
-              <span className="text-primary">✦</span>
-              <span className="h-px w-10 bg-primary/40" />
+
+            {/* Fecha en formato editorial: MES · DÍA · AÑO */}
+            <div className="mx-auto mt-6 flex w-fit items-stretch gap-4 border-y border-primary/30 px-5 py-2">
+              <div className="self-center text-center text-[9px] leading-tight tracking-[0.25em] uppercase opacity-70">
+                {partes.diaSemana}
+                <br />
+                {partes.mes}
+              </div>
+              <span className="w-px bg-primary/25" />
+              <div className="self-center font-display text-4xl leading-none">{partes.dia}</div>
+              <span className="w-px bg-primary/25" />
+              <div className="self-center text-center text-[9px] leading-tight tracking-[0.25em] uppercase opacity-70">
+                {partes.anio}
+                <br />
+                {partes.hora}
+              </div>
             </div>
-            <p className="font-mono text-sm tracking-tighter">{fechaLarga(inv.fecha)}</p>
-            <p className="mt-2 text-xs tracking-widest uppercase opacity-60">
+
+            <p className="mt-4 text-xs tracking-widest uppercase opacity-60">
               {inv.lugar}
               {inv.ciudad ? `, ${inv.ciudad}` : ""}
             </p>
           </div>
 
-          <div className="absolute bottom-8 z-10 w-full px-10">
+          <div className="absolute bottom-6 z-10 w-full px-10">
             <p className="mb-3 text-[9px] tracking-[0.3em] text-olive uppercase">
               Falta poco para el gran día
             </p>
@@ -266,7 +283,16 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 </div>
               ))}
             </div>
+            <button
+              type="button"
+              onClick={() => irA("interactuar")}
+              className="mx-auto mt-4 flex flex-col items-center gap-1 text-olive"
+            >
+              <span className="font-display text-lg italic">Desliza para descubrir</span>
+              <ChevronDown size={16} className="animate-bounce" />
+            </button>
           </div>
+
         </section>
 
         {/* Accesos rápidos con iconos */}
