@@ -366,14 +366,24 @@ function Editor() {
                   <option value={270}>270°</option>
                 </select>
               </div>
-              <label className="flex items-end gap-2 pb-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={inv.esquinasEspejo ?? true}
-                  onChange={(e) => set("esquinasEspejo", e.target.checked)}
-                />
-                Voltear en espejo cada esquina
-              </label>
+              <div>
+                <label className={etiqueta} htmlFor="esq-modo">
+                  Cómo se acomoda en cada esquina
+                </label>
+                <select
+                  id="esq-modo"
+                  className={campo}
+                  value={inv.esquinasModo ?? "espejo"}
+                  onChange={(e) =>
+                    set("esquinasModo", e.target.value as NonNullable<Invitacion["esquinasModo"]>)
+                  }
+                >
+                  <option value="espejo">Espejo (se reflejan)</option>
+                  <option value="giro">Girar 90° por esquina</option>
+                  <option value="igual">Todas iguales</option>
+                </select>
+              </div>
+
             </div>
 
 
