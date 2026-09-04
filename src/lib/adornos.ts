@@ -12,13 +12,20 @@ import { ADORNOS_CDN, ESQUINAS_CDN } from "./adornos-cdn";
 
 export type Adorno = { id: string; nombre: string; src: string };
 
-/** Marcos elegantes que enmarcan toda la invitación (bordes, no coronas). */
+/**
+ * Marcos que enmarcan la portada sin taparla.
+ * Solo se conservan los dos que respetan el hero: acuarela natural y filigrana dorada.
+ */
 export const MARCOS: Adorno[] = [
+  { id: "floral", nombre: "Acuarela natural", src: marcoFloral },
   { id: "dorado", nombre: "Filigrana dorada", src: marcoDorado },
-  { id: "floral", nombre: "Acuarela floral", src: marcoFloral },
-  { id: "rosas", nombre: "Rosas blush", src: marcoRosas },
-  { id: "deco", nombre: "Art déco", src: marcoDeco },
-  { id: "verde", nombre: "Olivo verde", src: marcoVerde },
+];
+
+/** Marcos retirados del catálogo pero disponibles como coronas decorativas. */
+const MARCOS_RETIRADOS: Adorno[] = [
+  { id: "m-rosas", nombre: "Rosas blush", src: marcoRosas },
+  { id: "m-deco", nombre: "Art déco", src: marcoDeco },
+  { id: "m-verde", nombre: "Olivo verde", src: marcoVerde },
 ];
 
 /** Decoraciones de esquina (se repiten en las 4 esquinas de la invitación). */
