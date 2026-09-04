@@ -123,7 +123,22 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
       ]
     : [];
 
+  const fechaEvento = new Date(inv.fecha);
+  const valida = !Number.isNaN(fechaEvento.getTime());
+  const fmt = (opts: Intl.DateTimeFormatOptions) =>
+    valida ? fechaEvento.toLocaleDateString("es-MX", opts) : "";
+  const partes = {
+    diaSemana: fmt({ weekday: "long" }),
+    mes: fmt({ month: "long" }),
+    dia: valida ? String(fechaEvento.getDate()).padStart(2, "0") : "",
+    anio: valida ? String(fechaEvento.getFullYear()) : "",
+    hora: valida
+      ? fechaEvento.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })
+      : "",
+  };
+
   const tieneDos = inv.nombre2.trim().length > 0;
+
   const accesos = [
     { id: "ubicacion", Icono: MapPin, texto: "Cómo llegar" },
     { id: "rsvp", Icono: CheckCircle2, texto: "Confirmar" },
