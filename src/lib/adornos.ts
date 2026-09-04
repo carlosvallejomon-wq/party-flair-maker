@@ -9,17 +9,20 @@ import marcoVerde from "@/assets/marco-verde.png";
 import texturaMarmol from "@/assets/textura-marmol.jpg";
 import texturaPapel from "@/assets/textura-papel.jpg";
 import { ADORNOS_CDN, ESQUINAS_CDN } from "./adornos-cdn";
+import { MARCOS_SVG, TEXTURAS_SVG } from "./adornos-svg";
 
 export type Adorno = { id: string; nombre: string; src: string };
 
 /**
  * Marcos que enmarcan la portada sin taparla.
- * Solo se conservan los dos que respetan el hero: acuarela natural y filigrana dorada.
+ * Los vectoriales se distribuyen siempre bien; los de acuarela quedan al final.
  */
 export const MARCOS: Adorno[] = [
+  ...MARCOS_SVG,
   { id: "floral", nombre: "Acuarela natural", src: marcoFloral },
   { id: "dorado", nombre: "Filigrana dorada", src: marcoDorado },
 ];
+
 
 /** Marcos retirados del catálogo pero disponibles como coronas decorativas. */
 const MARCOS_RETIRADOS: Adorno[] = [
@@ -45,7 +48,9 @@ export const CORONAS: Adorno[] = [
 export const TEXTURAS: Adorno[] = [
   { id: "papel", nombre: "Papel de algodón", src: texturaPapel },
   { id: "marmol", nombre: "Mármol y oro", src: texturaMarmol },
+  ...TEXTURAS_SVG,
 ];
+
 
 export function buscarAdorno(lista: Adorno[], id?: string, propio?: string) {
   if (propio?.trim()) return propio;

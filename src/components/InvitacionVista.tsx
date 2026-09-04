@@ -1,16 +1,25 @@
 import {
+  Banknote,
   CalendarPlus,
+  Car,
   CheckCircle2,
   ChevronDown,
   Clock3,
+  CreditCard,
+  ExternalLink,
+  Eye,
   Gift,
+  Mail,
   Images,
   Instagram,
   MapPin,
   Music2,
+  Plane,
   Navigation,
   Pause,
   Share2,
+  Shirt,
+  ShoppingBag,
   Sparkles,
 } from "lucide-react";
 import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
@@ -37,6 +46,27 @@ import {
 } from "@/lib/invitacion";
 import { iconoPorId } from "@/lib/iconos";
 import { useAmbientMusic } from "@/lib/use-ambient-music";
+
+/** Icono para cada opción de la mesa de regalos. */
+const ICONOS_REGALO = {
+  sobre: Mail,
+  efectivo: Banknote,
+  transferencia: CreditCard,
+  tienda: ShoppingBag,
+  viaje: Plane,
+  regalo: Gift,
+} as const;
+
+function iconoRegalo(id?: string, texto = "") {
+  if (id && id in ICONOS_REGALO) return ICONOS_REGALO[id as keyof typeof ICONOS_REGALO];
+  const t = texto.toLowerCase();
+  if (/sobre|lluvia/.test(t)) return Mail;
+  if (/efectivo|aporte|dinero/.test(t)) return Banknote;
+  if (/transfer|banco|cuenta|cbu|clabe/.test(t)) return CreditCard;
+  if (/tienda|liverpool|amazon|palacio|mesa/.test(t)) return ShoppingBag;
+  if (/viaje|luna de miel/.test(t)) return Plane;
+  return Gift;
+}
 
 function useCuentaRegresiva(iso: string) {
   const [restante, setRestante] = useState<{ d: number; h: number; m: number; s: number } | null>(
@@ -186,7 +216,12 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 muted
                 playsInline
                 className={`absolute inset-0 h-full w-full ${ajusteFondo}`}
-                style={{ objectPosition: posicionFondo, opacity: opacidadFondo }}
+                style={{
+                  objectPosition: posicionFondo,
+                  opacity: opacidadFondo,
+                  transform: `scale(${(inv.fondoZoom ?? 100) / 100})`,
+                  transformOrigin: posicionFondo,
+                }}
               />
             ) : (
               <img
@@ -194,7 +229,12 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 alt=""
                 aria-hidden
                 className={`absolute inset-0 h-full w-full ${ajusteFondo}`}
-                style={{ objectPosition: posicionFondo, opacity: opacidadFondo }}
+                style={{
+                  objectPosition: posicionFondo,
+                  opacity: opacidadFondo,
+                  transform: `scale(${(inv.fondoZoom ?? 100) / 100})`,
+                  transformOrigin: posicionFondo,
+                }}
               />
             )}
           </div>
@@ -209,17 +249,20 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           >
             {/* Foto o video de portada, encuadrado automáticamente dentro de la corona */}
             {(corona || inv.videoPortadaUrl?.trim() || inv.fotoPortadaUrl?.trim()) && (
-              <div className="relative mx-auto mb-6 aspect-square w-[74%] max-w-[300px]">
+              <div
+                className="relative mx-auto mb-6 aspect-square"
+                style={{ width: `${inv.coronaTamano ?? 74}%`, maxWidth: 340 }}
+              >
                 <div
                   className="absolute overflow-hidden rounded-full border border-primary/20 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)]"
-                  style={{ inset: corona ? "17%" : "0%" }}
+                  style={{ inset: `${corona ? (inv.coronaHueco ?? 17) : 0}%` }}
                 >
                   {inv.videoPortadaUrl?.trim() ? (
                     <video
                       src={inv.videoPortadaUrl}
                       autoPlay
                       loop
-                      muted
+                      muted={inv.videoPortadaSonido !== true}
                       playsInline
                       className="h-full w-full object-cover object-center"
                     />
@@ -237,10 +280,12 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                     alt=""
                     aria-hidden
                     className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+                    style={{ transform: `rotate(${inv.coronaGiro ?? 0}deg)` }}
                   />
                 )}
               </div>
             )}
+
 
             {inv.familia?.trim() && (
               <p className="mb-3 text-[9px] leading-relaxed tracking-[0.25em] uppercase opacity-55">
@@ -367,32 +412,51 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
         {/* Historia */}
         {inv.historia.trim() && (
-          <section className="relative px-10 py-20 text-center">
+          <section className="relative px-6 py-20 text-center">
             <Reveal>
-              <h2 className="mb-8 font-display text-3xl italic">Nuestra Historia</h2>
-              <p className="text-sm leading-relaxed text-pretty text-foreground/80">
+              <p className="text-[9px] tracking-[0.3em] text-olive uppercase">
+                Recuerdos &amp; trayectoria
+              </p>
+              <h2 className="mt-2 mb-6 font-display text-4xl">
+                {inv.historiaTitulo || "Nuestra Historia"}
+              </h2>
+              <p className="mx-auto max-w-[38ch] text-sm leading-relaxed text-pretty text-foreground/75">
                 {inv.historia}
               </p>
             </Reveal>
 
-            {/* Línea de tiempo por años */}
+            {/* Tarjetas con foto por momento */}
             {(inv.hitos ?? []).length > 0 && (
-              <div className="relative mt-12 space-y-5 text-left">
+              <div className="mt-10 grid gap-5 sm:grid-cols-2">
                 {(inv.hitos ?? []).map((h, i) => (
                   <Reveal key={`${h.anio}-${i}`} delay={i * 110}>
                     <button
                       type="button"
                       onClick={() => setHito(hito === i ? null : i)}
                       aria-expanded={hito === i}
-                      className={`flex w-full gap-4 rounded-3xl border p-5 text-left transition-all ${hito === i ? "border-primary/40 bg-primary/8" : "border-primary/12 bg-card/80"} ${relieve ? "tarjeta-relieve" : ""}`}
+                      className={`group block h-full w-full overflow-hidden rounded-3xl border text-left transition-all ${
+                        hito === i ? "border-primary/45" : "border-primary/15"
+                      } ${relieve ? "capsula-vidrio" : "bg-card"}`}
                     >
-                      <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/15 font-mono text-[11px] text-primary">
-                        {h.anio}
-                      </span>
-                      <div className="min-w-0">
-                        <h3 className="font-display text-xl italic">{h.titulo}</h3>
+                      <div className="relative">
+                        <img
+                          src={h.foto?.trim() || galeria[i % galeria.length]!}
+                          alt={h.titulo}
+                          loading="lazy"
+                          className="aspect-[4/3] w-full rounded-3xl object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                        />
+                        <span className="absolute top-3 right-3 rounded-full border border-primary/50 bg-background/80 px-3 py-1 text-[9px] font-medium tracking-widest text-primary uppercase backdrop-blur-md">
+                          {h.anio}
+                        </span>
+                      </div>
+                      <div className="p-5">
+                        <h3 className="font-display text-2xl leading-tight">{h.titulo}</h3>
                         <p
-                          className={`text-xs leading-relaxed text-foreground/65 transition-all ${hito === i ? "mt-1 max-h-40 opacity-100" : "max-h-0 overflow-hidden opacity-0"}`}
+                          className={`text-xs leading-relaxed text-foreground/65 transition-all ${
+                            hito === i
+                              ? "mt-2 max-h-48 opacity-100"
+                              : "max-h-0 overflow-hidden opacity-0"
+                          }`}
                         >
                           {h.texto}
                         </p>
@@ -402,6 +466,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 ))}
               </div>
             )}
+
 
 
 
@@ -492,10 +557,15 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                         </span>
 
                         <span
-                          className={`flex size-20 items-center justify-center rounded-full border border-primary/25 bg-primary/8 text-primary transition-transform ${activo ? "scale-105" : ""} ${relieve ? "tarjeta-relieve" : ""} ${izquierda ? "order-3 justify-self-start" : "order-1 justify-self-end"}`}
+                          className={`flex size-[4.5rem] items-center justify-center rounded-full border text-primary transition-all duration-500 ${activo ? "scale-110 border-primary/60" : "border-primary/25"} ${relieve ? "icono-relieve" : "bg-card"} ${izquierda ? "order-3 justify-self-start" : "order-1 justify-self-end"}`}
+                          style={{
+                            background:
+                              "radial-gradient(circle at 32% 26%, color-mix(in oklab, var(--primary) 22%, transparent), color-mix(in oklab, var(--card) 88%, transparent))",
+                          }}
                         >
-                          <Icono size={30} strokeWidth={1.2} />
+                          <Icono size={26} strokeWidth={1.1} />
                         </span>
+
                       </button>
                     </Reveal>
                   );
@@ -548,47 +618,74 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
         {/* Lugares de la celebración */}
         {(inv.sedes ?? []).some((s) => s.nombre.trim()) && (
-          <section className="relative bg-primary/5 px-8 py-16">
+          <section className="relative bg-primary/5 px-6 py-16">
             <Reveal>
-              <h2 className="mb-8 text-center font-display text-3xl italic">
+              <p className="text-center text-[9px] tracking-[0.3em] text-olive uppercase">
+                Ubicaciones
+              </p>
+              <h2 className="mt-2 mb-8 text-center font-display text-3xl">
                 Lugares de la Celebración
               </h2>
             </Reveal>
             <div className="space-y-5">
               {(inv.sedes ?? [])
                 .filter((s) => s.nombre.trim())
-                .map((s, i) => (
-                  <Reveal key={`${s.nombre}-${i}`} delay={i * 120}>
-                    <div
-                      className={`rounded-3xl border border-primary/15 bg-card/80 p-6 text-center backdrop-blur-sm ${relieve ? "tarjeta-relieve" : ""}`}
-                    >
-                      <span className="inline-block rounded-full bg-primary px-4 py-1 text-[9px] tracking-widest text-primary-foreground uppercase">
-                        {s.etiqueta}
-                      </span>
-                      <h3 className="mt-4 font-display text-2xl italic">{s.nombre}</h3>
-                      {s.hora.trim() && (
-                        <p className="mt-1 font-mono text-xs text-primary">{s.hora}</p>
-                      )}
-                      {s.direccion.trim() && (
-                        <p className="mt-2 text-xs text-foreground/60">{s.direccion}</p>
-                      )}
-                      <a
-                        href={
-                          s.mapsUrl.trim() ||
-                          `https://maps.google.com/?q=${encodeURIComponent(`${s.nombre} ${s.direccion}`)}`
-                        }
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mt-5 inline-flex items-center gap-2 rounded-full border border-primary px-5 py-2 text-[10px] tracking-widest text-primary uppercase hover:bg-primary hover:text-background"
+                .map((s, i) => {
+                  const Icono = iconoPorId(undefined, `${s.etiqueta} ${s.nombre}`);
+                  const maps =
+                    s.mapsUrl.trim() ||
+                    `https://maps.google.com/?q=${encodeURIComponent(`${s.nombre} ${s.direccion}`)}`;
+                  const waze =
+                    s.wazeUrl?.trim() ||
+                    `https://waze.com/ul?q=${encodeURIComponent(`${s.nombre} ${s.direccion}`)}`;
+                  const uber =
+                    s.uberUrl?.trim() ||
+                    `https://m.uber.com/ul/?action=setPickup&dropoff[nickname]=${encodeURIComponent(s.nombre)}`;
+                  return (
+                    <Reveal key={`${s.nombre}-${i}`} delay={i * 120}>
+                      <div
+                        className={`rounded-3xl border border-primary/15 p-6 text-left ${relieve ? "capsula-vidrio" : "bg-card"}`}
                       >
-                        <Navigation size={13} /> Cómo llegar
-                      </a>
-                    </div>
-                  </Reveal>
-                ))}
+                        <span className="inline-flex items-center gap-2 rounded-full bg-primary/12 px-3 py-1.5 text-[9px] tracking-[0.18em] text-primary uppercase">
+                          <Icono size={13} strokeWidth={1.4} /> {s.etiqueta}
+                        </span>
+                        {s.hora.trim() && (
+                          <p className="mt-3 flex items-center gap-2 font-mono text-xs text-primary">
+                            <Clock3 size={13} /> {s.hora}
+                          </p>
+                        )}
+                        <h3 className="mt-2 font-display text-2xl leading-tight">{s.nombre}</h3>
+                        {s.direccion.trim() && (
+                          <p className="mt-2 flex items-start gap-2 text-xs leading-relaxed text-foreground/60">
+                            <MapPin size={13} className="mt-0.5 shrink-0 text-primary" />
+                            {s.direccion}
+                          </p>
+                        )}
+                        <div className="mt-5 grid grid-cols-3 gap-2 border-t border-primary/12 pt-4">
+                          {[
+                            { href: maps, Icono: Navigation, texto: "Maps" },
+                            { href: waze, Icono: Navigation, texto: "Waze" },
+                            { href: uber, Icono: Car, texto: "Uber" },
+                          ].map((b) => (
+                            <a
+                              key={b.texto}
+                              href={b.href}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="flex items-center justify-center gap-1.5 rounded-full border border-primary/20 bg-primary/8 py-2.5 text-[10px] font-medium text-foreground/80 transition-colors hover:bg-primary hover:text-primary-foreground"
+                            >
+                              <b.Icono size={12} className="text-primary" /> {b.texto}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    </Reveal>
+                  );
+                })}
             </div>
           </section>
         )}
+
 
         {/* A tomar en cuenta */}
         {(inv.notas ?? []).length > 0 && (
@@ -624,60 +721,141 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
 
         {/* Detalles */}
-        <section className="relative space-y-8 px-8 pb-16">
+        <section className="relative space-y-8 px-6 pb-16">
           {inv.dressCode.trim() && (
             <Reveal>
               <div
-                className={`rounded-3xl border border-primary/15 bg-card/80 p-8 text-center backdrop-blur-sm ${relieve ? "tarjeta-relieve" : ""}`}
+                className={`rounded-3xl border border-primary/15 p-7 text-center ${relieve ? "capsula-vidrio" : "bg-card"}`}
               >
-                <span className="mb-4 block text-[10px] tracking-widest text-olive uppercase">
+                <span
+                  className={`mx-auto -mt-14 mb-5 flex size-16 items-center justify-center rounded-full border border-primary/25 text-primary ${relieve ? "icono-relieve" : "bg-card"}`}
+                >
+                  <Shirt size={26} strokeWidth={1.2} />
+                </span>
+                <span className="mb-3 block text-[10px] tracking-[0.3em] text-olive uppercase">
                   Código de Vestimenta
                 </span>
-                <h3 className="font-display text-2xl italic">{inv.dressCode}</h3>
-                <p className="mt-4 text-xs text-foreground/60">{inv.dressDetalle}</p>
-                <div className="mt-5 flex justify-center gap-2">
+                <h3 className="font-display text-2xl">{inv.dressCode}</h3>
+                <p className="mx-auto mt-3 max-w-[36ch] text-xs leading-relaxed text-foreground/65">
+                  {inv.dressDetalle}
+                </p>
+
+                {inv.dressFotoUrl?.trim() && (
+                  <div className="relative mt-6 overflow-hidden rounded-2xl border border-primary/15">
+                    <img
+                      src={inv.dressFotoUrl}
+                      alt={`Guía visual de vestimenta: ${inv.dressCode}`}
+                      loading="lazy"
+                      className="aspect-[4/3] w-full object-cover"
+                    />
+                    <a
+                      href={inv.dressGuiaUrl?.trim() || inv.dressFotoUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="absolute inset-x-6 bottom-4 flex items-center justify-center gap-2 rounded-full bg-foreground/70 py-2.5 text-[9px] tracking-[0.2em] text-background uppercase backdrop-blur-md"
+                    >
+                      <Eye size={13} /> Ver guía visual de vestimenta
+                    </a>
+                  </div>
+                )}
+
+                <p className="mt-6 mb-3 text-[10px] tracking-[0.28em] text-olive uppercase">
+                  Paleta de colores sugerida
+                </p>
+                <div className="flex flex-wrap justify-center gap-3">
                   {(inv.coloresSugeridos?.length
                     ? inv.coloresSugeridos
                     : TEMAS[inv.tema].swatch
                   ).map((c) => (
                     <span
                       key={c}
-                      className="size-5 rounded-full border border-foreground/10"
+                      title={c}
+                      className="size-9 rounded-full border border-foreground/10 shadow-[0_8px_18px_-8px_rgba(0,0,0,0.6)]"
                       style={{ backgroundColor: c }}
                     />
                   ))}
                 </div>
+
+                {inv.dressNota?.trim() && (
+                  <p className="mt-6 rounded-2xl border border-primary/20 bg-primary/8 px-5 py-3 text-xs leading-relaxed text-foreground/75">
+                    <span className="font-semibold">Nota especial:</span> {inv.dressNota}
+                  </p>
+                )}
               </div>
             </Reveal>
           )}
 
-          {inv.regalosTitulo.trim() && (
+          {(inv.regalosTitulo.trim() || (inv.regalos ?? []).length > 0) && (
             <Reveal delay={120}>
               <div
                 id="regalos"
-                className={`rounded-3xl border border-primary/15 bg-primary/8 p-8 text-center ${relieve ? "tarjeta-relieve" : ""}`}
+                className={`rounded-3xl border border-primary/15 p-7 text-center ${relieve ? "capsula-vidrio" : "bg-card"}`}
               >
-                <span className="mb-4 block text-[10px] tracking-widest text-olive uppercase">
+                <span
+                  className={`mx-auto -mt-14 mb-5 flex size-16 items-center justify-center rounded-full border border-primary/25 text-primary ${relieve ? "icono-relieve" : "bg-card"}`}
+                >
+                  <Gift size={26} strokeWidth={1.2} />
+                </span>
+                <span className="mb-3 block text-[10px] tracking-[0.3em] text-olive uppercase">
                   Mesa de Regalos
                 </span>
-                <h3 className="font-display text-2xl">{inv.regalosTitulo}</h3>
-                <p className="mt-4 mb-6 text-xs text-foreground/60">
-                  Tu presencia es nuestro mejor regalo, pero si deseas obsequiarnos algo:
+                <h3 className="font-display text-2xl">
+                  {inv.regalosTitulo || "Tu presencia es nuestro mejor regalo"}
+                </h3>
+                <p className="mx-auto mt-3 mb-6 max-w-[36ch] text-xs leading-relaxed text-foreground/65">
+                  {inv.regalosNota ||
+                    "Si deseas obsequiarnos algo, aquí tienes algunas opciones con mucho cariño."}
                 </p>
+
+                {(inv.regalos ?? []).length > 0 && (
+                  <div className="mb-6 space-y-3 text-left">
+                    {(inv.regalos ?? []).map((r, i) => {
+                      const Icono = iconoRegalo(r.icono, r.titulo);
+                      return (
+                        <div
+                          key={`${r.titulo}-${i}`}
+                          className={`flex items-start gap-4 rounded-2xl border border-primary/15 p-4 ${relieve ? "tarjeta-relieve" : "bg-card"}`}
+                        >
+                          <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/12 text-primary">
+                            <Icono size={18} strokeWidth={1.3} />
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="text-sm font-semibold">{r.titulo}</h4>
+                            <p className="mt-1 text-xs leading-relaxed break-words text-foreground/65">
+                              {r.detalle}
+                            </p>
+                            {r.url?.trim() && (
+                              <a
+                                href={r.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="mt-2 inline-flex items-center gap-1.5 text-[10px] tracking-widest text-primary uppercase hover:underline"
+                              >
+                                <ExternalLink size={12} /> Abrir
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
                 {inv.regalosUrl.trim() && (
                   <a
                     href={inv.regalosUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-block rounded-full border border-primary px-7 py-3 text-[10px] tracking-widest text-primary uppercase transition-colors hover:bg-primary hover:text-background"
+                    className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-[10px] tracking-widest text-primary-foreground uppercase transition-opacity hover:opacity-85"
                   >
-                    Ver Mesa de Regalos
+                    <Gift size={13} /> Ver mesa de regalos
                   </a>
                 )}
               </div>
             </Reveal>
           )}
         </section>
+
 
         <Divisor inv={inv} />
 
@@ -743,14 +921,23 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
         {/* Muro de felicitaciones */}
         {inv.muroActivo !== false && (
-          <section className="relative bg-primary/5 px-8 py-16 text-center">
+          <section className="relative bg-primary/5 px-6 py-16 text-center">
             <Reveal>
-              <p className="text-[9px] tracking-[0.3em] text-olive uppercase">Déjanos tu huella</p>
-              <h2 className="mt-2 mb-6 font-display text-3xl italic">Muro de Felicitaciones</h2>
+              <p className="text-[9px] tracking-[0.3em] text-olive uppercase">
+                Libro de honor &amp; visitas
+              </p>
+              <h2 className="mt-2 font-display text-3xl italic">
+                {inv.muroTitulo || "Muro de Felicitaciones & Buenos Deseos"}
+              </h2>
+              <p className="mx-auto mt-3 mb-6 max-w-[34ch] text-xs leading-relaxed text-foreground/60">
+                Deja una dedicatoria especial a los anfitriones y comparte tu alegría en este día
+                inolvidable.
+              </p>
               <Muro clave={`${inv.nombre1}-${inv.fecha}`} relieve={relieve} />
             </Reveal>
           </section>
         )}
+
 
         <Divisor inv={inv} />
 

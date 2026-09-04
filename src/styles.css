@@ -357,16 +357,44 @@
 }
 
 @utility tarjeta-relieve {
+  background-color: color-mix(in oklab, var(--card) 55%, transparent);
+  backdrop-filter: blur(18px) saturate(140%);
+  border-color: color-mix(in oklab, var(--primary) 28%, transparent);
   box-shadow:
-    0 1px 0 color-mix(in oklab, var(--background) 85%, white) inset,
-    0 18px 40px -26px color-mix(in oklab, var(--foreground) 55%, transparent);
+    0 1px 0 color-mix(in oklab, var(--background) 70%, white) inset,
+    0 -1px 0 color-mix(in oklab, var(--foreground) 8%, transparent) inset,
+    0 2px 6px -2px color-mix(in oklab, var(--foreground) 30%, transparent),
+    0 24px 48px -22px color-mix(in oklab, var(--foreground) 85%, transparent),
+    0 40px 80px -50px color-mix(in oklab, var(--foreground) 95%, transparent);
+}
+
+@utility capsula-vidrio {
+  background: linear-gradient(
+    150deg,
+    color-mix(in oklab, var(--card) 70%, transparent),
+    color-mix(in oklab, var(--card) 38%, transparent)
+  );
+  backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid color-mix(in oklab, var(--primary) 32%, transparent);
+  box-shadow:
+    0 1px 0 color-mix(in oklab, var(--background) 75%, white) inset,
+    0 18px 40px -20px color-mix(in oklab, var(--foreground) 85%, transparent),
+    0 36px 70px -46px color-mix(in oklab, var(--foreground) 95%, transparent);
 }
 
 @utility icono-relieve {
+  background: radial-gradient(
+    circle at 30% 25%,
+    color-mix(in oklab, var(--background) 92%, white),
+    color-mix(in oklab, var(--primary) 14%, var(--card))
+  );
+  backdrop-filter: blur(14px);
   box-shadow:
-    0 1px 1px color-mix(in oklab, var(--background) 90%, white) inset,
-    0 -1px 2px color-mix(in oklab, var(--foreground) 12%, transparent) inset,
-    0 8px 18px -10px color-mix(in oklab, var(--foreground) 55%, transparent);
+    0 1px 1px color-mix(in oklab, var(--background) 92%, white) inset,
+    0 -1px 3px color-mix(in oklab, var(--foreground) 16%, transparent) inset,
+    0 10px 22px -10px color-mix(in oklab, var(--foreground) 70%, transparent),
+    0 20px 36px -26px color-mix(in oklab, var(--foreground) 90%, transparent);
 }
+
 
 
