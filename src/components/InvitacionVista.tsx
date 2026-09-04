@@ -311,7 +311,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
         </section>
 
         {/* Accesos rápidos con iconos */}
-        <section className="relative border-b border-foreground/5 px-6 py-10 text-center">
+        <section
+          id="interactuar"
+          className="relative border-b border-foreground/5 px-6 py-10 text-center"
+        >
+          <p className="mb-1 text-[9px] tracking-[0.3em] text-olive uppercase">Todo en un toque</p>
           <p className="mb-6 font-display text-2xl italic">Haz clic para interactuar</p>
           <div className="flex flex-wrap justify-center gap-4">
             {accesos.map((a) => (
@@ -322,10 +326,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 className="group flex w-16 flex-col items-center gap-2"
               >
                 <span
-                  className={`flex size-14 items-center justify-center rounded-full border border-primary/30 bg-card text-primary transition-transform group-hover:scale-105 ${relieve ? "icono-relieve" : ""}`}
+                  className={`flex size-14 items-center justify-center rounded-full bg-foreground text-background transition-transform group-hover:scale-110 ${relieve ? "icono-relieve" : ""}`}
                 >
-                  <a.Icono size={22} strokeWidth={1.4} />
+                  <a.Icono size={22} strokeWidth={1.3} />
                 </span>
+
                 <span className="text-[8px] leading-tight tracking-widest uppercase opacity-70">
                   {a.texto}
                 </span>
