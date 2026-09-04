@@ -66,6 +66,8 @@ export type Invitacion = {
   sedes?: Sede[]; // Lugares de la celebración
   notas?: Nota[]; // A tomar en cuenta
   muroActivo?: boolean; // muro de felicitaciones
+  separador?: string; // estilo del separador ornamental entre secciones
+  itinerarioTitulo?: string; // título de la sección de itinerario
 
 
   decoracionUrl?: string; // PNG propio que se superpone a toda la invitación
