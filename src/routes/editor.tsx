@@ -425,7 +425,116 @@ function Editor() {
             </div>
           </section>
 
+          {/* Contenido de las secciones */}
+          <section className="rounded-2xl border border-foreground/10 bg-background p-6">
+            <h2 className="mb-1 font-display text-2xl italic">Secciones de la invitación</h2>
+            <p className="mb-5 text-xs text-foreground/60">
+              Escribe una línea por tarjeta, separando los datos con el símbolo |
+            </p>
+
+            <div className="mb-4">
+              <label className={etiqueta} htmlFor="familia">
+                Línea de apertura
+              </label>
+              <input
+                id="familia"
+                className={campo}
+                value={inv.familia ?? ""}
+                onChange={(e) => set("familia", e.target.value)}
+                placeholder="Con la bendición de nuestros padres"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className={etiqueta} htmlFor="hitos">
+                Nuestra historia (año | título | texto)
+              </label>
+              <textarea
+                id="hitos"
+                rows={4}
+                className={campo}
+                value={(inv.hitos ?? [])
+                  .map((h) => [h.anio, h.titulo, h.texto].join(" | "))
+                  .join("\n")}
+                onChange={(e) =>
+                  set(
+                    "hitos",
+                    e.target.value
+                      .split("\n")
+                      .filter((l) => l.trim())
+                      .map((l) => {
+                        const [anio = "", titulo = "", texto = ""] = l.split("|").map((x) => x.trim());
+                        return { anio, titulo, texto };
+                      }),
+                  )
+                }
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className={etiqueta} htmlFor="sedes">
+                Lugares de la celebración (etiqueta | lugar | hora | dirección | enlace de mapa)
+              </label>
+              <textarea
+                id="sedes"
+                rows={3}
+                className={campo}
+                value={(inv.sedes ?? [])
+                  .map((s) => [s.etiqueta, s.nombre, s.hora, s.direccion, s.mapsUrl].join(" | "))
+                  .join("\n")}
+                onChange={(e) =>
+                  set(
+                    "sedes",
+                    e.target.value
+                      .split("\n")
+                      .filter((l) => l.trim())
+                      .map((l) => {
+                        const [etiqueta = "", nombre = "", hora = "", direccion = "", mapsUrl = ""] =
+                          l.split("|").map((x) => x.trim());
+                        return { etiqueta, nombre, hora, direccion, mapsUrl };
+                      }),
+                  )
+                }
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className={etiqueta} htmlFor="notas">
+                A tomar en cuenta (título | texto)
+              </label>
+              <textarea
+                id="notas"
+                rows={4}
+                className={campo}
+                value={(inv.notas ?? []).map((n) => [n.titulo, n.texto].join(" | ")).join("\n")}
+                onChange={(e) =>
+                  set(
+                    "notas",
+                    e.target.value
+                      .split("\n")
+                      .filter((l) => l.trim())
+                      .map((l) => {
+                        const [titulo = "", texto = ""] = l.split("|").map((x) => x.trim());
+                        return { titulo, texto };
+                      }),
+                  )
+                }
+              />
+            </div>
+
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                className="size-4 accent-[var(--primary)]"
+                checked={inv.muroActivo !== false}
+                onChange={(e) => set("muroActivo", e.target.checked)}
+              />
+              Mostrar muro de felicitaciones
+            </label>
+          </section>
+
           {/* Fotos y videos */}
+
           <section className="rounded-2xl border border-foreground/10 bg-background p-6">
             <h2 className="mb-5 font-display text-2xl italic">Fotos y videos</h2>
             <div className="grid gap-5 sm:grid-cols-2">
