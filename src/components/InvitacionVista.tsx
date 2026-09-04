@@ -785,15 +785,27 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           </button>
         </footer>
 
-        {/* Música */}
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label={playing ? "Pausar música" : "Reproducir música"}
-          className="sticky bottom-5 left-[calc(100%-4.5rem)] z-40 flex size-12 items-center justify-center rounded-full border border-primary/30 bg-card text-primary shadow-lg backdrop-blur"
-        >
-          {playing ? <Pause size={18} /> : <Music2 size={18} />}
-        </button>
+        {/* Barra fija: música + confirmación */}
+        {abierto && (
+          <div className="sticky bottom-0 z-40 flex items-center gap-3 border-t border-foreground/10 bg-background/85 px-5 py-3 backdrop-blur">
+            <button
+              type="button"
+              onClick={toggle}
+              aria-label={playing ? "Pausar música" : "Reproducir música"}
+              className="flex size-11 shrink-0 items-center justify-center rounded-full border border-primary/30 bg-card text-primary"
+            >
+              {playing ? <Pause size={17} /> : <Music2 size={17} />}
+            </button>
+            <button
+              type="button"
+              onClick={() => irA("rsvp")}
+              className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-foreground py-3 text-[10px] tracking-widest text-background uppercase"
+            >
+              <CheckCircle2 size={14} /> Confirmar asistencia
+            </button>
+          </div>
+        )}
+
 
         {/* Lightbox */}
         {foto && (
