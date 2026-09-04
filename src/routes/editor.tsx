@@ -327,6 +327,52 @@ function Editor() {
                 onCambio={(v) => set("marcoUrl", v)}
                 ayuda="Si subes uno, reemplaza al marco de la galería."
               />
+              <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                <div>
+                  <label className={etiqueta} htmlFor="marco-ajuste">
+                    Cómo se ajusta
+                  </label>
+                  <select
+                    id="marco-ajuste"
+                    className={campo}
+                    value={inv.marcoAjuste ?? "estirar"}
+                    onChange={(e) =>
+                      set("marcoAjuste", e.target.value as NonNullable<Invitacion["marcoAjuste"]>)
+                    }
+                  >
+                    <option value="estirar">Estirar al borde</option>
+                    <option value="contener">Mantener proporción</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={etiqueta} htmlFor="marco-margen">
+                    Margen del marco ({inv.marcoMargen ?? 3}%)
+                  </label>
+                  <input
+                    id="marco-margen"
+                    type="range"
+                    min={0}
+                    max={12}
+                    className="w-full accent-[var(--primary)]"
+                    value={inv.marcoMargen ?? 3}
+                    onChange={(e) => set("marcoMargen", Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <label className={etiqueta} htmlFor="marco-opa">
+                    Opacidad del marco ({inv.marcoOpacidad ?? 85}%)
+                  </label>
+                  <input
+                    id="marco-opa"
+                    type="range"
+                    min={10}
+                    max={100}
+                    className="w-full accent-[var(--primary)]"
+                    value={inv.marcoOpacidad ?? 85}
+                    onChange={(e) => set("marcoOpacidad", Number(e.target.value))}
+                  />
+                </div>
+              </div>
             </div>
 
             <Galeria
@@ -341,6 +387,52 @@ function Editor() {
                 valor={inv.coronaUrl}
                 onCambio={(v) => set("coronaUrl", v)}
               />
+              <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                <div>
+                  <label className={etiqueta} htmlFor="corona-tam">
+                    Tamaño de la corona ({inv.coronaTamano ?? 74}%)
+                  </label>
+                  <input
+                    id="corona-tam"
+                    type="range"
+                    min={40}
+                    max={100}
+                    className="w-full accent-[var(--primary)]"
+                    value={inv.coronaTamano ?? 74}
+                    onChange={(e) => set("coronaTamano", Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <label className={etiqueta} htmlFor="corona-hueco">
+                    Encuadre de la foto ({inv.coronaHueco ?? 17}%)
+                  </label>
+                  <input
+                    id="corona-hueco"
+                    type="range"
+                    min={0}
+                    max={35}
+                    className="w-full accent-[var(--primary)]"
+                    value={inv.coronaHueco ?? 17}
+                    onChange={(e) => set("coronaHueco", Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <label className={etiqueta} htmlFor="corona-giro">
+                    Girar la corona
+                  </label>
+                  <select
+                    id="corona-giro"
+                    className={campo}
+                    value={inv.coronaGiro ?? 0}
+                    onChange={(e) => set("coronaGiro", Number(e.target.value))}
+                  >
+                    <option value={0}>Sin girar</option>
+                    <option value={90}>90°</option>
+                    <option value={180}>180°</option>
+                    <option value={270}>270°</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
             <Galeria
@@ -403,6 +495,56 @@ function Editor() {
                   <option value="igual">Todas iguales</option>
                 </select>
               </div>
+              <div>
+                <label className={etiqueta} htmlFor="esq-disp">
+                  Dónde se colocan
+                </label>
+                <select
+                  id="esq-disp"
+                  className={campo}
+                  value={inv.esquinasDisposicion ?? "cuatro"}
+                  onChange={(e) =>
+                    set(
+                      "esquinasDisposicion",
+                      e.target.value as NonNullable<Invitacion["esquinasDisposicion"]>,
+                    )
+                  }
+                >
+                  <option value="cuatro">Las 4 esquinas</option>
+                  <option value="arriba">2 arriba</option>
+                  <option value="abajo">2 abajo</option>
+                  <option value="diagonal">1 arriba y 1 abajo (en diagonal)</option>
+                  <option value="lados">2 a los lados</option>
+                </select>
+              </div>
+              <div>
+                <label className={etiqueta} htmlFor="esq-margen">
+                  Separación del borde ({inv.esquinasMargen ?? 0}%)
+                </label>
+                <input
+                  id="esq-margen"
+                  type="range"
+                  min={0}
+                  max={15}
+                  className="w-full accent-[var(--primary)]"
+                  value={inv.esquinasMargen ?? 0}
+                  onChange={(e) => set("esquinasMargen", Number(e.target.value))}
+                />
+              </div>
+              <div>
+                <label className={etiqueta} htmlFor="esq-opa">
+                  Opacidad de las esquinas ({inv.esquinasOpacidad ?? 100}%)
+                </label>
+                <input
+                  id="esq-opa"
+                  type="range"
+                  min={10}
+                  max={100}
+                  className="w-full accent-[var(--primary)]"
+                  value={inv.esquinasOpacidad ?? 100}
+                  onChange={(e) => set("esquinasOpacidad", Number(e.target.value))}
+                />
+              </div>
 
             </div>
 
@@ -419,6 +561,20 @@ function Editor() {
                 valor={inv.texturaUrl}
                 onCambio={(v) => set("texturaUrl", v)}
               />
+              <div className="mt-4">
+                <label className={etiqueta} htmlFor="tex-opa">
+                  Intensidad de la textura ({inv.texturaOpacidad ?? 50}%)
+                </label>
+                <input
+                  id="tex-opa"
+                  type="range"
+                  min={5}
+                  max={100}
+                  className="w-full accent-[var(--primary)]"
+                  value={inv.texturaOpacidad ?? 50}
+                  onChange={(e) => set("texturaOpacidad", Number(e.target.value))}
+                />
+              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -466,15 +622,25 @@ function Editor() {
             </div>
 
             <div className="mb-4">
+              <label className={etiqueta} htmlFor="historia-titulo">
+                Título de la sección de historia
+              </label>
+              <input
+                id="historia-titulo"
+                className={`${campo} mb-4`}
+                value={inv.historiaTitulo ?? ""}
+                onChange={(e) => set("historiaTitulo", e.target.value)}
+                placeholder="Nuestra Historia"
+              />
               <label className={etiqueta} htmlFor="hitos">
-                Nuestra historia (año | título | texto)
+                Nuestra historia (año | título | texto | enlace de foto)
               </label>
               <textarea
                 id="hitos"
                 rows={4}
                 className={campo}
                 value={(inv.hitos ?? [])
-                  .map((h) => [h.anio, h.titulo, h.texto].join(" | "))
+                  .map((h) => [h.anio, h.titulo, h.texto, h.foto ?? ""].join(" | "))
                   .join("\n")}
                 onChange={(e) =>
                   set(
@@ -483,8 +649,10 @@ function Editor() {
                       .split("\n")
                       .filter((l) => l.trim())
                       .map((l) => {
-                        const [anio = "", titulo = "", texto = ""] = l.split("|").map((x) => x.trim());
-                        return { anio, titulo, texto };
+                        const [anio = "", titulo = "", texto = "", foto = ""] = l
+                          .split("|")
+                          .map((x) => x.trim());
+                        return { anio, titulo, texto, foto };
                       }),
                   )
                 }
@@ -493,14 +661,24 @@ function Editor() {
 
             <div className="mb-4">
               <label className={etiqueta} htmlFor="sedes">
-                Lugares de la celebración (etiqueta | lugar | hora | dirección | enlace de mapa)
+                Lugares (etiqueta | lugar | hora | dirección | mapa | waze | uber)
               </label>
               <textarea
                 id="sedes"
                 rows={3}
                 className={campo}
                 value={(inv.sedes ?? [])
-                  .map((s) => [s.etiqueta, s.nombre, s.hora, s.direccion, s.mapsUrl].join(" | "))
+                  .map((s) =>
+                    [
+                      s.etiqueta,
+                      s.nombre,
+                      s.hora,
+                      s.direccion,
+                      s.mapsUrl,
+                      s.wazeUrl ?? "",
+                      s.uberUrl ?? "",
+                    ].join(" | "),
+                  )
                   .join("\n")}
                 onChange={(e) =>
                   set(
@@ -509,9 +687,16 @@ function Editor() {
                       .split("\n")
                       .filter((l) => l.trim())
                       .map((l) => {
-                        const [etiqueta = "", nombre = "", hora = "", direccion = "", mapsUrl = ""] =
-                          l.split("|").map((x) => x.trim());
-                        return { etiqueta, nombre, hora, direccion, mapsUrl };
+                        const [
+                          etiqueta = "",
+                          nombre = "",
+                          hora = "",
+                          direccion = "",
+                          mapsUrl = "",
+                          wazeUrl = "",
+                          uberUrl = "",
+                        ] = l.split("|").map((x) => x.trim());
+                        return { etiqueta, nombre, hora, direccion, mapsUrl, wazeUrl, uberUrl };
                       }),
                   )
                 }
@@ -890,6 +1075,41 @@ function Editor() {
               </div>
               <div>
                 <label className={etiqueta} htmlFor="regu">
+                  Opciones de regalo (título | detalle | enlace)
+                </label>
+                <textarea
+                  id="regalos-lista"
+                  rows={3}
+                  className={`${campo} mb-4`}
+                  value={(inv.regalos ?? [])
+                    .map((r) => [r.titulo, r.detalle, r.url ?? ""].join(" | "))
+                    .join("\n")}
+                  onChange={(e) =>
+                    set(
+                      "regalos",
+                      e.target.value
+                        .split("\n")
+                        .filter((l) => l.trim())
+                        .map((l) => {
+                          const [titulo = "", detalle = "", url = ""] = l
+                            .split("|")
+                            .map((x) => x.trim());
+                          return { titulo, detalle, url };
+                        }),
+                    )
+                  }
+                />
+                <label className={etiqueta} htmlFor="regalos-nota">
+                  Nota de la mesa de regalos
+                </label>
+                <input
+                  id="regalos-nota"
+                  className={`${campo} mb-4`}
+                  value={inv.regalosNota ?? ""}
+                  onChange={(e) => set("regalosNota", e.target.value)}
+                  placeholder="Tu presencia es nuestro mejor regalo…"
+                />
+                <label className={etiqueta} htmlFor="regalos-url">
                   Enlace de mesa de regalos
                 </label>
                 <input
