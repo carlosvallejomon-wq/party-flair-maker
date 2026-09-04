@@ -366,6 +366,29 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
               </p>
             </Reveal>
 
+            {/* Línea de tiempo por años */}
+            {(inv.hitos ?? []).length > 0 && (
+              <div className="relative mt-12 space-y-5 text-left">
+                {(inv.hitos ?? []).map((h, i) => (
+                  <Reveal key={`${h.anio}-${i}`} delay={i * 110}>
+                    <div
+                      className={`flex gap-4 rounded-2xl border border-foreground/10 bg-card p-5 ${relieve ? "tarjeta-relieve" : ""}`}
+                    >
+                      <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10 font-mono text-[11px] text-primary">
+                        {h.anio}
+                      </span>
+                      <div className="min-w-0">
+                        <h3 className="font-display text-xl italic">{h.titulo}</h3>
+                        <p className="mt-1 text-xs leading-relaxed text-foreground/65">{h.texto}</p>
+                      </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            )}
+
+
+
             {inv.videoGaleriaUrl?.trim() && (
               <Reveal delay={120}>
                 <video
