@@ -557,10 +557,15 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                         </span>
 
                         <span
-                          className={`flex size-20 items-center justify-center rounded-full border border-primary/25 bg-primary/8 text-primary transition-transform ${activo ? "scale-105" : ""} ${relieve ? "tarjeta-relieve" : ""} ${izquierda ? "order-3 justify-self-start" : "order-1 justify-self-end"}`}
+                          className={`flex size-[4.5rem] items-center justify-center rounded-full border text-primary transition-all duration-500 ${activo ? "scale-110 border-primary/60" : "border-primary/25"} ${relieve ? "icono-relieve" : "bg-card"} ${izquierda ? "order-3 justify-self-start" : "order-1 justify-self-end"}`}
+                          style={{
+                            background:
+                              "radial-gradient(circle at 32% 26%, color-mix(in oklab, var(--primary) 22%, transparent), color-mix(in oklab, var(--card) 88%, transparent))",
+                          }}
                         >
-                          <Icono size={30} strokeWidth={1.2} />
+                          <Icono size={26} strokeWidth={1.1} />
                         </span>
+
                       </button>
                     </Reveal>
                   );
