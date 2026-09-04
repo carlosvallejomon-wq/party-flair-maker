@@ -408,20 +408,30 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                       loop
                       muted={inv.videoPortadaSonido !== true}
                       playsInline
-                      className="h-full w-full object-cover object-center"
+                      className={corona && huecoCorona.detectado ? "absolute object-cover object-center" : "h-full w-full object-cover object-center"}
                       style={corona && huecoCorona.detectado ? {
                         objectPosition: "50% 50%",
-                        transform: `scale(${Math.max(1, 100 / Math.max(20, 100 - huecoCorona.left - huecoCorona.right))})`,
+                        top: `${huecoCorona.top}%`,
+                        right: `${huecoCorona.right}%`,
+                        bottom: `${huecoCorona.bottom}%`,
+                        left: `${huecoCorona.left}%`,
+                        width: "auto",
+                        height: "auto",
                       } : undefined}
                     />
                   ) : (
                     <img
                       src={inv.fotoPortadaUrl?.trim() || pareja1}
                       alt={`Foto de ${nombres}`}
-                      className="h-full w-full object-cover object-center"
+                      className={corona && huecoCorona.detectado ? "absolute object-cover object-center" : "h-full w-full object-cover object-center"}
                       style={corona && huecoCorona.detectado ? {
                         objectPosition: "50% 50%",
-                        transform: `scale(${Math.max(1, 100 / Math.max(20, 100 - huecoCorona.left - huecoCorona.right))})`,
+                        top: `${huecoCorona.top}%`,
+                        right: `${huecoCorona.right}%`,
+                        bottom: `${huecoCorona.bottom}%`,
+                        left: `${huecoCorona.left}%`,
+                        width: "auto",
+                        height: "auto",
                       } : { objectPosition: "50% 50%" }}
                     />
                   )}
