@@ -59,26 +59,46 @@ export type Invitacion = {
   // Adornos: marcos, coronas y texturas (galería + subida propia)
   marco?: string; // id de MARCOS o "ninguno"
   marcoUrl?: string; // PNG propio subido
+  marcoAjuste?: "estirar" | "contener"; // cómo se distribuye el marco en la portada
+  marcoMargen?: number; // % de separación del borde (0 a 12)
+  marcoOpacidad?: number; // 0 a 100
   corona?: string; // id de CORONAS o "ninguno"
   coronaUrl?: string;
+  coronaTamano?: number; // % del ancho de la portada que ocupa la corona (40 a 100)
+  coronaHueco?: number; // % de inset de la foto dentro de la corona (0 a 35)
+  coronaGiro?: number; // giro de la corona en grados
   textura?: string; // id de TEXTURAS o "ninguno"
   texturaUrl?: string;
+  texturaOpacidad?: number; // 0 a 100
   esquinas?: string; // id de ESQUINAS o "ninguno"
   esquinasUrl?: string; // PNG propio para las esquinas
-  esquinasTamano?: number; // % del ancho que ocupa cada esquina (15 a 60)
+  esquinasTamano?: number; // % del ancho que ocupa cada esquina (10 a 60)
   esquinasEspejo?: boolean; // repetir espejada (si no, todas iguales)
   esquinasGiro?: number; // giro base en grados (0, 90, 180, 270)
   esquinasModo?: "espejo" | "giro" | "igual"; // cómo se acomoda en cada esquina
+  esquinasDisposicion?: "cuatro" | "arriba" | "abajo" | "diagonal" | "lados"; // cuáles esquinas se muestran
+  esquinasMargen?: number; // % de separación del borde (0 a 10)
+  esquinasOpacidad?: number; // 0 a 100
 
   // Contenido extendido (secciones tipo invitación premium)
   familia?: string; // línea superior: "Con la bendición de nuestros padres"
   hitos?: Hito[]; // Nuestra historia por años
+  historiaTitulo?: string;
   sedes?: Sede[]; // Lugares de la celebración
   notas?: Nota[]; // A tomar en cuenta
   muroActivo?: boolean; // muro de felicitaciones
+  muroTitulo?: string;
   separador?: string; // estilo del separador ornamental entre secciones
   itinerarioTitulo?: string; // título de la sección de itinerario
 
+  // Código de vestimenta
+  dressFotoUrl?: string; // guía visual de vestimenta
+  dressGuiaUrl?: string; // enlace externo a la guía
+  dressNota?: string; // nota especial (ej. reservar el blanco)
+
+  // Mesa de regalos
+  regalos?: Regalo[]; // opciones: sobre, transferencia, tienda…
+  regalosNota?: string;
 
   decoracionUrl?: string; // PNG propio que se superpone a toda la invitación
   decoracionOpacidad?: number; // 0 a 100
@@ -88,6 +108,7 @@ export type Invitacion = {
   fotoPortadaUrl?: string;
   videoSobreUrl?: string; // se reproduce al abrir el sobre
   videoPortadaUrl?: string; // video dentro de la corona de portada
+  videoPortadaSonido?: boolean; // el video de la corona suena
   videoGaleriaUrl?: string; // video en la sección de historia/galería
 
   // Fondo de la portada (hero)
@@ -97,6 +118,8 @@ export type Invitacion = {
   fondoAjuste?: "cubrir" | "contener"; // object-fit
   fondoPosX?: number; // 0 a 100 (encuadre horizontal)
   fondoPosY?: number; // 0 a 100 (encuadre vertical)
+  fondoZoom?: number; // 60 a 200 (%) acercamiento del fondo
+
 
 
   // Extras
