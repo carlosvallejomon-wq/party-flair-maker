@@ -113,13 +113,12 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
         { x: bordes.derecha, y: bordes.abajo },
       ];
 
-  const posicion = exterior.map((borde, i) => {
-    const vertical = `${margenNumero - borde.y * (inv.esquinasTamano ?? 30)}%`;
-    const horizontal = `${margenNumero - borde.x * (inv.esquinasTamano ?? 30)}%`;
-    if (i === 0) return { top: vertical, left: horizontal };
-    if (i === 1) return { top: vertical, right: horizontal };
-    if (i === 2) return { bottom: vertical, left: horizontal };
-    return { bottom: vertical, right: horizontal };
+  const posicion = exterior.map((_borde, i) => {
+    const margen = `${margenNumero}%`;
+    if (i === 0) return { top: margen, left: margen };
+    if (i === 1) return { top: margen, right: margen };
+    if (i === 2) return { bottom: margen, left: margen };
+    return { bottom: margen, right: margen };
   });
 
   return (
@@ -143,7 +142,7 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
             className="h-full w-full object-contain"
             style={{
               transformOrigin: "center",
-              transform: `${acomodo[i]} rotate(${giro}deg)`,
+              transform: `${acomodo[i]} translate(${i === 1 || i === 3 ? bordes.izquierda * 100 : -bordes.izquierda * 100}%, ${i >= 2 ? bordes.arriba * 100 : -bordes.arriba * 100}%) rotate(${giro}deg)`,
             }}
           />
         </span>

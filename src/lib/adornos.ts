@@ -34,13 +34,34 @@ const MARCOS_RETIRADOS: Adorno[] = [
 /** Decoraciones de esquina (se repiten en las 4 esquinas de la invitación). */
 export const ESQUINAS: Adorno[] = ESQUINAS_CDN;
 
+/** Archivos sin hueco central: sirven como fondos, no como marcos para foto. */
+const CORONAS_SIN_HUECO = new Set([
+  "adorno-116",
+  "adorno-121",
+  "adorno-146",
+  "adorno-231",
+  "adorno-379",
+  "adorno-402",
+  "adorno-418",
+  "adorno-426",
+  "adorno-480",
+  "adorno-50",
+  "adorno-52",
+  "adorno-53",
+  "adorno-Home",
+]);
+
 /** Coronas (marcos circulares) para la foto o el video de portada. */
 export const CORONAS: Adorno[] = [
   { id: "flores", nombre: "Corona de flores", src: coronaFlores },
   { id: "dorada", nombre: "Corona dorada", src: coronaDorada },
   { id: "girasoles", nombre: "Corona de girasoles", src: coronaGirasoles },
   ...MARCOS_RETIRADOS,
-  ...ADORNOS_CDN.map((a) => ({ ...a, id: `c-${a.id}`, nombre: `Corona ${a.id.split("-")[1]}` })),
+  ...ADORNOS_CDN.filter((a) => !CORONAS_SIN_HUECO.has(a.id)).map((a) => ({
+    ...a,
+    id: `c-${a.id}`,
+    nombre: `Corona ${a.id.split("-")[1]}`,
+  })),
 ];
 
 
