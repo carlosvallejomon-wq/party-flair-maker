@@ -490,6 +490,83 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           </Reveal>
         </section>
 
+        {/* Lugares de la celebración */}
+        {(inv.sedes ?? []).some((s) => s.nombre.trim()) && (
+          <section className="relative bg-primary/5 px-8 py-16">
+            <Reveal>
+              <h2 className="mb-8 text-center font-display text-3xl italic">
+                Lugares de la Celebración
+              </h2>
+            </Reveal>
+            <div className="space-y-5">
+              {(inv.sedes ?? [])
+                .filter((s) => s.nombre.trim())
+                .map((s, i) => (
+                  <Reveal key={`${s.nombre}-${i}`} delay={i * 120}>
+                    <div
+                      className={`rounded-2xl border border-foreground/10 bg-card p-6 text-center ${relieve ? "tarjeta-relieve" : ""}`}
+                    >
+                      <span className="inline-block rounded-full bg-foreground px-4 py-1 text-[9px] tracking-widest text-background uppercase">
+                        {s.etiqueta}
+                      </span>
+                      <h3 className="mt-4 font-display text-2xl italic">{s.nombre}</h3>
+                      {s.hora.trim() && (
+                        <p className="mt-1 font-mono text-xs text-primary">{s.hora}</p>
+                      )}
+                      {s.direccion.trim() && (
+                        <p className="mt-2 text-xs text-foreground/60">{s.direccion}</p>
+                      )}
+                      <a
+                        href={
+                          s.mapsUrl.trim() ||
+                          `https://maps.google.com/?q=${encodeURIComponent(`${s.nombre} ${s.direccion}`)}`
+                        }
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-5 inline-flex items-center gap-2 rounded-full border border-primary px-5 py-2 text-[10px] tracking-widest text-primary uppercase hover:bg-primary hover:text-background"
+                      >
+                        <Navigation size={13} /> Cómo llegar
+                      </a>
+                    </div>
+                  </Reveal>
+                ))}
+            </div>
+          </section>
+        )}
+
+        {/* A tomar en cuenta */}
+        {(inv.notas ?? []).length > 0 && (
+          <section className="relative px-8 py-16">
+            <Reveal>
+              <p className="text-center text-[9px] tracking-[0.3em] text-olive uppercase">
+                Detalles importantes
+              </p>
+              <h2 className="mt-2 mb-8 text-center font-display text-3xl italic">
+                A Tomar en Cuenta
+              </h2>
+            </Reveal>
+            <div className="space-y-4">
+              {(inv.notas ?? []).map((n, i) => (
+                <Reveal key={`${n.titulo}-${i}`} delay={i * 100}>
+                  <div
+                    className={`flex gap-4 rounded-2xl border border-foreground/10 bg-card p-5 ${relieve ? "tarjeta-relieve" : ""}`}
+                  >
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <Sparkles size={15} />
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-medium">{n.titulo}</h3>
+                      <p className="mt-1 text-xs leading-relaxed text-foreground/65">{n.texto}</p>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+        )}
+
+
+
         {/* Detalles */}
         <section className="relative space-y-8 px-8 pb-16">
           {inv.dressCode.trim() && (
