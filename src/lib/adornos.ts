@@ -48,7 +48,9 @@ export const CORONAS: Adorno[] = [
 export const TEXTURAS: Adorno[] = [
   { id: "papel", nombre: "Papel de algodón", src: texturaPapel },
   { id: "marmol", nombre: "Mármol y oro", src: texturaMarmol },
+  ...TEXTURAS_SVG,
 ];
+
 
 export function buscarAdorno(lista: Adorno[], id?: string, propio?: string) {
   if (propio?.trim()) return propio;
