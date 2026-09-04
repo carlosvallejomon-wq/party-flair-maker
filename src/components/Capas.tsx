@@ -31,17 +31,14 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
   const visibles = DISPOSICIONES[inv.esquinasDisposicion ?? "cuatro"] ?? DISPOSICIONES["cuatro"]!;
   const opacidad = (inv.esquinasOpacidad ?? 100) / 100;
 
-  // Acomodo por esquina. En "giro" la esquina superior izquierda también rota
-  // (-90°) para que el adorno mire siempre hacia el centro de la invitación.
+  // Cada adorno vive dentro de un contenedor anclado. Así el tamaño cambia
+  // hacia el interior sin alterar la posición del vértice.
   const acomodo =
     modo === "espejo"
       ? ["none", "scaleX(-1)", "scaleY(-1)", "scale(-1, -1)"]
       : modo === "giro"
-        ? ["rotate(-90deg)", "rotate(0deg)", "rotate(180deg)", "rotate(90deg)"]
+        ? ["rotate(0deg)", "rotate(90deg)", "rotate(270deg)", "rotate(180deg)"]
         : ["none", "none", "none", "none"];
-
-  // Origen del giro en el vértice de cada esquina para que no se salga del marco.
-  const origen = ["top left", "top right", "bottom left", "bottom right"];
 
   const posicion = [
     { top: margen, left: margen },
@@ -53,23 +50,28 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
   return (
     <>
       {visibles.map((i) => (
-        <img
+        <span
           key={i}
-          src={src}
-          alt=""
           aria-hidden
-          loading="lazy"
-          className="pointer-events-none absolute z-[6] object-contain"
+          className="pointer-events-none absolute z-[6] block"
           style={{
             ...posicion[i],
             width: tam,
-            height: tam,
+            aspectRatio: "1 / 1",
             opacity: opacidad,
-            transformOrigin: origen[i],
-            transform: `${acomodo[i]} rotate(${giro}deg)`,
-            objectPosition: "center",
           }}
-        />
+        >
+          <img
+            src={src}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-contain"
+            style={{
+              transformOrigin: "center",
+              transform: `rotate(${giro}deg) ${acomodo[i]}`,
+            }}
+          />
+        </span>
       ))}
     </>
   );

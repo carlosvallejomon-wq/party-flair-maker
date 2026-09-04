@@ -108,7 +108,11 @@ function Editor() {
   const set = <K extends keyof Invitacion>(clave: K, valor: Invitacion[K]) =>
     setInv((prev) => ({ ...prev, [clave]: valor }));
 
-  const setItem = (i: number, clave: "hora" | "titulo" | "lugar" | "icono", valor: string) =>
+  const setItem = (
+    i: number,
+    clave: "hora" | "titulo" | "lugar" | "icono" | "seccion",
+    valor: string,
+  ) =>
     setInv((prev) => ({
       ...prev,
       itinerario: prev.itinerario.map((it, idx) => (idx === i ? { ...it, [clave]: valor } : it)),
@@ -372,6 +376,15 @@ function Editor() {
                     onChange={(e) => set("marcoOpacidad", Number(e.target.value))}
                   />
                 </div>
+                <label className="flex items-center gap-3 text-sm sm:col-span-3">
+                  <input
+                    type="checkbox"
+                    className="size-4 accent-[var(--primary)]"
+                    checked={inv.coronaEncuadreAuto !== false}
+                    onChange={(e) => set("coronaEncuadreAuto", e.target.checked)}
+                  />
+                  Ajustar la foto automáticamente al hueco transparente de la corona
+                </label>
               </div>
             </div>
 
@@ -964,13 +977,26 @@ function Editor() {
             <h2 className="mb-4 font-display text-2xl italic">Itinerario</h2>
             <div className="space-y-4">
               {inv.itinerario.map((item, i) => (
-                <div key={i} className="grid gap-3 sm:grid-cols-[110px_130px_1fr_1fr_auto]">
+                <div key={i} className="grid gap-3 rounded-xl border border-foreground/10 p-3 sm:grid-cols-2">
                   <input
                     aria-label={`Hora del momento ${i + 1}`}
                     className={campo}
                     value={item.hora}
                     onChange={(e) => setItem(i, "hora", e.target.value)}
                   />
+                  <select
+                    aria-label={`Sección enlazada al momento ${i + 1}`}
+                    className={campo}
+                    value={item.seccion ?? ""}
+                    onChange={(e) => setItem(i, "seccion", e.target.value)}
+                  >
+                    <option value="">Solo desplegar información</option>
+                    <option value="ubicacion">Abrir ubicación</option>
+                    <option value="vestimenta">Abrir vestimenta</option>
+                    <option value="regalos">Abrir mesa de regalos</option>
+                    <option value="album">Abrir álbum</option>
+                    <option value="rsvp">Abrir confirmación</option>
+                  </select>
                   <select
                     aria-label={`Icono del momento ${i + 1}`}
                     className={campo}
@@ -1005,7 +1031,7 @@ function Editor() {
                         inv.itinerario.filter((_, idx) => idx !== i),
                       )
                     }
-                    className="rounded-lg border border-foreground/15 px-3 text-xs text-foreground/60 hover:border-destructive hover:text-destructive"
+                    className="rounded-lg border border-foreground/15 px-3 py-2 text-xs text-foreground/60 hover:border-destructive hover:text-destructive"
                   >
                     Quitar
                   </button>
@@ -1058,6 +1084,18 @@ function Editor() {
                   valor={inv.dressFotoUrl ?? ""}
                   onCambio={(v) => set("dressFotoUrl", v)}
                 />
+                {[0, 1].map((indice) => (
+                  <SubirArchivo
+                    key={indice}
+                    etiqueta={`Foto adicional de vestimenta ${indice + 1}`}
+                    valor={inv.dressFotos?.[indice] ?? ""}
+                    onCambio={(v) => {
+                      const fotos = [...(inv.dressFotos ?? [])];
+                      fotos[indice] = v;
+                      set("dressFotos", fotos.filter(Boolean));
+                    }}
+                  />
+                ))}
                 <div>
                   <label className={etiqueta} htmlFor="dress-guia">
                     Enlace de la guía completa
@@ -1139,32 +1177,76 @@ function Editor() {
                   onChange={(e) => set("regalosTitulo", e.target.value)}
                 />
               </div>
-              <div>
-                <label className={etiqueta} htmlFor="regu">
-                  Opciones de regalo (título | detalle | enlace)
-                </label>
-                <textarea
-                  id="regalos-lista"
-                  rows={3}
-                  className={`${campo} mb-4`}
-                  value={(inv.regalos ?? [])
-                    .map((r) => [r.titulo, r.detalle, r.url ?? ""].join(" | "))
-                    .join("\n")}
-                  onChange={(e) =>
-                    set(
-                      "regalos",
-                      e.target.value
-                        .split("\n")
-                        .filter((l) => l.trim())
-                        .map((l) => {
-                          const [titulo = "", detalle = "", url = ""] = l
-                            .split("|")
-                            .map((x) => x.trim());
-                          return { titulo, detalle, url };
-                        }),
-                    )
-                  }
-                />
+              <div className="sm:col-span-2">
+                <span className={etiqueta}>Opciones de dinero y regalos físicos</span>
+                <div className="mb-4 space-y-3">
+                  {(inv.regalos ?? []).map((regalo, i) => (
+                    <div key={i} className="grid gap-2 rounded-xl border border-foreground/10 p-3 sm:grid-cols-2">
+                      <select
+                        aria-label={`Tipo de regalo ${i + 1}`}
+                        className={campo}
+                        value={regalo.icono ?? "regalo"}
+                        onChange={(e) =>
+                          set("regalos", (inv.regalos ?? []).map((r, idx) => idx === i ? { ...r, icono: e.target.value } : r))
+                        }
+                      >
+                        <option value="efectivo">Dinero en efectivo / sobre</option>
+                        <option value="transferencia">Transferencia bancaria</option>
+                        <option value="regalo">Regalo físico</option>
+                        <option value="tienda">Lista en tienda</option>
+                        <option value="viaje">Fondo de viaje</option>
+                      </select>
+                      <input
+                        aria-label={`Título del regalo ${i + 1}`}
+                        className={campo}
+                        value={regalo.titulo}
+                        placeholder="Título"
+                        onChange={(e) => set("regalos", (inv.regalos ?? []).map((r, idx) => idx === i ? { ...r, titulo: e.target.value } : r))}
+                      />
+                      <textarea
+                        aria-label={`Detalle del regalo ${i + 1}`}
+                        className={`${campo} resize-none`}
+                        rows={2}
+                        value={regalo.detalle}
+                        placeholder="Datos de cuenta, dirección o indicaciones"
+                        onChange={(e) => set("regalos", (inv.regalos ?? []).map((r, idx) => idx === i ? { ...r, detalle: e.target.value } : r))}
+                      />
+                      <div className="flex gap-2">
+                        <input
+                          aria-label={`Enlace del regalo ${i + 1}`}
+                          className={campo}
+                          value={regalo.url ?? ""}
+                          placeholder="Enlace opcional"
+                          onChange={(e) => set("regalos", (inv.regalos ?? []).map((r, idx) => idx === i ? { ...r, url: e.target.value } : r))}
+                        />
+                        <button
+                          type="button"
+                          aria-label={`Eliminar regalo ${i + 1}`}
+                          onClick={() => set("regalos", (inv.regalos ?? []).filter((_, idx) => idx !== i))}
+                          className="rounded-lg border border-destructive/30 px-3 text-destructive"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mb-4 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => set("regalos", [...(inv.regalos ?? []), { titulo: "Aporte en dinero", detalle: "", icono: "efectivo" }])}
+                    className="rounded-full border border-primary px-4 py-2 text-[10px] tracking-widest text-primary uppercase"
+                  >
+                    + Dinero
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => set("regalos", [...(inv.regalos ?? []), { titulo: "Regalo físico", detalle: "", icono: "regalo" }])}
+                    className="rounded-full border border-primary px-4 py-2 text-[10px] tracking-widest text-primary uppercase"
+                  >
+                    + Regalo físico
+                  </button>
+                </div>
                 <label className={etiqueta} htmlFor="regalos-nota">
                   Nota de la mesa de regalos
                 </label>

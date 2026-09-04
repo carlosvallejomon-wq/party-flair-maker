@@ -1,4 +1,10 @@
-export type ItemItinerario = { hora: string; titulo: string; lugar: string; icono?: string };
+export type ItemItinerario = {
+  hora: string;
+  titulo: string;
+  lugar: string;
+  icono?: string;
+  seccion?: "ubicacion" | "vestimenta" | "regalos" | "album" | "rsvp";
+};
 export type Hito = { anio: string; titulo: string; texto: string; foto?: string };
 export type Sede = {
   etiqueta: string;
@@ -67,6 +73,7 @@ export type Invitacion = {
   coronaTamano?: number; // % del ancho de la portada que ocupa la corona (40 a 100)
   coronaHueco?: number; // % de inset de la foto dentro de la corona (0 a 35)
   coronaGiro?: number; // giro de la corona en grados
+  coronaEncuadreAuto?: boolean; // detecta el hueco transparente y ajusta la foto
   textura?: string; // id de TEXTURAS o "ninguno"
   texturaUrl?: string;
   texturaOpacidad?: number; // 0 a 100
@@ -93,6 +100,7 @@ export type Invitacion = {
 
   // Código de vestimenta
   dressFotoUrl?: string; // guía visual de vestimenta
+  dressFotos?: string[]; // varias referencias visuales de vestimenta
   dressGuiaUrl?: string; // enlace externo a la guía
   dressNota?: string; // nota especial (ej. reservar el blanco)
 
@@ -1132,12 +1140,29 @@ const EXTRAS: Partial<Invitacion> = {
   esquinasEspejo: true,
   esquinasGiro: 0,
   esquinasModo: "espejo",
+  esquinasDisposicion: "cuatro",
+  esquinasMargen: 0,
+  esquinasOpacidad: 100,
 
   familia: "Con la bendición de Dios y de nuestros padres",
   muroActivo: true,
   separador: "asterisco",
   itinerarioTitulo: "the Itinerary",
   coloresSugeridos: ["#f7f6ef", "#c9a86a", "#8a9a5b", "#3b4232"],
+  coronaEncuadreAuto: true,
+  dressFotos: [],
+  regalos: [
+    {
+      titulo: "Aporte en dinero",
+      detalle: "Puedes entregarlo en sobre el día del evento o solicitar los datos de transferencia.",
+      icono: "efectivo",
+    },
+    {
+      titulo: "Regalo físico",
+      detalle: "También recibimos con cariño un detalle para nuestro nuevo hogar.",
+      icono: "regalo",
+    },
+  ],
   hitos: [
     { anio: "2019", titulo: "Nos conocimos", texto: "Una tarde cualquiera que lo cambió todo." },
     { anio: "2022", titulo: "El primer viaje", texto: "Descubrimos que juntos todo es más bonito." },
