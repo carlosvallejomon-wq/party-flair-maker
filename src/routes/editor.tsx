@@ -108,7 +108,7 @@ function Editor() {
   const set = <K extends keyof Invitacion>(clave: K, valor: Invitacion[K]) =>
     setInv((prev) => ({ ...prev, [clave]: valor }));
 
-  const setItem = (i: number, clave: "hora" | "titulo" | "lugar", valor: string) =>
+  const setItem = (i: number, clave: "hora" | "titulo" | "lugar" | "icono", valor: string) =>
     setInv((prev) => ({
       ...prev,
       itinerario: prev.itinerario.map((it, idx) => (idx === i ? { ...it, [clave]: valor } : it)),
