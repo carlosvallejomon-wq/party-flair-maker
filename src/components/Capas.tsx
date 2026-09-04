@@ -90,39 +90,54 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
 
   // Cada adorno vive dentro de un contenedor anclado. Así el tamaño cambia
   // hacia el interior sin alterar la posición del vértice.
-  const acomodo =
-    modo === "espejo"
-      ? ["scale(1, 1)", "scale(-1, 1)", "scale(1, -1)", "scale(-1, -1)"]
-      : modo === "giro"
-        ? ["rotate(0deg)", "rotate(90deg)", "rotate(270deg)", "rotate(180deg)"]
-        : ["scale(1, 1)", "scale(1, 1)", "scale(1, 1)", "scale(1, 1)"];
-
-  // En modo espejo el mismo borde original mira hacia cada vértice. Compensar
-  // su transparencia evita que el adorno se aleje del filo cuando crece.
-  const exterior = modo === "espejo"
+  const transformaciones = modo === "espejo"
     ? [
-        { x: bordes.izquierda, y: bordes.arriba },
-        { x: bordes.izquierda, y: bordes.arriba },
-        { x: bordes.izquierda, y: bordes.arriba },
-        { x: bordes.izquierda, y: bordes.arriba },
+        { sx: 1, sy: 1, angulo: giro },
+        { sx: -1, sy: 1, angulo: giro },
+        { sx: 1, sy: -1, angulo: giro },
+        { sx: -1, sy: -1, angulo: giro },
       ]
-    : [
-        { x: bordes.izquierda, y: bordes.arriba },
-        { x: bordes.derecha, y: bordes.arriba },
-        { x: bordes.izquierda, y: bordes.abajo },
-        { x: bordes.derecha, y: bordes.abajo },
-      ];
+    : modo === "giro"
+      ? [0, 90, 270, 180].map((angulo) => ({ sx: 1, sy: 1, angulo: angulo + giro }))
+      : [0, 1, 2, 3].map(() => ({ sx: 1, sy: 1, angulo: giro }));
 
-  const posicion = exterior.map((_borde, i) => {
+  // Calcula el rectángulo visible después de girar o reflejar el PNG. De esta
+  // forma el borde visible —no el lienzo transparente— permanece en el filo.
+  const limitesVisibles = transformaciones.map(({ sx, sy, angulo }) => {
+    const radianes = (angulo * Math.PI) / 180;
+    const cos = Math.cos(radianes);
+    const sin = Math.sin(radianes);
+    const puntos = [
+      [bordes.izquierda, bordes.arriba],
+      [1 - bordes.derecha, bordes.arriba],
+      [bordes.izquierda, 1 - bordes.abajo],
+      [1 - bordes.derecha, 1 - bordes.abajo],
+    ].map(([x = 0, y = 0]) => {
+      const cx = x - 0.5;
+      const cy = y - 0.5;
+      return {
+        x: 0.5 + sx * (cos * cx - sin * cy),
+        y: 0.5 + sy * (sin * cx + cos * cy),
+      };
+    });
+    return {
+      izquierda: Math.min(...puntos.map((p) => p.x)),
+      derecha: 1 - Math.max(...puntos.map((p) => p.x)),
+      arriba: Math.min(...puntos.map((p) => p.y)),
+      abajo: 1 - Math.max(...puntos.map((p) => p.y)),
+    };
+  });
+
+  const posicion = limitesVisibles.map((_borde, i) => {
     const margen = `${margenNumero}%`;
     if (i === 0) return { top: margen, left: margen };
     if (i === 1) return { top: margen, right: margen };
     if (i === 2) return { bottom: margen, left: margen };
     return { bottom: margen, right: margen };
   });
-  const compensacion = exterior.map((borde, i) => {
-    const x = (i === 1 || i === 3 ? 1 : -1) * borde.x * 100;
-    const y = (i >= 2 ? 1 : -1) * borde.y * 100;
+  const compensacion = limitesVisibles.map((borde, i) => {
+    const x = (i === 1 || i === 3 ? borde.derecha : -borde.izquierda) * 100;
+    const y = (i >= 2 ? borde.abajo : -borde.arriba) * 100;
     return `translate(${x}%, ${y}%)`;
   });
 
@@ -148,7 +163,7 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
             className="h-full w-full object-contain"
             style={{
               transformOrigin: "center",
-              transform: `${acomodo[i]} rotate(${giro}deg)`,
+               transform: `scale(${transformaciones[i]?.sx ?? 1}, ${transformaciones[i]?.sy ?? 1}) rotate(${transformaciones[i]?.angulo ?? giro}deg)`,
             }}
           />
         </span>
