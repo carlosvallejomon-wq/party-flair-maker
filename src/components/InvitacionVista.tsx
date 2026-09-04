@@ -92,7 +92,7 @@ function useCuentaRegresiva(iso: string) {
   return restante;
 }
 
-type HuecoCorona = { top: number; right: number; bottom: number; left: number };
+type HuecoCorona = { top: number; right: number; bottom: number; left: number; mascara: string; detectado: boolean };
 
 /** Encuentra el área transparente cerrada del centro sin confundirla con el exterior. */
 function useHuecoCorona(src: string, automatico: boolean, manual: number) {
@@ -101,10 +101,12 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
     right: manual,
     bottom: manual,
     left: manual,
+    mascara: "",
+    detectado: false,
   });
 
   useEffect(() => {
-    const fijo = { top: manual, right: manual, bottom: manual, left: manual };
+    const fijo = { top: manual, right: manual, bottom: manual, left: manual, mascara: "", detectado: false };
     if (!src || !automatico) {
       setHueco(fijo);
       return;
@@ -128,7 +130,7 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
         const alpha = ctx.getImageData(0, 0, lado, lado).data;
         const transparente = (indice: number) => (alpha[indice * 4 + 3] ?? 255) < 42;
         const visitado = new Uint8Array(lado * lado);
-        const componentes: Array<{ minX: number; maxX: number; minY: number; maxY: number; area: number; borde: boolean }> = [];
+        const componentes: Array<{ minX: number; maxX: number; minY: number; maxY: number; area: number; borde: boolean; pixeles: number[] }> = [];
         for (let inicio = 0; inicio < lado * lado; inicio += 1) {
           if (visitado[inicio] || !transparente(inicio)) continue;
           const cola = [inicio];
@@ -157,7 +159,7 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
               cola.push(vecino);
             }
           }
-          componentes.push({ minX, maxX, minY, maxY, area: cola.length, borde });
+          componentes.push({ minX, maxX, minY, maxY, area: cola.length, borde, pixeles: cola });
         }
         const centro = lado / 2;
         const huecoCentral = componentes
@@ -172,11 +174,30 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
           return;
         }
         const seguridad = 2;
+        const mascaraCanvas = document.createElement("canvas");
+        mascaraCanvas.width = lado;
+        mascaraCanvas.height = lado;
+        const mascaraCtx = mascaraCanvas.getContext("2d");
+        if (!mascaraCtx) {
+          setHueco(fijo);
+          return;
+        }
+        const mascaraDatos = mascaraCtx.createImageData(lado, lado);
+        for (const indice of huecoCentral.pixeles) {
+          const salida = indice * 4;
+          mascaraDatos.data[salida] = 255;
+          mascaraDatos.data[salida + 1] = 255;
+          mascaraDatos.data[salida + 2] = 255;
+          mascaraDatos.data[salida + 3] = 255;
+        }
+        mascaraCtx.putImageData(mascaraDatos, 0, 0);
         setHueco({
           top: Math.max(0, (huecoCentral.minY + seguridad) / lado * 100),
           right: Math.max(0, (lado - huecoCentral.maxX + seguridad) / lado * 100),
           bottom: Math.max(0, (lado - huecoCentral.maxY + seguridad) / lado * 100),
           left: Math.max(0, (huecoCentral.minX + seguridad) / lado * 100),
+          mascara: mascaraCanvas.toDataURL("image/png"),
+          detectado: true,
         });
       } catch {
         setHueco(fijo);
@@ -360,14 +381,22 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 style={{ width: `${inv.coronaTamano ?? 74}%`, maxWidth: 340 }}
               >
                 <div
-                  className="absolute overflow-hidden rounded-full border border-primary/20 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)]"
-                  style={
-                    corona
+                  className={`absolute overflow-hidden shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)] ${corona && huecoCorona.detectado ? "" : "rounded-full border border-primary/20"}`}
+                  style={corona && huecoCorona.detectado
+                    ? {
+                        inset: 0,
+                        maskImage: `url(${huecoCorona.mascara})`,
+                        WebkitMaskImage: `url(${huecoCorona.mascara})`,
+                        maskSize: "100% 100%",
+                        WebkitMaskSize: "100% 100%",
+                      }
+                    : corona
                       ? {
                           top: `${huecoCorona.top}%`,
                           right: `${huecoCorona.right}%`,
                           bottom: `${huecoCorona.bottom}%`,
                           left: `${huecoCorona.left}%`,
+                          zIndex: 2,
                         }
                       : { inset: 0 }
                   }
@@ -379,14 +408,31 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                       loop
                       muted={inv.videoPortadaSonido !== true}
                       playsInline
-                      className="h-full w-full object-cover object-center"
+                      className={corona && huecoCorona.detectado ? "absolute object-cover object-center" : "h-full w-full object-cover object-center"}
+                      style={corona && huecoCorona.detectado ? {
+                        objectPosition: "50% 50%",
+                        top: `${huecoCorona.top}%`,
+                        right: `${huecoCorona.right}%`,
+                        bottom: `${huecoCorona.bottom}%`,
+                        left: `${huecoCorona.left}%`,
+                        width: "auto",
+                        height: "auto",
+                      } : undefined}
                     />
                   ) : (
                     <img
                       src={inv.fotoPortadaUrl?.trim() || pareja1}
                       alt={`Foto de ${nombres}`}
-                      className="h-full w-full object-cover object-center"
-                      style={{ objectPosition: "50% 50%" }}
+                      className={corona && huecoCorona.detectado ? "absolute object-cover object-center" : "h-full w-full object-cover object-center"}
+                      style={corona && huecoCorona.detectado ? {
+                        objectPosition: "50% 50%",
+                        top: `${huecoCorona.top}%`,
+                        right: `${huecoCorona.right}%`,
+                        bottom: `${huecoCorona.bottom}%`,
+                        left: `${huecoCorona.left}%`,
+                        width: "auto",
+                        height: "auto",
+                      } : { objectPosition: "50% 50%" }}
                     />
                   )}
                 </div>

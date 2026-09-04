@@ -1,5 +1,6 @@
 import { CORONAS, ESQUINAS, MARCOS, TEXTURAS, buscarAdorno } from "@/lib/adornos";
 import type { Invitacion } from "@/lib/invitacion";
+import { useEffect, useState } from "react";
 
 export const marcoDe = (inv: Invitacion) => buscarAdorno(MARCOS, inv.marco, inv.marcoUrl);
 export const coronaDe = (inv: Invitacion) => buscarAdorno(CORONAS, inv.corona, inv.coronaUrl);
@@ -15,6 +16,61 @@ const DISPOSICIONES: Record<string, number[]> = {
   lados: [0, 2],
 };
 
+type BordesTransparentes = { arriba: number; derecha: number; abajo: number; izquierda: number };
+
+/** Mide el espacio transparente del PNG para anclar la parte visible, no el lienzo vacío. */
+function useBordesTransparentes(src: string) {
+  const [bordes, setBordes] = useState<BordesTransparentes>({ arriba: 0, derecha: 0, abajo: 0, izquierda: 0 });
+
+  useEffect(() => {
+    const imagen = new Image();
+    imagen.onload = () => {
+      const lado = 220;
+      const canvas = document.createElement("canvas");
+      canvas.width = lado;
+      canvas.height = lado;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      if (!ctx) return;
+      const escala = Math.min(lado / imagen.naturalWidth, lado / imagen.naturalHeight);
+      const ancho = imagen.naturalWidth * escala;
+      const alto = imagen.naturalHeight * escala;
+      const x0 = (lado - ancho) / 2;
+      const y0 = (lado - alto) / 2;
+      ctx.clearRect(0, 0, lado, lado);
+      ctx.drawImage(imagen, x0, y0, ancho, alto);
+      try {
+        const datos = ctx.getImageData(0, 0, lado, lado).data;
+        let minX = lado;
+        let minY = lado;
+        let maxX = 0;
+        let maxY = 0;
+        for (let y = 0; y < lado; y += 1) {
+          for (let x = 0; x < lado; x += 1) {
+            if ((datos[(y * lado + x) * 4 + 3] ?? 0) < 18) continue;
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            maxX = Math.max(maxX, x);
+            maxY = Math.max(maxY, y);
+          }
+        }
+        if (minX === lado) return;
+        setBordes({
+          arriba: minY / lado,
+          derecha: (lado - 1 - maxX) / lado,
+          abajo: (lado - 1 - maxY) / lado,
+          izquierda: minX / lado,
+        });
+      } catch {
+        setBordes({ arriba: 0, derecha: 0, abajo: 0, izquierda: 0 });
+      }
+    };
+    imagen.src = src;
+    return () => { imagen.onload = null; };
+  }, [src]);
+
+  return bordes;
+}
+
 /**
  * Decoración repetida en las esquinas de la invitación.
  * Cada esquina se ancla con `inset` y se transforma desde su propio vértice,
@@ -22,10 +78,11 @@ const DISPOSICIONES: Record<string, number[]> = {
  */
 export function Esquinas({ inv }: { inv: Invitacion }) {
   const src = esquinasDe(inv);
+  const bordes = useBordesTransparentes(src);
   if (!src) return null;
 
   const tam = `${inv.esquinasTamano ?? 30}%`;
-  const margen = `${inv.esquinasMargen ?? 0}%`;
+  const margenNumero = inv.esquinasMargen ?? 0;
   const giro = inv.esquinasGiro ?? 0;
   const modo = inv.esquinasModo ?? (inv.esquinasEspejo === false ? "igual" : "espejo");
   const visibles = DISPOSICIONES[inv.esquinasDisposicion ?? "cuatro"] ?? DISPOSICIONES["cuatro"]!;
@@ -40,12 +97,34 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
         ? ["rotate(0deg)", "rotate(90deg)", "rotate(270deg)", "rotate(180deg)"]
         : ["scale(1, 1)", "scale(1, 1)", "scale(1, 1)", "scale(1, 1)"];
 
-  const posicion = [
-    { top: margen, left: margen },
-    { top: margen, right: margen },
-    { bottom: margen, left: margen },
-    { bottom: margen, right: margen },
-  ];
+  // En modo espejo el mismo borde original mira hacia cada vértice. Compensar
+  // su transparencia evita que el adorno se aleje del filo cuando crece.
+  const exterior = modo === "espejo"
+    ? [
+        { x: bordes.izquierda, y: bordes.arriba },
+        { x: bordes.izquierda, y: bordes.arriba },
+        { x: bordes.izquierda, y: bordes.arriba },
+        { x: bordes.izquierda, y: bordes.arriba },
+      ]
+    : [
+        { x: bordes.izquierda, y: bordes.arriba },
+        { x: bordes.derecha, y: bordes.arriba },
+        { x: bordes.izquierda, y: bordes.abajo },
+        { x: bordes.derecha, y: bordes.abajo },
+      ];
+
+  const posicion = exterior.map((_borde, i) => {
+    const margen = `${margenNumero}%`;
+    if (i === 0) return { top: margen, left: margen };
+    if (i === 1) return { top: margen, right: margen };
+    if (i === 2) return { bottom: margen, left: margen };
+    return { bottom: margen, right: margen };
+  });
+  const compensacion = exterior.map((borde, i) => {
+    const x = (i === 1 || i === 3 ? 1 : -1) * borde.x * 100;
+    const y = (i >= 2 ? 1 : -1) * borde.y * 100;
+    return `translate(${x}%, ${y}%)`;
+  });
 
   return (
     <>
@@ -59,6 +138,7 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
             width: tam,
             aspectRatio: "1 / 1",
             opacity: opacidad,
+             transform: compensacion[i],
           }}
         >
           <img
