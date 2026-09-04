@@ -186,7 +186,12 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 muted
                 playsInline
                 className={`absolute inset-0 h-full w-full ${ajusteFondo}`}
-                style={{ objectPosition: posicionFondo, opacity: opacidadFondo }}
+                style={{
+                  objectPosition: posicionFondo,
+                  opacity: opacidadFondo,
+                  transform: `scale(${(inv.fondoZoom ?? 100) / 100})`,
+                  transformOrigin: posicionFondo,
+                }}
               />
             ) : (
               <img
@@ -194,7 +199,12 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 alt=""
                 aria-hidden
                 className={`absolute inset-0 h-full w-full ${ajusteFondo}`}
-                style={{ objectPosition: posicionFondo, opacity: opacidadFondo }}
+                style={{
+                  objectPosition: posicionFondo,
+                  opacity: opacidadFondo,
+                  transform: `scale(${(inv.fondoZoom ?? 100) / 100})`,
+                  transformOrigin: posicionFondo,
+                }}
               />
             )}
           </div>
@@ -209,17 +219,20 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           >
             {/* Foto o video de portada, encuadrado automáticamente dentro de la corona */}
             {(corona || inv.videoPortadaUrl?.trim() || inv.fotoPortadaUrl?.trim()) && (
-              <div className="relative mx-auto mb-6 aspect-square w-[74%] max-w-[300px]">
+              <div
+                className="relative mx-auto mb-6 aspect-square"
+                style={{ width: `${inv.coronaTamano ?? 74}%`, maxWidth: 340 }}
+              >
                 <div
                   className="absolute overflow-hidden rounded-full border border-primary/20 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)]"
-                  style={{ inset: corona ? "17%" : "0%" }}
+                  style={{ inset: `${corona ? (inv.coronaHueco ?? 17) : 0}%` }}
                 >
                   {inv.videoPortadaUrl?.trim() ? (
                     <video
                       src={inv.videoPortadaUrl}
                       autoPlay
                       loop
-                      muted
+                      muted={inv.videoPortadaSonido !== true}
                       playsInline
                       className="h-full w-full object-cover object-center"
                     />
@@ -237,10 +250,12 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                     alt=""
                     aria-hidden
                     className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+                    style={{ transform: `rotate(${inv.coronaGiro ?? 0}deg)` }}
                   />
                 )}
               </div>
             )}
+
 
             {inv.familia?.trim() && (
               <p className="mb-3 text-[9px] leading-relaxed tracking-[0.25em] uppercase opacity-55">
