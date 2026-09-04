@@ -94,7 +94,7 @@ function useCuentaRegresiva(iso: string) {
 
 type HuecoCorona = { top: number; right: number; bottom: number; left: number };
 
-/** Calcula el hueco transparente central de una corona PNG. */
+/** Encuentra el área transparente cerrada del centro sin confundirla con el exterior. */
 function useHuecoCorona(src: string, automatico: boolean, manual: number) {
   const [hueco, setHueco] = useState<HuecoCorona>({
     top: manual,
@@ -118,23 +118,66 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
       if (!ctx) return;
       try {
-        ctx.drawImage(imagen, 0, 0, lado, lado);
+        const escala = Math.min(lado / imagen.naturalWidth, lado / imagen.naturalHeight);
+        const ancho = imagen.naturalWidth * escala;
+        const alto = imagen.naturalHeight * escala;
+        const offsetX = (lado - ancho) / 2;
+        const offsetY = (lado - alto) / 2;
+        ctx.clearRect(0, 0, lado, lado);
+        ctx.drawImage(imagen, offsetX, offsetY, ancho, alto);
         const alpha = ctx.getImageData(0, 0, lado, lado).data;
-        const opaco = (x: number, y: number) => (alpha[(y * lado + x) * 4 + 3] ?? 0) > 36;
-        const centro = Math.floor(lado / 2);
-        const barrer = (dx: number, dy: number) => {
-          for (let paso = 0; paso < centro; paso += 1) {
-            let aciertos = 0;
-            for (let banda = -8; banda <= 8; banda += 4) {
-              const x = Math.max(0, Math.min(lado - 1, centro + dx * paso + (dy ? banda : 0)));
-              const y = Math.max(0, Math.min(lado - 1, centro + dy * paso + (dx ? banda : 0)));
-              if (opaco(x, y)) aciertos += 1;
+        const transparente = (indice: number) => (alpha[indice * 4 + 3] ?? 255) < 42;
+        const visitado = new Uint8Array(lado * lado);
+        const componentes: Array<{ minX: number; maxX: number; minY: number; maxY: number; area: number; borde: boolean }> = [];
+        for (let inicio = 0; inicio < lado * lado; inicio += 1) {
+          if (visitado[inicio] || !transparente(inicio)) continue;
+          const cola = [inicio];
+          visitado[inicio] = 1;
+          let cursor = 0;
+          let minX = lado;
+          let maxX = 0;
+          let minY = lado;
+          let maxY = 0;
+          let borde = false;
+          while (cursor < cola.length) {
+            const actual = cola[cursor];
+            cursor += 1;
+            if (actual === undefined) continue;
+            const x = actual % lado;
+            const y = Math.floor(actual / lado);
+            minX = Math.min(minX, x); maxX = Math.max(maxX, x);
+            minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+            if (x === 0 || y === 0 || x === lado - 1 || y === lado - 1) borde = true;
+            const vecinos = [actual - 1, actual + 1, actual - lado, actual + lado];
+            for (const vecino of vecinos) {
+              if (vecino < 0 || vecino >= lado * lado || visitado[vecino]) continue;
+              const vx = vecino % lado;
+              if (Math.abs(vx - x) > 1 || !transparente(vecino)) continue;
+              visitado[vecino] = 1;
+              cola.push(vecino);
             }
-            if (aciertos >= 2) return Math.max(6, (centro - paso + 5) / lado * 100);
           }
-          return manual;
-        };
-        setHueco({ top: barrer(0, -1), right: barrer(1, 0), bottom: barrer(0, 1), left: barrer(-1, 0) });
+          componentes.push({ minX, maxX, minY, maxY, area: cola.length, borde });
+        }
+        const centro = lado / 2;
+        const huecoCentral = componentes
+          .filter((c) => !c.borde && c.area > lado * lado * 0.02)
+          .sort((a, b) => {
+            const da = Math.abs((a.minX + a.maxX) / 2 - centro) + Math.abs((a.minY + a.maxY) / 2 - centro);
+            const db = Math.abs((b.minX + b.maxX) / 2 - centro) + Math.abs((b.minY + b.maxY) / 2 - centro);
+            return da - db || b.area - a.area;
+          })[0];
+        if (!huecoCentral) {
+          setHueco(fijo);
+          return;
+        }
+        const seguridad = 2;
+        setHueco({
+          top: Math.max(0, (huecoCentral.minY + seguridad) / lado * 100),
+          right: Math.max(0, (lado - huecoCentral.maxX + seguridad) / lado * 100),
+          bottom: Math.max(0, (lado - huecoCentral.maxY + seguridad) / lado * 100),
+          left: Math.max(0, (huecoCentral.minX + seguridad) / lado * 100),
+        });
       } catch {
         setHueco(fijo);
       }
@@ -343,6 +386,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                       src={inv.fotoPortadaUrl?.trim() || pareja1}
                       alt={`Foto de ${nombres}`}
                       className="h-full w-full object-cover object-center"
+                      style={{ objectPosition: "50% 50%" }}
                     />
                   )}
                 </div>

@@ -1,5 +1,6 @@
 import { CORONAS, ESQUINAS, MARCOS, TEXTURAS, buscarAdorno } from "@/lib/adornos";
 import type { Invitacion } from "@/lib/invitacion";
+import { useEffect, useState } from "react";
 
 export const marcoDe = (inv: Invitacion) => buscarAdorno(MARCOS, inv.marco, inv.marcoUrl);
 export const coronaDe = (inv: Invitacion) => buscarAdorno(CORONAS, inv.corona, inv.coronaUrl);
@@ -35,10 +36,10 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
   // hacia el interior sin alterar la posición del vértice.
   const acomodo =
     modo === "espejo"
-      ? ["none", "scaleX(-1)", "scaleY(-1)", "scale(-1, -1)"]
+      ? ["scale(1, 1)", "scale(-1, 1)", "scale(1, -1)", "scale(-1, -1)"]
       : modo === "giro"
         ? ["rotate(0deg)", "rotate(90deg)", "rotate(270deg)", "rotate(180deg)"]
-        : ["none", "none", "none", "none"];
+        : ["scale(1, 1)", "scale(1, 1)", "scale(1, 1)", "scale(1, 1)"];
 
   const posicion = [
     { top: margen, left: margen },
@@ -68,7 +69,7 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
             className="h-full w-full object-contain"
             style={{
               transformOrigin: "center",
-              transform: `rotate(${giro}deg) ${acomodo[i]}`,
+              transform: `${acomodo[i]} rotate(${giro}deg)`,
             }}
           />
         </span>

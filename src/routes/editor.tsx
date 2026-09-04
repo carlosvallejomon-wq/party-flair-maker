@@ -392,7 +392,11 @@ function Editor() {
               titulo="Corona de la portada"
               lista={CORONAS}
               valor={inv.corona}
-              onElegir={(id) => set("corona", id)}
+              onElegir={(id) => {
+                set("corona", id);
+                set("coronaUrl", "");
+                set("coronaEncuadreAuto", true);
+              }}
             />
             <div className="mb-8">
               <SubirArchivo
@@ -452,7 +456,10 @@ function Editor() {
               titulo="Decoración de esquinas"
               lista={ESQUINAS}
               valor={inv.esquinas}
-              onElegir={(id) => set("esquinas", id)}
+              onElegir={(id) => {
+                set("esquinas", id);
+                set("esquinasUrl", "");
+              }}
             />
             <div className="mb-8 grid gap-4 sm:grid-cols-2">
               <SubirArchivo
