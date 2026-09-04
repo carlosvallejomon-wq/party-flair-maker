@@ -367,32 +367,51 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
         {/* Historia */}
         {inv.historia.trim() && (
-          <section className="relative px-10 py-20 text-center">
+          <section className="relative px-6 py-20 text-center">
             <Reveal>
-              <h2 className="mb-8 font-display text-3xl italic">Nuestra Historia</h2>
-              <p className="text-sm leading-relaxed text-pretty text-foreground/80">
+              <p className="text-[9px] tracking-[0.3em] text-olive uppercase">
+                Recuerdos &amp; trayectoria
+              </p>
+              <h2 className="mt-2 mb-6 font-display text-4xl">
+                {inv.historiaTitulo || "Nuestra Historia"}
+              </h2>
+              <p className="mx-auto max-w-[38ch] text-sm leading-relaxed text-pretty text-foreground/75">
                 {inv.historia}
               </p>
             </Reveal>
 
-            {/* Línea de tiempo por años */}
+            {/* Tarjetas con foto por momento */}
             {(inv.hitos ?? []).length > 0 && (
-              <div className="relative mt-12 space-y-5 text-left">
+              <div className="mt-10 grid gap-5 sm:grid-cols-2">
                 {(inv.hitos ?? []).map((h, i) => (
                   <Reveal key={`${h.anio}-${i}`} delay={i * 110}>
                     <button
                       type="button"
                       onClick={() => setHito(hito === i ? null : i)}
                       aria-expanded={hito === i}
-                      className={`flex w-full gap-4 rounded-3xl border p-5 text-left transition-all ${hito === i ? "border-primary/40 bg-primary/8" : "border-primary/12 bg-card/80"} ${relieve ? "tarjeta-relieve" : ""}`}
+                      className={`group block h-full w-full overflow-hidden rounded-3xl border text-left transition-all ${
+                        hito === i ? "border-primary/45" : "border-primary/15"
+                      } ${relieve ? "capsula-vidrio" : "bg-card"}`}
                     >
-                      <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/15 font-mono text-[11px] text-primary">
-                        {h.anio}
-                      </span>
-                      <div className="min-w-0">
-                        <h3 className="font-display text-xl italic">{h.titulo}</h3>
+                      <div className="relative">
+                        <img
+                          src={h.foto?.trim() || galeria[i % galeria.length]!}
+                          alt={h.titulo}
+                          loading="lazy"
+                          className="aspect-[4/3] w-full rounded-3xl object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                        />
+                        <span className="absolute top-3 right-3 rounded-full border border-primary/50 bg-background/80 px-3 py-1 text-[9px] font-medium tracking-widest text-primary uppercase backdrop-blur-md">
+                          {h.anio}
+                        </span>
+                      </div>
+                      <div className="p-5">
+                        <h3 className="font-display text-2xl leading-tight">{h.titulo}</h3>
                         <p
-                          className={`text-xs leading-relaxed text-foreground/65 transition-all ${hito === i ? "mt-1 max-h-40 opacity-100" : "max-h-0 overflow-hidden opacity-0"}`}
+                          className={`text-xs leading-relaxed text-foreground/65 transition-all ${
+                            hito === i
+                              ? "mt-2 max-h-48 opacity-100"
+                              : "max-h-0 overflow-hidden opacity-0"
+                          }`}
                         >
                           {h.texto}
                         </p>
@@ -402,6 +421,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 ))}
               </div>
             )}
+
 
 
 
