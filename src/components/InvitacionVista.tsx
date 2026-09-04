@@ -161,7 +161,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
         {/* Portada */}
         <section
-          className={`relative flex flex-col items-center justify-center overflow-hidden border-b border-primary/10 px-8 text-center ${embebido ? "h-[620px]" : "h-[100svh] min-h-[560px]"}`}
+          className={`relative flex flex-col items-center justify-between overflow-hidden border-b border-primary/10 px-8 pt-10 pb-6 text-center ${embebido ? "min-h-[720px]" : "min-h-[100svh]"}`}
         >
           {!abierto && (
             <Sobre
