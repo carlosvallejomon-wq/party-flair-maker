@@ -215,6 +215,24 @@ function Editor() {
               ))}
             </div>
 
+            <div className="mb-6">
+              <label className={etiqueta} htmlFor="separador">
+                Separador entre secciones
+              </label>
+              <select
+                id="separador"
+                className={campo}
+                value={inv.separador ?? "asterisco"}
+                onChange={(e) => set("separador", e.target.value)}
+              >
+                {SEPARADORES.map((sep) => (
+                  <option key={sep.id} value={sep.id}>
+                    {sep.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-3">
               <div>
                 <label className={etiqueta} htmlFor="melodia">
@@ -724,13 +742,25 @@ function Editor() {
             <h2 className="mb-4 font-display text-2xl italic">Itinerario</h2>
             <div className="space-y-4">
               {inv.itinerario.map((item, i) => (
-                <div key={i} className="grid gap-3 sm:grid-cols-[110px_1fr_1fr_auto]">
+                <div key={i} className="grid gap-3 sm:grid-cols-[110px_130px_1fr_1fr_auto]">
                   <input
                     aria-label={`Hora del momento ${i + 1}`}
                     className={campo}
                     value={item.hora}
                     onChange={(e) => setItem(i, "hora", e.target.value)}
                   />
+                  <select
+                    aria-label={`Icono del momento ${i + 1}`}
+                    className={campo}
+                    value={item.icono ?? "reloj"}
+                    onChange={(e) => setItem(i, "icono", e.target.value)}
+                  >
+                    {ICONOS.map((ic) => (
+                      <option key={ic.id} value={ic.id}>
+                        {ic.nombre}
+                      </option>
+                    ))}
+                  </select>
                   <input
                     aria-label={`Título del momento ${i + 1}`}
                     className={campo}
@@ -764,7 +794,7 @@ function Editor() {
               onClick={() =>
                 set("itinerario", [
                   ...inv.itinerario,
-                  { hora: "00:00 HRS", titulo: "Nuevo momento", lugar: "" },
+                  { hora: "00:00 HRS", titulo: "Nuevo momento", lugar: "", icono: "reloj" },
                 ])
               }
               className="mt-4 rounded-full border border-primary px-5 py-2 text-[10px] tracking-widest text-primary uppercase hover:bg-primary hover:text-background"
@@ -798,6 +828,51 @@ function Editor() {
                   value={inv.dressDetalle}
                   onChange={(e) => set("dressDetalle", e.target.value)}
                 />
+              </div>
+              <div className="sm:col-span-2">
+                <span className={etiqueta}>Paleta de colores sugerida para vestimenta</span>
+                <div className="flex flex-wrap items-center gap-3">
+                  {(inv.coloresSugeridos ?? []).map((c, i) => (
+                    <span key={i} className="flex items-center gap-1">
+                      <input
+                        type="color"
+                        aria-label={`Color sugerido ${i + 1}`}
+                        value={c}
+                        onChange={(e) =>
+                          set(
+                            "coloresSugeridos",
+                            (inv.coloresSugeridos ?? []).map((v, idx) =>
+                              idx === i ? e.target.value : v,
+                            ),
+                          )
+                        }
+                        className="size-9 cursor-pointer rounded-full border border-foreground/15 bg-transparent"
+                      />
+                      <button
+                        type="button"
+                        aria-label={`Quitar color ${i + 1}`}
+                        onClick={() =>
+                          set(
+                            "coloresSugeridos",
+                            (inv.coloresSugeridos ?? []).filter((_, idx) => idx !== i),
+                          )
+                        }
+                        className="text-xs text-foreground/40 hover:text-destructive"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      set("coloresSugeridos", [...(inv.coloresSugeridos ?? []), "#c9a86a"])
+                    }
+                    className="rounded-full border border-primary px-4 py-2 text-[10px] tracking-widest text-primary uppercase hover:bg-primary hover:text-background"
+                  >
+                    Agregar color
+                  </button>
+                </div>
               </div>
               <div>
                 <label className={etiqueta} htmlFor="regt">
