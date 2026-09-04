@@ -1,4 +1,4 @@
-export type ItemItinerario = { hora: string; titulo: string; lugar: string };
+export type ItemItinerario = { hora: string; titulo: string; lugar: string; icono?: string };
 export type Hito = { anio: string; titulo: string; texto: string };
 export type Sede = { etiqueta: string; nombre: string; hora: string; direccion: string; mapsUrl: string };
 export type Nota = { titulo: string; texto: string };
@@ -16,7 +16,13 @@ export type Tema =
   | "arena"
   | "coral"
   | "cielo"
-  | "carbon";
+  | "carbon"
+  | "orquidea"
+  | "neon"
+  | "menta"
+  | "ambar"
+  | "terracota"
+  | "marfil";
 export type Melodia = "romantica" | "vals" | "alegre" | "serena";
 
 export type Invitacion = {
