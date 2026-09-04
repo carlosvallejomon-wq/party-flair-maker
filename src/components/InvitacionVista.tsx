@@ -92,6 +92,64 @@ function useCuentaRegresiva(iso: string) {
   return restante;
 }
 
+type HuecoCorona = { top: number; right: number; bottom: number; left: number };
+
+/** Calcula el hueco transparente central de una corona PNG. */
+function useHuecoCorona(src: string, automatico: boolean, manual: number) {
+  const [hueco, setHueco] = useState<HuecoCorona>({
+    top: manual,
+    right: manual,
+    bottom: manual,
+    left: manual,
+  });
+
+  useEffect(() => {
+    const fijo = { top: manual, right: manual, bottom: manual, left: manual };
+    if (!src || !automatico) {
+      setHueco(fijo);
+      return;
+    }
+    const imagen = new Image();
+    imagen.onload = () => {
+      const lado = 240;
+      const canvas = document.createElement("canvas");
+      canvas.width = lado;
+      canvas.height = lado;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      if (!ctx) return;
+      try {
+        ctx.drawImage(imagen, 0, 0, lado, lado);
+        const alpha = ctx.getImageData(0, 0, lado, lado).data;
+        const opaco = (x: number, y: number) => (alpha[(y * lado + x) * 4 + 3] ?? 0) > 36;
+        const centro = Math.floor(lado / 2);
+        const barrer = (dx: number, dy: number) => {
+          for (let paso = 0; paso < centro; paso += 1) {
+            let aciertos = 0;
+            for (let banda = -8; banda <= 8; banda += 4) {
+              const x = Math.max(0, Math.min(lado - 1, centro + dx * paso + (dy ? banda : 0)));
+              const y = Math.max(0, Math.min(lado - 1, centro + dy * paso + (dx ? banda : 0)));
+              if (opaco(x, y)) aciertos += 1;
+            }
+            if (aciertos >= 2) return Math.max(6, (centro - paso + 5) / lado * 100);
+          }
+          return manual;
+        };
+        setHueco({ top: barrer(0, -1), right: barrer(1, 0), bottom: barrer(0, 1), left: barrer(-1, 0) });
+      } catch {
+        setHueco(fijo);
+      }
+    };
+    imagen.onerror = () => setHueco(fijo);
+    imagen.src = src;
+    return () => {
+      imagen.onload = null;
+      imagen.onerror = null;
+    };
+  }, [src, automatico, manual]);
+
+  return hueco;
+}
+
 const ANIM = {
   fade: "portada-fade",
   zoom: "portada-zoom",
@@ -113,6 +171,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
   const nombres = [inv.nombre1, inv.nombre2].filter((n) => n.trim()).join(" & ");
   const corona = coronaDe(inv);
+  const huecoCorona = useHuecoCorona(
+    corona,
+    inv.coronaEncuadreAuto !== false,
+    inv.coronaHueco ?? 17,
+  );
   const fondoPortada = inv.fondoUrl?.trim() || inv.fotoPortadaUrl?.trim() || botanical;
   const ajusteFondo = inv.fondoAjuste === "contener" ? "object-contain" : "object-cover";
   const posicionFondo = `${inv.fondoPosX ?? 50}% ${inv.fondoPosY ?? 50}%`;
@@ -255,7 +318,16 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
               >
                 <div
                   className="absolute overflow-hidden rounded-full border border-primary/20 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)]"
-                  style={{ inset: `${corona ? (inv.coronaHueco ?? 17) : 0}%` }}
+                  style={
+                    corona
+                      ? {
+                          top: `${huecoCorona.top}%`,
+                          right: `${huecoCorona.right}%`,
+                          bottom: `${huecoCorona.bottom}%`,
+                          left: `${huecoCorona.left}%`,
+                        }
+                      : { inset: 0 }
+                  }
                 >
                   {inv.videoPortadaUrl?.trim() ? (
                     <video
@@ -545,11 +617,25 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                           <h3 className="text-sm leading-tight font-semibold tracking-wide uppercase">
                             {item.titulo}
                           </h3>
-                          <p
-                            className={`text-xs text-foreground/60 transition-all ${activo ? "mt-1 max-h-24 opacity-100" : "max-h-0 overflow-hidden opacity-0"}`}
-                          >
-                            {item.lugar}
-                          </p>
+                          <div className={`transition-all ${activo ? "mt-1 max-h-28 opacity-100" : "max-h-0 overflow-hidden opacity-0"}`}>
+                            <p className="text-xs text-foreground/60">{item.lugar}</p>
+                            {item.seccion && (
+                              <span
+                                role="button"
+                                tabIndex={0}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  irA(item.seccion ?? "itinerario");
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") irA(item.seccion ?? "itinerario");
+                                }}
+                                className="mt-2 inline-flex items-center gap-1 text-[9px] font-semibold tracking-widest text-primary uppercase"
+                              >
+                                Abrir sección <ChevronDown size={11} />
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         <span className="order-2 flex size-4 items-center justify-center rounded-full border border-primary bg-background">
@@ -725,6 +811,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           {inv.dressCode.trim() && (
             <Reveal>
               <div
+                id="vestimenta"
                 className={`rounded-3xl border border-primary/15 p-7 text-center ${relieve ? "capsula-vidrio" : "bg-card"}`}
               >
                 <span
@@ -740,16 +827,23 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                   {inv.dressDetalle}
                 </p>
 
-                {inv.dressFotoUrl?.trim() && (
+                {[inv.dressFotoUrl, ...(inv.dressFotos ?? [])].filter((url): url is string => Boolean(url?.trim())).length > 0 && (
                   <div className="relative mt-6 overflow-hidden rounded-2xl border border-primary/15">
-                    <img
-                      src={inv.dressFotoUrl}
-                      alt={`Guía visual de vestimenta: ${inv.dressCode}`}
-                      loading="lazy"
-                      className="aspect-[4/3] w-full object-cover"
-                    />
+                    <div className="grid grid-cols-2 gap-1">
+                      {[inv.dressFotoUrl, ...(inv.dressFotos ?? [])]
+                        .filter((url): url is string => Boolean(url?.trim()))
+                        .map((url, i) => (
+                          <img
+                            key={`${url.slice(0, 32)}-${i}`}
+                            src={url}
+                            alt={`Ejemplo ${i + 1} de vestimenta ${inv.dressCode}`}
+                            loading="lazy"
+                            className={`w-full object-cover ${i === 0 ? "col-span-2 aspect-[16/10]" : "aspect-square"}`}
+                          />
+                        ))}
+                    </div>
                     <a
-                      href={inv.dressGuiaUrl?.trim() || inv.dressFotoUrl}
+                      href={inv.dressGuiaUrl?.trim() || inv.dressFotoUrl || inv.dressFotos?.[0]}
                       target="_blank"
                       rel="noreferrer"
                       className="absolute inset-x-6 bottom-4 flex items-center justify-center gap-2 rounded-full bg-foreground/70 py-2.5 text-[9px] tracking-[0.2em] text-background uppercase backdrop-blur-md"
