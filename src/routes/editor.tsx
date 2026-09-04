@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
+import { SEPARADORES } from "@/components/Divisor";
 import { InvitacionVista } from "@/components/InvitacionVista";
+import { ICONOS } from "@/lib/iconos";
 import { SubirArchivo } from "@/components/SubirArchivo";
 import { CORONAS, ESQUINAS, MARCOS, TEXTURAS, type Adorno } from "@/lib/adornos";
 import {
