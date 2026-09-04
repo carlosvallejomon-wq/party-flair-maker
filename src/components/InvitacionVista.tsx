@@ -75,6 +75,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
   const [abierto, setAbierto] = useState(!inv.sobreActivo);
   const [foto, setFoto] = useState<string | null>(null);
   const [momento, setMomento] = useState<number | null>(0);
+  const [hito, setHito] = useState<number | null>(0);
 
   useEffect(() => {
     setAbierto(!inv.sobreActivo);
@@ -379,17 +380,24 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
               <div className="relative mt-12 space-y-5 text-left">
                 {(inv.hitos ?? []).map((h, i) => (
                   <Reveal key={`${h.anio}-${i}`} delay={i * 110}>
-                    <div
-                      className={`flex gap-4 rounded-3xl border border-primary/12 bg-card/80 p-5 ${relieve ? "tarjeta-relieve" : ""}`}
+                    <button
+                      type="button"
+                      onClick={() => setHito(hito === i ? null : i)}
+                      aria-expanded={hito === i}
+                      className={`flex w-full gap-4 rounded-3xl border p-5 text-left transition-all ${hito === i ? "border-primary/40 bg-primary/8" : "border-primary/12 bg-card/80"} ${relieve ? "tarjeta-relieve" : ""}`}
                     >
-                      <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10 font-mono text-[11px] text-primary">
+                      <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/15 font-mono text-[11px] text-primary">
                         {h.anio}
                       </span>
                       <div className="min-w-0">
                         <h3 className="font-display text-xl italic">{h.titulo}</h3>
-                        <p className="mt-1 text-xs leading-relaxed text-foreground/65">{h.texto}</p>
+                        <p
+                          className={`text-xs leading-relaxed text-foreground/65 transition-all ${hito === i ? "mt-1 max-h-40 opacity-100" : "max-h-0 overflow-hidden opacity-0"}`}
+                        >
+                          {h.texto}
+                        </p>
                       </div>
-                    </div>
+                    </button>
                   </Reveal>
                 ))}
               </div>
