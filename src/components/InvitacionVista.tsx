@@ -624,60 +624,141 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
 
         {/* Detalles */}
-        <section className="relative space-y-8 px-8 pb-16">
+        <section className="relative space-y-8 px-6 pb-16">
           {inv.dressCode.trim() && (
             <Reveal>
               <div
-                className={`rounded-3xl border border-primary/15 bg-card/80 p-8 text-center backdrop-blur-sm ${relieve ? "tarjeta-relieve" : ""}`}
+                className={`rounded-3xl border border-primary/15 p-7 text-center ${relieve ? "capsula-vidrio" : "bg-card"}`}
               >
-                <span className="mb-4 block text-[10px] tracking-widest text-olive uppercase">
+                <span
+                  className={`mx-auto -mt-14 mb-5 flex size-16 items-center justify-center rounded-full border border-primary/25 text-primary ${relieve ? "icono-relieve" : "bg-card"}`}
+                >
+                  <Shirt size={26} strokeWidth={1.2} />
+                </span>
+                <span className="mb-3 block text-[10px] tracking-[0.3em] text-olive uppercase">
                   Código de Vestimenta
                 </span>
-                <h3 className="font-display text-2xl italic">{inv.dressCode}</h3>
-                <p className="mt-4 text-xs text-foreground/60">{inv.dressDetalle}</p>
-                <div className="mt-5 flex justify-center gap-2">
+                <h3 className="font-display text-2xl">{inv.dressCode}</h3>
+                <p className="mx-auto mt-3 max-w-[36ch] text-xs leading-relaxed text-foreground/65">
+                  {inv.dressDetalle}
+                </p>
+
+                {inv.dressFotoUrl?.trim() && (
+                  <div className="relative mt-6 overflow-hidden rounded-2xl border border-primary/15">
+                    <img
+                      src={inv.dressFotoUrl}
+                      alt={`Guía visual de vestimenta: ${inv.dressCode}`}
+                      loading="lazy"
+                      className="aspect-[4/3] w-full object-cover"
+                    />
+                    <a
+                      href={inv.dressGuiaUrl?.trim() || inv.dressFotoUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="absolute inset-x-6 bottom-4 flex items-center justify-center gap-2 rounded-full bg-foreground/70 py-2.5 text-[9px] tracking-[0.2em] text-background uppercase backdrop-blur-md"
+                    >
+                      <Eye size={13} /> Ver guía visual de vestimenta
+                    </a>
+                  </div>
+                )}
+
+                <p className="mt-6 mb-3 text-[10px] tracking-[0.28em] text-olive uppercase">
+                  Paleta de colores sugerida
+                </p>
+                <div className="flex flex-wrap justify-center gap-3">
                   {(inv.coloresSugeridos?.length
                     ? inv.coloresSugeridos
                     : TEMAS[inv.tema].swatch
                   ).map((c) => (
                     <span
                       key={c}
-                      className="size-5 rounded-full border border-foreground/10"
+                      title={c}
+                      className="size-9 rounded-full border border-foreground/10 shadow-[0_8px_18px_-8px_rgba(0,0,0,0.6)]"
                       style={{ backgroundColor: c }}
                     />
                   ))}
                 </div>
+
+                {inv.dressNota?.trim() && (
+                  <p className="mt-6 rounded-2xl border border-primary/20 bg-primary/8 px-5 py-3 text-xs leading-relaxed text-foreground/75">
+                    <span className="font-semibold">Nota especial:</span> {inv.dressNota}
+                  </p>
+                )}
               </div>
             </Reveal>
           )}
 
-          {inv.regalosTitulo.trim() && (
+          {(inv.regalosTitulo.trim() || (inv.regalos ?? []).length > 0) && (
             <Reveal delay={120}>
               <div
                 id="regalos"
-                className={`rounded-3xl border border-primary/15 bg-primary/8 p-8 text-center ${relieve ? "tarjeta-relieve" : ""}`}
+                className={`rounded-3xl border border-primary/15 p-7 text-center ${relieve ? "capsula-vidrio" : "bg-card"}`}
               >
-                <span className="mb-4 block text-[10px] tracking-widest text-olive uppercase">
+                <span
+                  className={`mx-auto -mt-14 mb-5 flex size-16 items-center justify-center rounded-full border border-primary/25 text-primary ${relieve ? "icono-relieve" : "bg-card"}`}
+                >
+                  <Gift size={26} strokeWidth={1.2} />
+                </span>
+                <span className="mb-3 block text-[10px] tracking-[0.3em] text-olive uppercase">
                   Mesa de Regalos
                 </span>
-                <h3 className="font-display text-2xl">{inv.regalosTitulo}</h3>
-                <p className="mt-4 mb-6 text-xs text-foreground/60">
-                  Tu presencia es nuestro mejor regalo, pero si deseas obsequiarnos algo:
+                <h3 className="font-display text-2xl">
+                  {inv.regalosTitulo || "Tu presencia es nuestro mejor regalo"}
+                </h3>
+                <p className="mx-auto mt-3 mb-6 max-w-[36ch] text-xs leading-relaxed text-foreground/65">
+                  {inv.regalosNota ||
+                    "Si deseas obsequiarnos algo, aquí tienes algunas opciones con mucho cariño."}
                 </p>
+
+                {(inv.regalos ?? []).length > 0 && (
+                  <div className="mb-6 space-y-3 text-left">
+                    {(inv.regalos ?? []).map((r, i) => {
+                      const Icono = iconoRegalo(r.icono, r.titulo);
+                      return (
+                        <div
+                          key={`${r.titulo}-${i}`}
+                          className={`flex items-start gap-4 rounded-2xl border border-primary/15 p-4 ${relieve ? "tarjeta-relieve" : "bg-card"}`}
+                        >
+                          <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/12 text-primary">
+                            <Icono size={18} strokeWidth={1.3} />
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="text-sm font-semibold">{r.titulo}</h4>
+                            <p className="mt-1 text-xs leading-relaxed break-words text-foreground/65">
+                              {r.detalle}
+                            </p>
+                            {r.url?.trim() && (
+                              <a
+                                href={r.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="mt-2 inline-flex items-center gap-1.5 text-[10px] tracking-widest text-primary uppercase hover:underline"
+                              >
+                                <ExternalLink size={12} /> Abrir
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
                 {inv.regalosUrl.trim() && (
                   <a
                     href={inv.regalosUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-block rounded-full border border-primary px-7 py-3 text-[10px] tracking-widest text-primary uppercase transition-colors hover:bg-primary hover:text-background"
+                    className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-[10px] tracking-widest text-primary-foreground uppercase transition-opacity hover:opacity-85"
                   >
-                    Ver Mesa de Regalos
+                    <Gift size={13} /> Ver mesa de regalos
                   </a>
                 )}
               </div>
             </Reveal>
           )}
         </section>
+
 
         <Divisor inv={inv} />
 
