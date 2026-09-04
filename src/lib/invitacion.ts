@@ -1,4 +1,4 @@
-export type ItemItinerario = { hora: string; titulo: string; lugar: string };
+export type ItemItinerario = { hora: string; titulo: string; lugar: string; icono?: string };
 export type Hito = { anio: string; titulo: string; texto: string };
 export type Sede = { etiqueta: string; nombre: string; hora: string; direccion: string; mapsUrl: string };
 export type Nota = { titulo: string; texto: string };
@@ -16,7 +16,13 @@ export type Tema =
   | "arena"
   | "coral"
   | "cielo"
-  | "carbon";
+  | "carbon"
+  | "orquidea"
+  | "neon"
+  | "menta"
+  | "ambar"
+  | "terracota"
+  | "marfil";
 export type Melodia = "romantica" | "vals" | "alegre" | "serena";
 
 export type Invitacion = {
@@ -60,6 +66,8 @@ export type Invitacion = {
   sedes?: Sede[]; // Lugares de la celebración
   notas?: Nota[]; // A tomar en cuenta
   muroActivo?: boolean; // muro de felicitaciones
+  separador?: string; // estilo del separador ornamental entre secciones
+  itinerarioTitulo?: string; // título de la sección de itinerario
 
 
   decoracionUrl?: string; // PNG propio que se superpone a toda la invitación
@@ -228,7 +236,74 @@ export const TEMAS: Record<Tema, { nombre: string; swatch: string[]; vars: Recor
         "--olive": "oklch(0.75 0.005 260)",
       },
     },
+    orquidea: {
+      nombre: "Orquídea neón",
+      swatch: ["#1b1024", "#b57bff", "#7a3ff2", "#f5eaff"],
+      vars: {
+        "--background": "oklch(0.19 0.04 300)",
+        "--foreground": "oklch(0.95 0.02 300)",
+        "--card": "oklch(0.24 0.05 300)",
+        "--primary": "oklch(0.72 0.18 305)",
+        "--olive": "oklch(0.8 0.12 160)",
+      },
+    },
+    neon: {
+      nombre: "Medianoche neón",
+      swatch: ["#0d0f18", "#5ce1e6", "#a259ff", "#eef4ff"],
+      vars: {
+        "--background": "oklch(0.16 0.02 265)",
+        "--foreground": "oklch(0.95 0.01 265)",
+        "--card": "oklch(0.22 0.03 265)",
+        "--primary": "oklch(0.82 0.13 195)",
+        "--olive": "oklch(0.7 0.16 300)",
+      },
+    },
+    menta: {
+      nombre: "Menta fresca",
+      swatch: ["#f2fbf7", "#7fd6b5", "#3f9d7c", "#1d3b31"],
+      vars: {
+        "--background": "oklch(0.98 0.015 165)",
+        "--foreground": "oklch(0.32 0.04 165)",
+        "--card": "oklch(0.99 0.01 165)",
+        "--primary": "oklch(0.75 0.1 165)",
+        "--olive": "oklch(0.63 0.09 165)",
+      },
+    },
+    ambar: {
+      nombre: "Ámbar dorado",
+      swatch: ["#fdf8ec", "#e0ad4b", "#b0801f", "#3d3116"],
+      vars: {
+        "--background": "oklch(0.98 0.018 90)",
+        "--foreground": "oklch(0.33 0.04 85)",
+        "--card": "oklch(0.99 0.012 90)",
+        "--primary": "oklch(0.78 0.12 85)",
+        "--olive": "oklch(0.67 0.11 85)",
+      },
+    },
+    terracota: {
+      nombre: "Terracota",
+      swatch: ["#fbf2ec", "#c9714b", "#9c4f2f", "#3a1e14"],
+      vars: {
+        "--background": "oklch(0.97 0.014 45)",
+        "--foreground": "oklch(0.32 0.05 40)",
+        "--card": "oklch(0.99 0.01 45)",
+        "--primary": "oklch(0.63 0.12 45)",
+        "--olive": "oklch(0.56 0.1 42)",
+      },
+    },
+    marfil: {
+      nombre: "Marfil minimal",
+      swatch: ["#fbfaf7", "#d8d3c8", "#8d8779", "#2c2a25"],
+      vars: {
+        "--background": "oklch(0.985 0.005 90)",
+        "--foreground": "oklch(0.28 0.008 90)",
+        "--card": "oklch(0.995 0.003 90)",
+        "--primary": "oklch(0.7 0.02 90)",
+        "--olive": "oklch(0.6 0.02 90)",
+      },
+    },
   };
+
 
 export const MELODIAS: { id: Melodia; nombre: string }[] = [
   { id: "romantica", nombre: "Romántica" },
@@ -427,6 +502,132 @@ export const PLANTILLAS: (Invitacion & { slug: string; descripcion: string })[] 
     corona: "flores",
     textura: "marmol",
   },
+  {
+    slug: "orquidea-neon",
+    descripcion: "Fondo oscuro con violeta neón, itinerario animado y muro de mensajes.",
+    plantilla: "Orquídea Neón",
+    evento: "XV Años",
+    nombre1: "Ximena",
+    nombre2: "",
+    fecha: "2026-10-24T16:30",
+    lugar: "Hacienda Los Encinos",
+    ciudad: "Valle Real",
+    frase: "Mis XV Años",
+    historia:
+      "Una noche de luces, música y baile para celebrar la etapa más brillante de mi vida junto a las personas que quiero.",
+    itinerario: [
+      { hora: "16:30 HRS", titulo: "Ceremonia religiosa", lugar: "Capilla Los Ángeles", icono: "iglesia" },
+      { hora: "18:00 HRS", titulo: "Cóctel de bienvenida", lugar: "Jardín de las Fuentes", icono: "coctel" },
+      { hora: "19:30 HRS", titulo: "Cena y vals", lugar: "Salón principal", icono: "cena" },
+      { hora: "21:00 HRS", titulo: "Primer baile y fiesta", lugar: "DJ y barra libre", icono: "baile" },
+      { hora: "01:00 HRS", titulo: "Tornaboda", lugar: "Para recargar energías", icono: "amanecer" },
+    ],
+    dressCode: "Formal riguroso / Black Tie",
+    dressDetalle: "Hombres: traje oscuro o esmoquin. Mujeres: vestido largo de noche.",
+    regalosTitulo: "Lluvia de sobres",
+    regalosUrl: "",
+    mapsUrl: "https://maps.google.com/?q=Valle+Real",
+    rsvpLimite: "1 de octubre",
+    tema: "orquidea",
+    melodia: "alegre",
+    animacionPortada: "zoom",
+    marco: "ninguno",
+    corona: "flores",
+    textura: "ninguno",
+    separador: "asterisco",
+  },
+  {
+    slug: "medianoche-neon",
+    descripcion: "Turquesa y violeta sobre negro para fiestas nocturnas y cumpleaños.",
+    plantilla: "Medianoche Neón",
+    evento: "Cumpleaños",
+    nombre1: "Andrés",
+    nombre2: "",
+    fecha: "2026-11-14T21:00",
+    lugar: "Rooftop Skyline",
+    ciudad: "CDMX",
+    frase: "Fiesta de Cumpleaños",
+    historia: "Música, luces y buena compañía. Nos vemos arriba, la ciudad se ve mejor de noche.",
+    itinerario: [
+      { hora: "21:00 HRS", titulo: "Bienvenida", lugar: "Terraza", icono: "bebida" },
+      { hora: "22:00 HRS", titulo: "Brindis", lugar: "Barra central", icono: "brindis" },
+      { hora: "23:00 HRS", titulo: "DJ set", lugar: "Pista", icono: "musica" },
+    ],
+    dressCode: "Cocktail nocturno",
+    dressDetalle: "Tonos oscuros con un detalle neón.",
+    regalosTitulo: "Sorpresas bienvenidas",
+    regalosUrl: "",
+    mapsUrl: "https://maps.google.com/?q=CDMX",
+    rsvpLimite: "1 de noviembre",
+    tema: "neon",
+    melodia: "alegre",
+    animacionPortada: "cortina",
+    marco: "ninguno",
+    corona: "ninguno",
+    textura: "ninguno",
+    separador: "rombo",
+  },
+  {
+    slug: "terracota-campestre",
+    descripcion: "Tonos tierra y tipografía cálida para bodas campestres.",
+    plantilla: "Terracota Campestre",
+    evento: "Boda",
+    nombre1: "Lucía",
+    nombre2: "Andrés",
+    fecha: "2026-09-19T17:30",
+    lugar: "Rancho El Encino",
+    ciudad: "San Miguel de Allende",
+    frase: "Nos Casamos",
+    historia: "Entre viñedos y atardeceres de barro, queremos empezar nuestra historia juntos.",
+    itinerario: [
+      { hora: "17:30 HRS", titulo: "Ceremonia al atardecer", lugar: "Explanada", icono: "anillos" },
+      { hora: "19:00 HRS", titulo: "Cena de campo", lugar: "Terraza", icono: "cena" },
+      { hora: "21:00 HRS", titulo: "Baile", lugar: "Patio central", icono: "baile" },
+    ],
+    dressCode: "Campestre elegante",
+    dressDetalle: "Tonos tierra. Calzado cómodo para terreno de piedra.",
+    regalosTitulo: "Mesa de regalos",
+    regalosUrl: "",
+    mapsUrl: "https://maps.google.com/?q=San+Miguel+de+Allende",
+    rsvpLimite: "1 de septiembre",
+    tema: "terracota",
+    melodia: "romantica",
+    animacionPortada: "fade",
+    marco: "dorado",
+    corona: "flores",
+    textura: "papel",
+    separador: "hojas",
+  },
+  {
+    slug: "marfil-minimal",
+    descripcion: "Minimalismo marfil, mucho aire y tipografía editorial.",
+    plantilla: "Marfil Minimal",
+    evento: "Boda Civil",
+    nombre1: "Ana",
+    nombre2: "Luis",
+    fecha: "2026-07-04T12:00",
+    lugar: "Casa Blanca",
+    ciudad: "Oaxaca",
+    frase: "Boda Civil",
+    historia: "Algo sencillo, íntimo y muy nuestro.",
+    itinerario: [
+      { hora: "12:00 HRS", titulo: "Ceremonia civil", lugar: "Patio de la casa", icono: "anillos" },
+      { hora: "13:30 HRS", titulo: "Comida", lugar: "Comedor", icono: "cena" },
+    ],
+    dressCode: "Casual elegante",
+    dressDetalle: "Tonos neutros, lino y algodón.",
+    regalosTitulo: "Tu presencia",
+    regalosUrl: "",
+    mapsUrl: "https://maps.google.com/?q=Oaxaca",
+    rsvpLimite: "15 de junio",
+    tema: "marfil",
+    melodia: "serena",
+    animacionPortada: "fade",
+    marco: "ninguno",
+    corona: "ninguno",
+    textura: "papel",
+    separador: "puntos",
+  },
 ];
 
 export const CLAVE_STORAGE = "invitacion-borrador";
@@ -456,6 +657,9 @@ const EXTRAS: Partial<Invitacion> = {
 
   familia: "Con la bendición de Dios y de nuestros padres",
   muroActivo: true,
+  separador: "asterisco",
+  itinerarioTitulo: "the Itinerary",
+  coloresSugeridos: ["#f7f6ef", "#c9a86a", "#8a9a5b", "#3b4232"],
   hitos: [
     { anio: "2019", titulo: "Nos conocimos", texto: "Una tarde cualquiera que lo cambió todo." },
     { anio: "2022", titulo: "El primer viaje", texto: "Descubrimos que juntos todo es más bonito." },
