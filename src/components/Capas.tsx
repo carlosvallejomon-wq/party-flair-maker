@@ -120,6 +120,11 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
     if (i === 2) return { bottom: margen, left: margen };
     return { bottom: margen, right: margen };
   });
+  const compensacion = exterior.map((borde, i) => {
+    const x = (i === 1 || i === 3 ? 1 : -1) * borde.x * 100;
+    const y = (i >= 2 ? 1 : -1) * borde.y * 100;
+    return `translate(${x}%, ${y}%)`;
+  });
 
   return (
     <>
@@ -133,6 +138,7 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
             width: tam,
             aspectRatio: "1 / 1",
             opacity: opacidad,
+             transform: compensacion[i],
           }}
         >
           <img
@@ -142,7 +148,7 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
             className="h-full w-full object-contain"
             style={{
               transformOrigin: "center",
-              transform: `${acomodo[i]} translate(${i === 1 || i === 3 ? bordes.izquierda * 100 : -bordes.izquierda * 100}%, ${i >= 2 ? bordes.arriba * 100 : -bordes.arriba * 100}%) rotate(${giro}deg)`,
+              transform: `${acomodo[i]} rotate(${giro}deg)`,
             }}
           />
         </span>
