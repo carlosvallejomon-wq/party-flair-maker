@@ -429,27 +429,67 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           </section>
         )}
 
-        {/* Itinerario */}
+        {/* Itinerario en zigzag con iconos interactivos */}
         {inv.itinerario.length > 0 && (
-          <section id="itinerario" className="relative bg-foreground px-8 py-16 text-background">
-            <h2 className="mb-14 text-center font-display text-4xl">El Gran Día</h2>
-            <div className="relative space-y-12">
-              <div className="absolute top-0 bottom-0 left-[11px] w-px bg-background/20" />
-              {inv.itinerario.map((item, i) => (
-                <Reveal key={`${item.titulo}-${i}`} delay={i * 120}>
-                  <div className="relative pl-10">
-                    <div className="absolute top-1 left-0 flex size-[22px] items-center justify-center rounded-full border border-primary bg-foreground">
-                      <div className="size-1.5 rounded-full bg-primary" />
-                    </div>
-                    <span className="font-mono text-xs text-primary">{item.hora}</span>
-                    <h3 className="text-lg font-medium">{item.titulo}</h3>
-                    <p className="mt-1 text-xs text-background/60">{item.lugar}</p>
-                  </div>
-                </Reveal>
-              ))}
+          <section id="itinerario" className="relative overflow-hidden px-6 py-16">
+            <Reveal>
+              <div className="mb-12 text-center">
+                <span className="block font-display text-3xl text-olive italic">the</span>
+                <h2 className="font-display text-4xl tracking-[0.22em] text-primary uppercase">
+                  {(inv.itinerarioTitulo ?? "Itinerary").replace(/^the\s+/i, "")}
+                </h2>
+              </div>
+            </Reveal>
+
+            <div className="relative">
+              <span className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-primary/40" />
+              <div className="space-y-8">
+                {inv.itinerario.map((item, i) => {
+                  const Icono = iconoPorId(item.icono);
+                  const izquierda = i % 2 === 0;
+                  const activo = momento === i;
+                  return (
+                    <Reveal key={`${item.titulo}-${i}`} delay={i * 110}>
+                      <button
+                        type="button"
+                        onClick={() => setMomento(activo ? null : i)}
+                        aria-expanded={activo}
+                        className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-3 text-left"
+                      >
+                        <div className={izquierda ? "text-right" : "order-3 text-left"}>
+                          <span className="block font-mono text-2xl text-primary tabular-nums">
+                            {item.hora.replace(/\s*HRS?/i, "")}
+                          </span>
+                          <span className="my-1 block text-[10px] text-primary/60">▾</span>
+                          <h3 className="text-sm leading-tight font-semibold tracking-wide uppercase">
+                            {item.titulo}
+                          </h3>
+                          <p
+                            className={`text-xs text-foreground/60 transition-all ${activo ? "mt-1 max-h-24 opacity-100" : "max-h-0 overflow-hidden opacity-0"}`}
+                          >
+                            {item.lugar}
+                          </p>
+                        </div>
+
+                        <span className="order-2 flex size-4 items-center justify-center rounded-full border border-primary bg-background">
+                          <span className="size-1.5 rounded-full bg-primary" />
+                        </span>
+
+                        <span
+                          className={`flex size-20 items-center justify-center rounded-2xl border border-primary/25 bg-card text-primary transition-transform ${activo ? "scale-105" : ""} ${relieve ? "tarjeta-relieve" : ""} ${izquierda ? "order-3 justify-self-start" : "order-1 justify-self-end"}`}
+                        >
+                          <Icono size={30} strokeWidth={1.2} />
+                        </span>
+                      </button>
+                    </Reveal>
+                  );
+                })}
+              </div>
             </div>
           </section>
         )}
+
+        <Divisor inv={inv} />
 
         {/* Ubicación */}
         <section id="ubicacion" className="relative px-8 py-16">
