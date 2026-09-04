@@ -754,9 +754,10 @@ function Editor() {
                   <select
                     aria-label={`Icono del momento ${i + 1}`}
                     className={campo}
-                    value={item.icono ?? "reloj"}
+                    value={item.icono ?? "auto"}
                     onChange={(e) => setItem(i, "icono", e.target.value)}
                   >
+                    <option value="auto">Automático</option>
                     {ICONOS.map((ic) => (
                       <option key={ic.id} value={ic.id}>
                         {ic.nombre}
