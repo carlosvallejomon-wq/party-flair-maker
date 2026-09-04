@@ -19,6 +19,7 @@ import botanical from "@/assets/botanical-hero.jpg";
 import pareja1 from "@/assets/pareja-1.jpg";
 import pareja2 from "@/assets/pareja-2.jpg";
 import { DecoracionPropia, Esquinas, Marco, Textura, coronaDe, marcoDe } from "@/components/Capas";
+import { Divisor } from "@/components/Divisor";
 import { Muro } from "@/components/Muro";
 import { QrAlbum } from "@/components/QrAlbum";
 import { Reveal } from "@/components/Reveal";
@@ -34,6 +35,7 @@ import {
   mapaEmbebido,
   type Invitacion,
 } from "@/lib/invitacion";
+import { iconoPorId } from "@/lib/iconos";
 import { useAmbientMusic } from "@/lib/use-ambient-music";
 
 function useCuentaRegresiva(iso: string) {
@@ -72,6 +74,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
   const [enviado, setEnviado] = useState(false);
   const [abierto, setAbierto] = useState(!inv.sobreActivo);
   const [foto, setFoto] = useState<string | null>(null);
+  const [momento, setMomento] = useState<number | null>(0);
 
   useEffect(() => {
     setAbierto(!inv.sobreActivo);
@@ -355,6 +358,8 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             </a>
           </div>
         </section>
+
+        <Divisor inv={inv} />
 
         {/* Historia */}
         {inv.historia.trim() && (
@@ -663,6 +668,8 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           )}
         </section>
 
+        <Divisor inv={inv} />
+
         {/* Galería */}
         <section className="relative px-8 pb-16">
           <Reveal>
@@ -733,6 +740,8 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             </Reveal>
           </section>
         )}
+
+        <Divisor inv={inv} />
 
         {/* RSVP */}
 
