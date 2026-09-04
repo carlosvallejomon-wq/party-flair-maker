@@ -1,16 +1,25 @@
 import {
+  Banknote,
   CalendarPlus,
+  Car,
   CheckCircle2,
   ChevronDown,
   Clock3,
+  CreditCard,
+  ExternalLink,
+  Eye,
   Gift,
+  Mail,
   Images,
   Instagram,
   MapPin,
   Music2,
+  Plane,
   Navigation,
   Pause,
   Share2,
+  Shirt,
+  ShoppingBag,
   Sparkles,
 } from "lucide-react";
 import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
@@ -37,6 +46,27 @@ import {
 } from "@/lib/invitacion";
 import { iconoPorId } from "@/lib/iconos";
 import { useAmbientMusic } from "@/lib/use-ambient-music";
+
+/** Icono para cada opción de la mesa de regalos. */
+const ICONOS_REGALO = {
+  sobre: Mail,
+  efectivo: Banknote,
+  transferencia: CreditCard,
+  tienda: ShoppingBag,
+  viaje: Plane,
+  regalo: Gift,
+} as const;
+
+function iconoRegalo(id?: string, texto = "") {
+  if (id && id in ICONOS_REGALO) return ICONOS_REGALO[id as keyof typeof ICONOS_REGALO];
+  const t = texto.toLowerCase();
+  if (/sobre|lluvia/.test(t)) return Mail;
+  if (/efectivo|aporte|dinero/.test(t)) return Banknote;
+  if (/transfer|banco|cuenta|cbu|clabe/.test(t)) return CreditCard;
+  if (/tienda|liverpool|amazon|palacio|mesa/.test(t)) return ShoppingBag;
+  if (/viaje|luna de miel/.test(t)) return Plane;
+  return Gift;
+}
 
 function useCuentaRegresiva(iso: string) {
   const [restante, setRestante] = useState<{ d: number; h: number; m: number; s: number } | null>(
