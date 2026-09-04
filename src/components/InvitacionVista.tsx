@@ -548,47 +548,74 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
         {/* Lugares de la celebración */}
         {(inv.sedes ?? []).some((s) => s.nombre.trim()) && (
-          <section className="relative bg-primary/5 px-8 py-16">
+          <section className="relative bg-primary/5 px-6 py-16">
             <Reveal>
-              <h2 className="mb-8 text-center font-display text-3xl italic">
+              <p className="text-center text-[9px] tracking-[0.3em] text-olive uppercase">
+                Ubicaciones
+              </p>
+              <h2 className="mt-2 mb-8 text-center font-display text-3xl">
                 Lugares de la Celebración
               </h2>
             </Reveal>
             <div className="space-y-5">
               {(inv.sedes ?? [])
                 .filter((s) => s.nombre.trim())
-                .map((s, i) => (
-                  <Reveal key={`${s.nombre}-${i}`} delay={i * 120}>
-                    <div
-                      className={`rounded-3xl border border-primary/15 bg-card/80 p-6 text-center backdrop-blur-sm ${relieve ? "tarjeta-relieve" : ""}`}
-                    >
-                      <span className="inline-block rounded-full bg-primary px-4 py-1 text-[9px] tracking-widest text-primary-foreground uppercase">
-                        {s.etiqueta}
-                      </span>
-                      <h3 className="mt-4 font-display text-2xl italic">{s.nombre}</h3>
-                      {s.hora.trim() && (
-                        <p className="mt-1 font-mono text-xs text-primary">{s.hora}</p>
-                      )}
-                      {s.direccion.trim() && (
-                        <p className="mt-2 text-xs text-foreground/60">{s.direccion}</p>
-                      )}
-                      <a
-                        href={
-                          s.mapsUrl.trim() ||
-                          `https://maps.google.com/?q=${encodeURIComponent(`${s.nombre} ${s.direccion}`)}`
-                        }
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mt-5 inline-flex items-center gap-2 rounded-full border border-primary px-5 py-2 text-[10px] tracking-widest text-primary uppercase hover:bg-primary hover:text-background"
+                .map((s, i) => {
+                  const Icono = iconoPorId(undefined, `${s.etiqueta} ${s.nombre}`);
+                  const maps =
+                    s.mapsUrl.trim() ||
+                    `https://maps.google.com/?q=${encodeURIComponent(`${s.nombre} ${s.direccion}`)}`;
+                  const waze =
+                    s.wazeUrl?.trim() ||
+                    `https://waze.com/ul?q=${encodeURIComponent(`${s.nombre} ${s.direccion}`)}`;
+                  const uber =
+                    s.uberUrl?.trim() ||
+                    `https://m.uber.com/ul/?action=setPickup&dropoff[nickname]=${encodeURIComponent(s.nombre)}`;
+                  return (
+                    <Reveal key={`${s.nombre}-${i}`} delay={i * 120}>
+                      <div
+                        className={`rounded-3xl border border-primary/15 p-6 text-left ${relieve ? "capsula-vidrio" : "bg-card"}`}
                       >
-                        <Navigation size={13} /> Cómo llegar
-                      </a>
-                    </div>
-                  </Reveal>
-                ))}
+                        <span className="inline-flex items-center gap-2 rounded-full bg-primary/12 px-3 py-1.5 text-[9px] tracking-[0.18em] text-primary uppercase">
+                          <Icono size={13} strokeWidth={1.4} /> {s.etiqueta}
+                        </span>
+                        {s.hora.trim() && (
+                          <p className="mt-3 flex items-center gap-2 font-mono text-xs text-primary">
+                            <Clock3 size={13} /> {s.hora}
+                          </p>
+                        )}
+                        <h3 className="mt-2 font-display text-2xl leading-tight">{s.nombre}</h3>
+                        {s.direccion.trim() && (
+                          <p className="mt-2 flex items-start gap-2 text-xs leading-relaxed text-foreground/60">
+                            <MapPin size={13} className="mt-0.5 shrink-0 text-primary" />
+                            {s.direccion}
+                          </p>
+                        )}
+                        <div className="mt-5 grid grid-cols-3 gap-2 border-t border-primary/12 pt-4">
+                          {[
+                            { href: maps, Icono: Navigation, texto: "Maps" },
+                            { href: waze, Icono: Navigation, texto: "Waze" },
+                            { href: uber, Icono: Car, texto: "Uber" },
+                          ].map((b) => (
+                            <a
+                              key={b.texto}
+                              href={b.href}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="flex items-center justify-center gap-1.5 rounded-full border border-primary/20 bg-primary/8 py-2.5 text-[10px] font-medium text-foreground/80 transition-colors hover:bg-primary hover:text-primary-foreground"
+                            >
+                              <b.Icono size={12} className="text-primary" /> {b.texto}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    </Reveal>
+                  );
+                })}
             </div>
           </section>
         )}
+
 
         {/* A tomar en cuenta */}
         {(inv.notas ?? []).length > 0 && (
