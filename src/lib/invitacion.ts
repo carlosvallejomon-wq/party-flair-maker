@@ -234,7 +234,74 @@ export const TEMAS: Record<Tema, { nombre: string; swatch: string[]; vars: Recor
         "--olive": "oklch(0.75 0.005 260)",
       },
     },
+    orquidea: {
+      nombre: "Orquídea neón",
+      swatch: ["#1b1024", "#b57bff", "#7a3ff2", "#f5eaff"],
+      vars: {
+        "--background": "oklch(0.19 0.04 300)",
+        "--foreground": "oklch(0.95 0.02 300)",
+        "--card": "oklch(0.24 0.05 300)",
+        "--primary": "oklch(0.72 0.18 305)",
+        "--olive": "oklch(0.8 0.12 160)",
+      },
+    },
+    neon: {
+      nombre: "Medianoche neón",
+      swatch: ["#0d0f18", "#5ce1e6", "#a259ff", "#eef4ff"],
+      vars: {
+        "--background": "oklch(0.16 0.02 265)",
+        "--foreground": "oklch(0.95 0.01 265)",
+        "--card": "oklch(0.22 0.03 265)",
+        "--primary": "oklch(0.82 0.13 195)",
+        "--olive": "oklch(0.7 0.16 300)",
+      },
+    },
+    menta: {
+      nombre: "Menta fresca",
+      swatch: ["#f2fbf7", "#7fd6b5", "#3f9d7c", "#1d3b31"],
+      vars: {
+        "--background": "oklch(0.98 0.015 165)",
+        "--foreground": "oklch(0.32 0.04 165)",
+        "--card": "oklch(0.99 0.01 165)",
+        "--primary": "oklch(0.75 0.1 165)",
+        "--olive": "oklch(0.63 0.09 165)",
+      },
+    },
+    ambar: {
+      nombre: "Ámbar dorado",
+      swatch: ["#fdf8ec", "#e0ad4b", "#b0801f", "#3d3116"],
+      vars: {
+        "--background": "oklch(0.98 0.018 90)",
+        "--foreground": "oklch(0.33 0.04 85)",
+        "--card": "oklch(0.99 0.012 90)",
+        "--primary": "oklch(0.78 0.12 85)",
+        "--olive": "oklch(0.67 0.11 85)",
+      },
+    },
+    terracota: {
+      nombre: "Terracota",
+      swatch: ["#fbf2ec", "#c9714b", "#9c4f2f", "#3a1e14"],
+      vars: {
+        "--background": "oklch(0.97 0.014 45)",
+        "--foreground": "oklch(0.32 0.05 40)",
+        "--card": "oklch(0.99 0.01 45)",
+        "--primary": "oklch(0.63 0.12 45)",
+        "--olive": "oklch(0.56 0.1 42)",
+      },
+    },
+    marfil: {
+      nombre: "Marfil minimal",
+      swatch: ["#fbfaf7", "#d8d3c8", "#8d8779", "#2c2a25"],
+      vars: {
+        "--background": "oklch(0.985 0.005 90)",
+        "--foreground": "oklch(0.28 0.008 90)",
+        "--card": "oklch(0.995 0.003 90)",
+        "--primary": "oklch(0.7 0.02 90)",
+        "--olive": "oklch(0.6 0.02 90)",
+      },
+    },
   };
+
 
 export const MELODIAS: { id: Melodia; nombre: string }[] = [
   { id: "romantica", nombre: "Romántica" },
