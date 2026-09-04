@@ -1,5 +1,6 @@
 import { CORONAS, ESQUINAS, MARCOS, TEXTURAS, buscarAdorno } from "@/lib/adornos";
 import type { Invitacion } from "@/lib/invitacion";
+import { useEffect, useState } from "react";
 
 export const marcoDe = (inv: Invitacion) => buscarAdorno(MARCOS, inv.marco, inv.marcoUrl);
 export const coronaDe = (inv: Invitacion) => buscarAdorno(CORONAS, inv.corona, inv.coronaUrl);
@@ -15,6 +16,61 @@ const DISPOSICIONES: Record<string, number[]> = {
   lados: [0, 2],
 };
 
+type BordesTransparentes = { arriba: number; derecha: number; abajo: number; izquierda: number };
+
+/** Mide el espacio transparente del PNG para anclar la parte visible, no el lienzo vacío. */
+function useBordesTransparentes(src: string) {
+  const [bordes, setBordes] = useState<BordesTransparentes>({ arriba: 0, derecha: 0, abajo: 0, izquierda: 0 });
+
+  useEffect(() => {
+    const imagen = new Image();
+    imagen.onload = () => {
+      const lado = 220;
+      const canvas = document.createElement("canvas");
+      canvas.width = lado;
+      canvas.height = lado;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      if (!ctx) return;
+      const escala = Math.min(lado / imagen.naturalWidth, lado / imagen.naturalHeight);
+      const ancho = imagen.naturalWidth * escala;
+      const alto = imagen.naturalHeight * escala;
+      const x0 = (lado - ancho) / 2;
+      const y0 = (lado - alto) / 2;
+      ctx.clearRect(0, 0, lado, lado);
+      ctx.drawImage(imagen, x0, y0, ancho, alto);
+      try {
+        const datos = ctx.getImageData(0, 0, lado, lado).data;
+        let minX = lado;
+        let minY = lado;
+        let maxX = 0;
+        let maxY = 0;
+        for (let y = 0; y < lado; y += 1) {
+          for (let x = 0; x < lado; x += 1) {
+            if ((datos[(y * lado + x) * 4 + 3] ?? 0) < 18) continue;
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            maxX = Math.max(maxX, x);
+            maxY = Math.max(maxY, y);
+          }
+        }
+        if (minX === lado) return;
+        setBordes({
+          arriba: minY / lado,
+          derecha: (lado - 1 - maxX) / lado,
+          abajo: (lado - 1 - maxY) / lado,
+          izquierda: minX / lado,
+        });
+      } catch {
+        setBordes({ arriba: 0, derecha: 0, abajo: 0, izquierda: 0 });
+      }
+    };
+    imagen.src = src;
+    return () => { imagen.onload = null; };
+  }, [src]);
+
+  return bordes;
+}
+
 /**
  * Decoración repetida en las esquinas de la invitación.
  * Cada esquina se ancla con `inset` y se transforma desde su propio vértice,
@@ -22,6 +78,7 @@ const DISPOSICIONES: Record<string, number[]> = {
  */
 export function Esquinas({ inv }: { inv: Invitacion }) {
   const src = esquinasDe(inv);
+  const bordes = useBordesTransparentes(src);
   if (!src) return null;
 
   const tam = `${inv.esquinasTamano ?? 30}%`;
@@ -40,11 +97,27 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
         ? ["rotate(0deg)", "rotate(90deg)", "rotate(270deg)", "rotate(180deg)"]
         : ["scale(1, 1)", "scale(1, 1)", "scale(1, 1)", "scale(1, 1)"];
 
+  // En modo espejo el mismo borde original mira hacia cada vértice. Compensar
+  // su transparencia evita que el adorno se aleje del filo cuando crece.
+  const exterior = modo === "espejo"
+    ? [
+        { x: bordes.izquierda, y: bordes.arriba },
+        { x: bordes.izquierda, y: bordes.arriba },
+        { x: bordes.izquierda, y: bordes.arriba },
+        { x: bordes.izquierda, y: bordes.arriba },
+      ]
+    : [
+        { x: bordes.izquierda, y: bordes.arriba },
+        { x: bordes.derecha, y: bordes.arriba },
+        { x: bordes.izquierda, y: bordes.abajo },
+        { x: bordes.derecha, y: bordes.abajo },
+      ];
+
   const posicion = [
-    { top: margen, left: margen },
-    { top: margen, right: margen },
-    { bottom: margen, left: margen },
-    { bottom: margen, right: margen },
+    { top: `calc(${margen} - ${exterior[0].y * 100}% * ${inv.esquinasTamano ?? 30} / 100)`, left: `calc(${margen} - ${exterior[0].x * 100}% * ${inv.esquinasTamano ?? 30} / 100)` },
+    { top: `calc(${margen} - ${exterior[1].y * 100}% * ${inv.esquinasTamano ?? 30} / 100)`, right: `calc(${margen} - ${exterior[1].x * 100}% * ${inv.esquinasTamano ?? 30} / 100)` },
+    { bottom: `calc(${margen} - ${exterior[2].y * 100}% * ${inv.esquinasTamano ?? 30} / 100)`, left: `calc(${margen} - ${exterior[2].x * 100}% * ${inv.esquinasTamano ?? 30} / 100)` },
+    { bottom: `calc(${margen} - ${exterior[3].y * 100}% * ${inv.esquinasTamano ?? 30} / 100)`, right: `calc(${margen} - ${exterior[3].x * 100}% * ${inv.esquinasTamano ?? 30} / 100)` },
   ];
 
   return (
