@@ -683,7 +683,19 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           </section>
         )}
 
+        {/* Muro de felicitaciones */}
+        {inv.muroActivo !== false && (
+          <section className="relative bg-primary/5 px-8 py-16 text-center">
+            <Reveal>
+              <p className="text-[9px] tracking-[0.3em] text-olive uppercase">Déjanos tu huella</p>
+              <h2 className="mt-2 mb-6 font-display text-3xl italic">Muro de Felicitaciones</h2>
+              <Muro clave={`${inv.nombre1}-${inv.fecha}`} relieve={relieve} />
+            </Reveal>
+          </section>
+        )}
+
         {/* RSVP */}
+
         <section id="rsvp" className="relative px-8 py-16">
           <Reveal>
             <div
