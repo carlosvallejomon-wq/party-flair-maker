@@ -130,7 +130,7 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
         const alpha = ctx.getImageData(0, 0, lado, lado).data;
         const transparente = (indice: number) => (alpha[indice * 4 + 3] ?? 255) < 42;
         const visitado = new Uint8Array(lado * lado);
-        const componentes: Array<{ minX: number; maxX: number; minY: number; maxY: number; area: number; borde: boolean }> = [];
+        const componentes: Array<{ minX: number; maxX: number; minY: number; maxY: number; area: number; borde: boolean; pixeles: number[] }> = [];
         for (let inicio = 0; inicio < lado * lado; inicio += 1) {
           if (visitado[inicio] || !transparente(inicio)) continue;
           const cola = [inicio];
@@ -159,7 +159,7 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
               cola.push(vecino);
             }
           }
-          componentes.push({ minX, maxX, minY, maxY, area: cola.length, borde });
+          componentes.push({ minX, maxX, minY, maxY, area: cola.length, borde, pixeles: cola });
         }
         const centro = lado / 2;
         const huecoCentral = componentes
@@ -183,16 +183,12 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
           return;
         }
         const mascaraDatos = mascaraCtx.createImageData(lado, lado);
-        for (let y = huecoCentral.minY; y <= huecoCentral.maxY; y += 1) {
-          for (let x = huecoCentral.minX; x <= huecoCentral.maxX; x += 1) {
-            const indice = y * lado + x;
-            if (!transparente(indice)) continue;
-            const salida = indice * 4;
-            mascaraDatos.data[salida] = 255;
-            mascaraDatos.data[salida + 1] = 255;
-            mascaraDatos.data[salida + 2] = 255;
-            mascaraDatos.data[salida + 3] = 255;
-          }
+        for (const indice of huecoCentral.pixeles) {
+          const salida = indice * 4;
+          mascaraDatos.data[salida] = 255;
+          mascaraDatos.data[salida + 1] = 255;
+          mascaraDatos.data[salida + 2] = 255;
+          mascaraDatos.data[salida + 3] = 255;
         }
         mascaraCtx.putImageData(mascaraDatos, 0, 0);
         setHueco({

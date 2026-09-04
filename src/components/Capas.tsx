@@ -82,7 +82,7 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
   if (!src) return null;
 
   const tam = `${inv.esquinasTamano ?? 30}%`;
-  const margen = `${inv.esquinasMargen ?? 0}%`;
+  const margenNumero = inv.esquinasMargen ?? 0;
   const giro = inv.esquinasGiro ?? 0;
   const modo = inv.esquinasModo ?? (inv.esquinasEspejo === false ? "igual" : "espejo");
   const visibles = DISPOSICIONES[inv.esquinasDisposicion ?? "cuatro"] ?? DISPOSICIONES["cuatro"]!;
@@ -114,10 +114,10 @@ export function Esquinas({ inv }: { inv: Invitacion }) {
       ];
 
   const posicion = [
-    { top: `calc(${margen} - ${exterior[0].y * 100}% * ${inv.esquinasTamano ?? 30} / 100)`, left: `calc(${margen} - ${exterior[0].x * 100}% * ${inv.esquinasTamano ?? 30} / 100)` },
-    { top: `calc(${margen} - ${exterior[1].y * 100}% * ${inv.esquinasTamano ?? 30} / 100)`, right: `calc(${margen} - ${exterior[1].x * 100}% * ${inv.esquinasTamano ?? 30} / 100)` },
-    { bottom: `calc(${margen} - ${exterior[2].y * 100}% * ${inv.esquinasTamano ?? 30} / 100)`, left: `calc(${margen} - ${exterior[2].x * 100}% * ${inv.esquinasTamano ?? 30} / 100)` },
-    { bottom: `calc(${margen} - ${exterior[3].y * 100}% * ${inv.esquinasTamano ?? 30} / 100)`, right: `calc(${margen} - ${exterior[3].x * 100}% * ${inv.esquinasTamano ?? 30} / 100)` },
+    { top: `${margenNumero - exterior[0].y * (inv.esquinasTamano ?? 30)}%`, left: `${margenNumero - exterior[0].x * (inv.esquinasTamano ?? 30)}%` },
+    { top: `${margenNumero - exterior[1].y * (inv.esquinasTamano ?? 30)}%`, right: `${margenNumero - exterior[1].x * (inv.esquinasTamano ?? 30)}%` },
+    { bottom: `${margenNumero - exterior[2].y * (inv.esquinasTamano ?? 30)}%`, left: `${margenNumero - exterior[2].x * (inv.esquinasTamano ?? 30)}%` },
+    { bottom: `${margenNumero - exterior[3].y * (inv.esquinasTamano ?? 30)}%`, right: `${margenNumero - exterior[3].x * (inv.esquinasTamano ?? 30)}%` },
   ];
 
   return (
