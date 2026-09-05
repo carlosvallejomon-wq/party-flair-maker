@@ -284,8 +284,17 @@ function Editor() {
                   id="musicaUrl"
                   className={campo}
                   placeholder="https://.../cancion.mp3"
-                  value={inv.musicaUrl ?? ""}
+                  value={inv.musicaUrl?.startsWith("data:") ? "" : (inv.musicaUrl ?? "")}
                   onChange={(e) => set("musicaUrl", e.target.value)}
+                />
+              </div>
+              <div>
+                <SubirArchivo
+                  etiqueta="…o sube tu mp3"
+                  acepta="audio/*"
+                  ayuda="Máximo 8 MB. Reemplaza el enlace de arriba."
+                  valor={inv.musicaUrl?.startsWith("data:") ? inv.musicaUrl : ""}
+                  onCambio={(v) => set("musicaUrl", v)}
                 />
               </div>
               <div className="sm:col-span-3 flex flex-wrap gap-6">
