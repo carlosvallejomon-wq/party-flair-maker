@@ -1237,6 +1237,49 @@ export function guardarBorrador(inv: Invitacion) {
   }
 }
 
+/** Marca que indica que el mp3 vive en IndexedDB y no en localStorage. */
+export const MARCA_AUDIO_IDB = "idb:musica";
+
+/**
+ * Guarda el borrador sacando el mp3 subido (data URL) hacia IndexedDB:
+ * localStorage solo admite ~5 MB y los audios lo superan con facilidad.
+ */
+export async function guardarBorradorCompleto(inv: Invitacion): Promise<boolean> {
+  const copia = { ...inv };
+  if (copia.musicaUrl?.startsWith("data:")) {
+    try {
+      const { guardarMedia } = await import("@/lib/media-store");
+      await guardarMedia("musica", copia.musicaUrl);
+      copia.musicaUrl = MARCA_AUDIO_IDB;
+    } catch {
+      return false;
+    }
+  } else if (copia.musicaUrl !== MARCA_AUDIO_IDB) {
+    // Si ya no hay mp3 subido, limpia el archivo guardado anteriormente.
+    try {
+      const { borrarMedia } = await import("@/lib/media-store");
+      await borrarMedia("musica");
+    } catch {
+      /* sin consecuencias */
+    }
+  }
+  return guardarBorrador(copia);
+}
+
+/** Carga el borrador y recupera el mp3 desde IndexedDB si aplica. */
+export async function cargarBorradorCompleto(): Promise<Invitacion | null> {
+  const inv = cargarBorrador();
+  if (inv?.musicaUrl === MARCA_AUDIO_IDB) {
+    try {
+      const { cargarMedia } = await import("@/lib/media-store");
+      inv.musicaUrl = (await cargarMedia("musica")) ?? "";
+    } catch {
+      inv.musicaUrl = "";
+    }
+  }
+  return inv;
+}
+
 export function fechaLarga(iso: string) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
