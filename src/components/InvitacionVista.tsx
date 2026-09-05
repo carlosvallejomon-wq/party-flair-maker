@@ -692,13 +692,18 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                   const izquierda = i % 2 === 0;
                   const activo = momento === i;
                   return (
-                    <Reveal key={`${item.titulo}-${i}`} delay={i * 110}>
+                    <Reveal
+                      key={`${item.titulo}-${i}`}
+                      delay={i * 110}
+                      desde={izquierda ? "izquierda" : "derecha"}
+                    >
                       <button
                         type="button"
                         onClick={() => setMomento(activo ? null : i)}
                         aria-expanded={activo}
-                        className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-3 text-left"
+                        className={`tarjeta-interactiva grid w-full grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-3xl border border-transparent p-2 text-left ${activo ? "border-primary/30" : ""}`}
                       >
+
                         <div className={izquierda ? "text-right" : "order-3 text-left"}>
                           <span className="block font-mono text-2xl text-primary tabular-nums">
                             {item.hora.replace(/\s*HRS?/i, "")}
@@ -820,7 +825,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                   return (
                     <Reveal key={`${s.nombre}-${i}`} delay={i * 120}>
                       <div
-                        className={`rounded-3xl border border-primary/15 p-6 text-left ${relieve ? "capsula-vidrio" : "bg-card"}`}
+                        className={`tarjeta-interactiva rounded-3xl border border-primary/15 p-6 text-left ${relieve ? "capsula-vidrio" : "bg-card"}`}
                       >
                         <span className="inline-flex items-center gap-2 rounded-full bg-primary/12 px-3 py-1.5 text-[9px] tracking-[0.18em] text-primary uppercase">
                           <Icono size={13} strokeWidth={1.4} /> {s.etiqueta}
@@ -878,7 +883,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
               {(inv.notas ?? []).map((n, i) => (
                 <Reveal key={`${n.titulo}-${i}`} delay={i * 100}>
                   <div
-                    className={`flex gap-4 rounded-3xl border border-primary/12 bg-card/80 p-5 ${relieve ? "tarjeta-relieve" : ""}`}
+                    className={`tarjeta-interactiva flex gap-4 rounded-3xl border border-primary/12 bg-card/80 p-5 ${relieve ? "tarjeta-relieve" : ""}`}
                   >
                     <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                       <Sparkles size={15} />
@@ -902,7 +907,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             <Reveal>
               <div
                 id="vestimenta"
-                className={`rounded-3xl border border-primary/15 p-7 text-center ${relieve ? "capsula-vidrio" : "bg-card"}`}
+                className={`tarjeta-interactiva rounded-3xl border border-primary/15 p-7 text-center ${relieve ? "capsula-vidrio" : "bg-card"}`}
               >
                 <span
                   className={`mx-auto -mt-14 mb-5 flex size-16 items-center justify-center rounded-full border border-primary/25 text-primary ${relieve ? "icono-relieve" : "bg-card"}`}
@@ -977,7 +982,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             <Reveal delay={120}>
               <div
                 id="regalos"
-                className={`rounded-3xl border border-primary/15 p-7 text-center ${relieve ? "capsula-vidrio" : "bg-card"}`}
+                className={`tarjeta-interactiva rounded-3xl border border-primary/15 p-7 text-center ${relieve ? "capsula-vidrio" : "bg-card"}`}
               >
                 <span
                   className={`mx-auto -mt-14 mb-5 flex size-16 items-center justify-center rounded-full border border-primary/25 text-primary ${relieve ? "icono-relieve" : "bg-card"}`}
@@ -1002,7 +1007,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                       return (
                         <div
                           key={`${r.titulo}-${i}`}
-                          className={`flex items-start gap-4 rounded-2xl border border-primary/15 p-4 ${relieve ? "tarjeta-relieve" : "bg-card"}`}
+                          className={`tarjeta-interactiva flex items-start gap-4 rounded-2xl border border-primary/15 p-4 ${relieve ? "tarjeta-relieve" : "bg-card"}`}
                         >
                           <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/12 text-primary">
                             <Icono size={18} strokeWidth={1.3} />

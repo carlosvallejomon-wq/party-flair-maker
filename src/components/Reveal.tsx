@@ -4,10 +4,13 @@ export function Reveal({
   children,
   className = "",
   delay = 0,
+  desde = "abajo",
 }: {
   children: ReactNode;
   className?: string;
   delay?: number;
+  /** Dirección desde la que entra el contenido. */
+  desde?: "abajo" | "izquierda" | "derecha";
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
@@ -28,14 +31,18 @@ export function Reveal({
     return () => io.disconnect();
   }, []);
 
+  const utilidad =
+    desde === "izquierda" ? "reveal-izq" : desde === "derecha" ? "reveal-der" : "reveal";
+
   return (
     <div
       ref={ref}
       data-visible={visible}
       style={{ transitionDelay: `${delay}ms` }}
-      className={`reveal ${className}`}
+      className={`${utilidad} ${className}`}
     >
       {children}
     </div>
   );
 }
+
