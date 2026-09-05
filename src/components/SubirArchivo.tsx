@@ -34,6 +34,8 @@ export function SubirArchivo({
   };
 
   const esVideo = acepta.includes("video");
+  const esAudio = acepta.includes("audio");
+
 
   return (
     <div>
