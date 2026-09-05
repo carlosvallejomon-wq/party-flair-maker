@@ -11,8 +11,8 @@ import {
   MELODIAS,
   PLANTILLAS,
   TEMAS,
-  cargarBorrador,
-  guardarBorrador,
+  cargarBorradorCompleto,
+  guardarBorradorCompleto,
   plantillaPorSlug,
   type Invitacion,
   type Melodia,
@@ -101,8 +101,9 @@ function Editor() {
       setInv(plantillaPorSlug(p));
       return;
     }
-    const borrador = cargarBorrador();
-    if (borrador) setInv(borrador);
+    void cargarBorradorCompleto().then((borrador) => {
+      if (borrador) setInv(borrador);
+    });
   }, [p]);
 
   const set = <K extends keyof Invitacion>(clave: K, valor: Invitacion[K]) =>
@@ -119,11 +120,12 @@ function Editor() {
     }));
 
   const guardar = () => {
-    const ok = guardarBorrador(inv);
-    setGuardado(true);
-    if (!ok) setAviso("No se pudo guardar: los archivos subidos son muy pesados para el navegador.");
-    else setAviso("");
-    setTimeout(() => setGuardado(false), 2500);
+    void guardarBorradorCompleto(inv).then((ok) => {
+      setGuardado(true);
+      if (!ok) setAviso("No se pudo guardar: los archivos subidos son muy pesados para el navegador.");
+      else setAviso("");
+      setTimeout(() => setGuardado(false), 2500);
+    });
   };
 
   return (

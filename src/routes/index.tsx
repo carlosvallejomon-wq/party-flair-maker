@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { InvitacionVista } from "@/components/InvitacionVista";
-import { cargarBorrador, plantillaPorSlug, type Invitacion } from "@/lib/invitacion";
+import { cargarBorradorCompleto, plantillaPorSlug, type Invitacion } from "@/lib/invitacion";
 
 const TITULO = "Invitaciones digitales interactivas | Votos & Seda";
 const DESCRIPCION =
@@ -26,8 +26,9 @@ function Inicio() {
   const [inv, setInv] = useState<Invitacion>(() => plantillaPorSlug());
 
   useEffect(() => {
-    const borrador = cargarBorrador();
-    if (borrador) setInv(borrador);
+    void cargarBorradorCompleto().then((borrador) => {
+      if (borrador) setInv(borrador);
+    });
   }, []);
 
   return (

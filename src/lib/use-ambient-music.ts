@@ -52,6 +52,11 @@ export function useAmbientMusic(melodia: Melodia = "romantica", url?: string) {
   const start = useCallback(() => {
     const pista = urlRef.current?.trim();
     if (pista) {
+      // Si la melodía sintetizada estaba sonando, se apaga antes de
+      // reproducir el mp3 para que nunca se mezclen ambas.
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = null;
+      gainRef.current?.gain.setTargetAtTime(0, ctxRef.current?.currentTime ?? 0, 0.1);
       if (!audioRef.current) {
         const el = new Audio(pista);
         el.loop = true;
@@ -60,10 +65,15 @@ export function useAmbientMusic(melodia: Melodia = "romantica", url?: string) {
       } else if (audioRef.current.src !== pista) {
         audioRef.current.src = pista;
       }
-      void audioRef.current.play().catch(() => undefined);
+      const el = audioRef.current;
+      void el.play().catch(() => undefined);
+      // Si el archivo no carga (enlace roto o formato inválido), se informa
+      // en consola y se detiene el estado de reproducción.
+      el.onerror = () => setPlaying(false);
       setPlaying(true);
       return;
     }
+    audioRef.current?.pause();
 
     const Ctx =
       window.AudioContext ??
