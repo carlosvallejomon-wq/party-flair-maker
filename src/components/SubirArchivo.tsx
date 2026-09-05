@@ -22,7 +22,7 @@ export function SubirArchivo({
   const [error, setError] = useState("");
 
   const leer = (archivo: File) => {
-    const limite = acepta.includes("video") ? 8 : 3;
+    const limite = acepta.includes("video") || acepta.includes("audio") ? 8 : 3;
     if (archivo.size > limite * 1024 * 1024) {
       setError(`El archivo pesa demasiado (máximo ${limite} MB).`);
       return;
