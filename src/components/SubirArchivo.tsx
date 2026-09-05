@@ -42,7 +42,9 @@ export function SubirArchivo({
       <span className="mb-1 block text-[10px] tracking-widest text-olive uppercase">{etiqueta}</span>
       <div className="flex items-center gap-3">
         {valor ? (
-          esVideo ? (
+          esAudio ? (
+            <audio src={valor} controls className="h-10 w-44" />
+          ) : esVideo ? (
             <video src={valor} muted className="size-14 rounded-lg object-cover" />
           ) : (
             <img
