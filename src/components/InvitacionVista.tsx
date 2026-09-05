@@ -107,8 +107,9 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
 
   useEffect(() => {
     const fijo = { top: manual, right: manual, bottom: manual, left: manual, mascara: "", detectado: false };
+    // No conserves la máscara de la corona anterior mientras carga la nueva.
+    setHueco(fijo);
     if (!src || !automatico) {
-      setHueco(fijo);
       return;
     }
     const imagen = new Image();
@@ -128,7 +129,8 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
         ctx.clearRect(0, 0, lado, lado);
         ctx.drawImage(imagen, offsetX, offsetY, ancho, alto);
         const alpha = ctx.getImageData(0, 0, lado, lado).data;
-        const transparente = (indice: number) => (alpha[indice * 4 + 3] ?? 255) < 42;
+        // Incluye los píxeles casi transparentes de acuarelas y PNG suavizados.
+        const transparente = (indice: number) => (alpha[indice * 4 + 3] ?? 255) < 96;
         const visitado = new Uint8Array(lado * lado);
         const componentes: Array<{ minX: number; maxX: number; minY: number; maxY: number; area: number; borde: boolean; pixeles: number[] }> = [];
         for (let inicio = 0; inicio < lado * lado; inicio += 1) {
@@ -240,7 +242,9 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
     inv.coronaEncuadreAuto !== false,
     inv.coronaHueco ?? 17,
   );
-  const fondoPortada = inv.fondoUrl?.trim() || inv.fotoPortadaUrl?.trim() || botanical;
+  // La foto principal pertenece solamente al arco/corona. Nunca debe heredarse
+  // como fondo cuando el usuario todavía no ha subido una imagen de fondo.
+  const fondoPortada = inv.fondoUrl?.trim() || botanical;
   const ajusteFondo = inv.fondoAjuste === "contener" ? "object-contain" : "object-cover";
   const posicionFondo = `${inv.fondoPosX ?? 50}% ${inv.fondoPosY ?? 50}%`;
   const opacidadFondo = (inv.fondoOpacidad ?? 25) / 100;
@@ -412,11 +416,9 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                       style={corona && huecoCorona.detectado ? {
                         objectPosition: "50% 50%",
                         top: `${huecoCorona.top}%`,
-                        right: `${huecoCorona.right}%`,
-                        bottom: `${huecoCorona.bottom}%`,
                         left: `${huecoCorona.left}%`,
-                        width: "auto",
-                        height: "auto",
+                        width: `${100 - huecoCorona.left - huecoCorona.right}%`,
+                        height: `${100 - huecoCorona.top - huecoCorona.bottom}%`,
                       } : undefined}
                     />
                   ) : (
@@ -427,11 +429,9 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                       style={corona && huecoCorona.detectado ? {
                         objectPosition: "50% 50%",
                         top: `${huecoCorona.top}%`,
-                        right: `${huecoCorona.right}%`,
-                        bottom: `${huecoCorona.bottom}%`,
                         left: `${huecoCorona.left}%`,
-                        width: "auto",
-                        height: "auto",
+                        width: `${100 - huecoCorona.left - huecoCorona.right}%`,
+                        height: `${100 - huecoCorona.top - huecoCorona.bottom}%`,
                       } : { objectPosition: "50% 50%" }}
                     />
                   )}
