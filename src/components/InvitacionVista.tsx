@@ -918,7 +918,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 </p>
 
                 {[inv.dressFotoUrl, ...(inv.dressFotos ?? [])].filter((url): url is string => Boolean(url?.trim())).length > 0 && (
-                  <div className="relative mt-6 overflow-hidden rounded-2xl border border-primary/15">
+                  <div className="relative mt-6 overflow-hidden rounded-2xl border border-primary/15 bg-foreground/[0.03] p-2">
                     <div className="grid grid-cols-2 gap-1">
                       {[inv.dressFotoUrl, ...(inv.dressFotos ?? [])]
                         .filter((url): url is string => Boolean(url?.trim()))
@@ -928,7 +928,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                             src={url}
                             alt={`Ejemplo ${i + 1} de vestimenta ${inv.dressCode}`}
                             loading="lazy"
-                            className={`w-full object-cover ${i === 0 ? "col-span-2 aspect-[16/10]" : "aspect-square"}`}
+                            className={
+                              i === 0
+                                ? "col-span-2 mx-auto max-h-[420px] w-full object-contain"
+                                : "aspect-square w-full rounded-xl object-cover"
+                            }
                           />
                         ))}
                     </div>
@@ -936,7 +940,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                       href={inv.dressGuiaUrl?.trim() || inv.dressFotoUrl || inv.dressFotos?.[0]}
                       target="_blank"
                       rel="noreferrer"
-                      className="absolute inset-x-6 bottom-4 flex items-center justify-center gap-2 rounded-full bg-foreground/70 py-2.5 text-[9px] tracking-[0.2em] text-background uppercase backdrop-blur-md"
+                      className="absolute inset-x-6 bottom-5 flex items-center justify-center gap-2 rounded-full bg-foreground/70 py-2.5 text-[9px] tracking-[0.2em] text-background uppercase backdrop-blur-md"
                     >
                       <Eye size={13} /> Ver guía visual de vestimenta
                     </a>
