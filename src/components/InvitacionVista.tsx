@@ -692,13 +692,18 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                   const izquierda = i % 2 === 0;
                   const activo = momento === i;
                   return (
-                    <Reveal key={`${item.titulo}-${i}`} delay={i * 110}>
+                    <Reveal
+                      key={`${item.titulo}-${i}`}
+                      delay={i * 110}
+                      desde={izquierda ? "izquierda" : "derecha"}
+                    >
                       <button
                         type="button"
                         onClick={() => setMomento(activo ? null : i)}
                         aria-expanded={activo}
-                        className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-3 text-left"
+                        className={`tarjeta-interactiva grid w-full grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-3xl border border-transparent p-2 text-left ${activo ? "border-primary/30" : ""}`}
                       >
+
                         <div className={izquierda ? "text-right" : "order-3 text-left"}>
                           <span className="block font-mono text-2xl text-primary tabular-nums">
                             {item.hora.replace(/\s*HRS?/i, "")}
