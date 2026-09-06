@@ -94,6 +94,8 @@ function useCuentaRegresiva(iso: string) {
 
 type HuecoCorona = { top: number; right: number; bottom: number; left: number; mascara: string; detectado: boolean };
 
+const cacheHuecosCorona = new Map<string, HuecoCorona>();
+
 /** Encuentra el área transparente cerrada del centro sin confundirla con el exterior. */
 function useHuecoCorona(src: string, automatico: boolean, manual: number) {
   const [hueco, setHueco] = useState<HuecoCorona>({
@@ -112,9 +114,14 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
     if (!src || !automatico) {
       return;
     }
+    const cacheado = cacheHuecosCorona.get(src);
+    if (cacheado) {
+      setHueco(cacheado);
+      return;
+    }
     const imagen = new Image();
     imagen.onload = () => {
-      const lado = 240;
+      const lado = 400;
       const canvas = document.createElement("canvas");
       canvas.width = lado;
       canvas.height = lado;
@@ -135,7 +142,30 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
         // Busca el hueco con varios niveles de transparencia: así también se
         // detectan acuarelas y bordes suavizados que antes quedaban fuera.
         const detectar = (limite: number) => {
-          const transparente = (indice: number) => (alpha[indice * 4 + 3] ?? 255) < limite;
+          const mapaOriginal = new Uint8Array(lado * lado);
+          for (let indice = 0; indice < lado * lado; indice += 1) {
+            mapaOriginal[indice] = (alpha[indice * 4 + 3] ?? 255) < limite ? 1 : 0;
+          }
+
+          // Contrae dos píxeles las zonas transparentes antes del flood-fill.
+          // Esto sella microfugas en anillos finos sin alterar el archivo de la corona.
+          const mapaSellado = new Uint8Array(lado * lado);
+          const radio = 2;
+          for (let y = radio; y < lado - radio; y += 1) {
+            for (let x = radio; x < lado - radio; x += 1) {
+              let interior = true;
+              for (let dy = -radio; dy <= radio && interior; dy += 1) {
+                for (let dx = -radio; dx <= radio; dx += 1) {
+                  if (!mapaOriginal[(y + dy) * lado + x + dx]) {
+                    interior = false;
+                    break;
+                  }
+                }
+              }
+              if (interior) mapaSellado[y * lado + x] = 1;
+            }
+          }
+          const transparente = (indice: number) => mapaSellado[indice] === 1;
           const visitado = new Uint8Array(lado * lado);
           const componentes: Array<{ minX: number; maxX: number; minY: number; maxY: number; area: number; lados: number; pixeles: number[] }> = [];
           for (let inicio = 0; inicio < lado * lado; inicio += 1) {
@@ -169,12 +199,18 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
                 cola.push(vecino);
               }
             }
+            // La erosión elimina los píxeles del borde exterior. Considera que
+            // un componente aún toca ese borde si llega hasta el radio erosionado.
+            izq ||= minX <= radio;
+            der ||= maxX >= lado - 1 - radio;
+            arriba ||= minY <= radio;
+            abajo ||= maxY >= lado - 1 - radio;
             const lados = Number(izq) + Number(der) + Number(arriba) + Number(abajo);
             componentes.push({ minX, maxX, minY, maxY, area: cola.length, lados, pixeles: cola });
           }
           const total = lado * lado;
           // El fondo exterior toca 3 o 4 bordes; el hueco interior toca 2 o menos.
-          const candidatos = componentes.filter((c) => c.lados <= 2 && c.area > total * 0.015 && c.area < total * 0.85);
+          const candidatos = componentes.filter((c) => c.lados <= 2 && c.area > total * 0.06 && c.area < total * 0.85);
           const conCentro = candidatos.find((c) => c.pixeles.includes(indiceCentro));
           if (conCentro) return conCentro;
           return candidatos.sort((a, b) => {
@@ -184,9 +220,9 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
           })[0];
         };
 
-        const huecoCentral = detectar(96) ?? detectar(150) ?? detectar(210);
+        const huecoCentral = detectar(64) ?? detectar(112) ?? detectar(160);
         if (!huecoCentral) {
-          setHueco(fijo);
+          setHueco({ top: 32, right: 32, bottom: 32, left: 32, mascara: "", detectado: false });
           return;
         }
 
@@ -208,14 +244,16 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
           mascaraDatos.data[salida + 3] = 255;
         }
         mascaraCtx.putImageData(mascaraDatos, 0, 0);
-        setHueco({
+        const detectado = {
           top: Math.max(0, (huecoCentral.minY + seguridad) / lado * 100),
           right: Math.max(0, (lado - huecoCentral.maxX + seguridad) / lado * 100),
           bottom: Math.max(0, (lado - huecoCentral.maxY + seguridad) / lado * 100),
           left: Math.max(0, (huecoCentral.minX + seguridad) / lado * 100),
           mascara: mascaraCanvas.toDataURL("image/png"),
           detectado: true,
-        });
+        };
+        cacheHuecosCorona.set(src, detectado);
+        setHueco(detectado);
       } catch {
         setHueco(fijo);
       }
@@ -268,10 +306,10 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
     ? huecoCorona.detectado
       ? { top: huecoCorona.top, right: huecoCorona.right, bottom: huecoCorona.bottom, left: huecoCorona.left }
       : {
-          top: inv.coronaHueco ?? 17,
-          right: inv.coronaHueco ?? 17,
-          bottom: inv.coronaHueco ?? 17,
-          left: inv.coronaHueco ?? 17,
+          top: inv.coronaEncuadreAuto !== false ? 32 : inv.coronaHueco ?? 17,
+          right: inv.coronaEncuadreAuto !== false ? 32 : inv.coronaHueco ?? 17,
+          bottom: inv.coronaEncuadreAuto !== false ? 32 : inv.coronaHueco ?? 17,
+          left: inv.coronaEncuadreAuto !== false ? 32 : inv.coronaHueco ?? 17,
         }
     : { top: 0, right: 0, bottom: 0, left: 0 };
   // Cada forma se calcula como una caja centrada dentro del hueco real de la

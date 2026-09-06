@@ -1,5 +1,11 @@
 // Catálogo generado a partir de los PNG subidos por Sandra (servidos desde el CDN de Lovable).
 import type { Adorno } from "./adornos";
+import coronaN2Corregida from "@/assets/coronas-fixed/corona-n2.png.asset.json";
+import coronaN4Corregida from "@/assets/coronas-fixed/corona-n4.png.asset.json";
+import coronaN9Corregida from "@/assets/coronas-fixed/corona-n9.png.asset.json";
+import coronaN10Corregida from "@/assets/coronas-fixed/corona-n10.png.asset.json";
+import coronaN19Corregida from "@/assets/coronas-fixed/corona-n19.png.asset.json";
+import coronaN62Corregida from "@/assets/coronas-fixed/corona-n62.png.asset.json";
 
 export const ADORNOS_CDN: Adorno[] = [
   { id: "adorno-11", nombre: "Adorno 1", src: "/__l5e/assets-v1/154afeaa-d454-455e-9fc2-9b8fe79bb8b7/adorno-11.png" },
@@ -117,15 +123,15 @@ export const ADORNOS_CDN: Adorno[] = [
 
 export const CORONAS_NUEVAS_CDN: Adorno[] = [
   { id: "corona-n1", nombre: "Corona nueva 1", src: "/__l5e/assets-v1/08c08dc1-4728-4ce0-8167-884ea57b82e2/corona-nueva-1.png" },
-  { id: "corona-n2", nombre: "Corona nueva 2", src: "/__l5e/assets-v1/131186b5-4cd1-4cb2-b167-3575f85dc8cf/corona-nueva-2.png" },
+  { id: "corona-n2", nombre: "Corona nueva 2", src: coronaN2Corregida.url },
   { id: "corona-n3", nombre: "Corona nueva 3", src: "/__l5e/assets-v1/26f1c24d-7953-4412-9260-c9bf32391b36/corona-nueva-3.png" },
-  { id: "corona-n4", nombre: "Corona nueva 4", src: "/__l5e/assets-v1/cf020179-813f-4cd4-9ea0-57cf628d2c5b/corona-nueva-4.png" },
+  { id: "corona-n4", nombre: "Corona nueva 4", src: coronaN4Corregida.url },
   { id: "corona-n5", nombre: "Corona nueva 5", src: "/__l5e/assets-v1/16a6d843-d217-436f-b5f5-ed63682f7efa/corona-nueva-5.png" },
   { id: "corona-n6", nombre: "Corona nueva 6", src: "/__l5e/assets-v1/ede250b4-6d12-4af0-9387-0b761e363bbe/corona-nueva-6.png" },
   { id: "corona-n7", nombre: "Corona nueva 7", src: "/__l5e/assets-v1/2a1d8c9e-0f90-48be-896a-3c71fedc7526/corona-nueva-7.png" },
   { id: "corona-n8", nombre: "Corona nueva 8", src: "/__l5e/assets-v1/50ad6a6a-45a7-407e-bebb-b20021e0b998/corona-nueva-8.png" },
-  { id: "corona-n9", nombre: "Corona nueva 9", src: "/__l5e/assets-v1/9c6cbef0-53a6-4806-b7f5-318ab625b88c/corona-nueva-9.png" },
-  { id: "corona-n10", nombre: "Corona nueva 10", src: "/__l5e/assets-v1/d728b82c-a7e4-477e-8a47-99b3a9b765e0/corona-nueva-10.png" },
+  { id: "corona-n9", nombre: "Corona nueva 9", src: coronaN9Corregida.url },
+  { id: "corona-n10", nombre: "Corona nueva 10", src: coronaN10Corregida.url },
   { id: "corona-n11", nombre: "Corona nueva 11", src: "/__l5e/assets-v1/a6e7ae51-a5a9-4aa9-8c3d-863c420baaf8/corona-nueva-11.png" },
   { id: "corona-n12", nombre: "Corona nueva 12", src: "/__l5e/assets-v1/a4abb297-90fa-437c-a079-a14151d327dd/corona-nueva-12.png" },
   { id: "corona-n13", nombre: "Corona nueva 13", src: "/__l5e/assets-v1/731bf831-549f-4c1d-879f-fea76150143e/corona-nueva-13.png" },
@@ -134,7 +140,7 @@ export const CORONAS_NUEVAS_CDN: Adorno[] = [
   { id: "corona-n16", nombre: "Corona nueva 16", src: "/__l5e/assets-v1/2036d629-95b7-4af8-ab45-184a21c2a610/corona-nueva-16.png" },
   { id: "corona-n17", nombre: "Corona nueva 17", src: "/__l5e/assets-v1/8d5a08fe-b89d-4f67-9877-e9b179d2069b/corona-nueva-17.png" },
   { id: "corona-n18", nombre: "Corona nueva 18", src: "/__l5e/assets-v1/cd7b1541-1364-4fbb-94f3-b87110f24c63/corona-nueva-18.png" },
-  { id: "corona-n19", nombre: "Corona nueva 19", src: "/__l5e/assets-v1/959c7128-8b04-43c8-85ad-dac98c7173d0/corona-nueva-19.png" },
+  { id: "corona-n19", nombre: "Corona nueva 19", src: coronaN19Corregida.url },
   { id: "corona-n20", nombre: "Corona nueva 20", src: "/__l5e/assets-v1/65f78f96-0da7-4185-bca0-69c730f91c0e/corona-nueva-20.png" },
   { id: "corona-n21", nombre: "Corona nueva 21", src: "/__l5e/assets-v1/8eff47b5-5ae7-4a89-88a3-f2a0c59d9abe/corona-nueva-21.png" },
   { id: "corona-n22", nombre: "Corona nueva 22", src: "/__l5e/assets-v1/4a7fa9c6-a231-47f2-9060-e13db84f3c40/corona-nueva-22.png" },
@@ -177,7 +183,7 @@ export const CORONAS_NUEVAS_CDN: Adorno[] = [
   { id: "corona-n59", nombre: "Corona nueva 59", src: "/__l5e/assets-v1/58299763-40ad-47d0-9408-d2944e82d039/corona-nueva-59.png" },
   { id: "corona-n60", nombre: "Corona nueva 60", src: "/__l5e/assets-v1/2522e071-068a-44d0-82aa-553b05f484ed/corona-nueva-60.png" },
   { id: "corona-n61", nombre: "Corona nueva 61", src: "/__l5e/assets-v1/626cd185-0a58-4959-adb5-0b6b11b3ec6e/corona-nueva-61.png" },
-  { id: "corona-n62", nombre: "Corona nueva 62", src: "/__l5e/assets-v1/9a0454a6-776a-4f98-8d95-1471647c36a7/corona-nueva-62.png" },
+  { id: "corona-n62", nombre: "Corona nueva 62", src: coronaN62Corregida.url },
   { id: "corona-n63", nombre: "Corona nueva 63", src: "/__l5e/assets-v1/e4e467f2-d83e-44ff-a2eb-4cae52769148/corona-nueva-63.png" },
   { id: "corona-n64", nombre: "Corona nueva 64", src: "/__l5e/assets-v1/10aa018a-963b-49c4-ab7d-8a2f7314c9d8/corona-nueva-64.png" },
 ];
