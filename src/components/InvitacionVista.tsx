@@ -447,11 +447,10 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                           left: `${huecoCorona.left}%`,
                           zIndex: 2,
                           transform: transformarRecorte,
-                          ...formaRecorte,
+                          borderRadius: "50%",
                         }
-                      : corona
-                        ? { inset: `${inv.coronaHueco ?? 17}%`, zIndex: 2, transform: transformarRecorte, ...formaRecorte }
-                        : { inset: 0, transform: transformarRecorte, ...formaRecorte }
+                      : estiloRecorteManual
+
                   }
                 >
                   {inv.videoPortadaUrl?.trim() ? (
