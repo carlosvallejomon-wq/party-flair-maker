@@ -142,7 +142,30 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
         // Busca el hueco con varios niveles de transparencia: así también se
         // detectan acuarelas y bordes suavizados que antes quedaban fuera.
         const detectar = (limite: number) => {
-          const transparente = (indice: number) => (alpha[indice * 4 + 3] ?? 255) < limite;
+          const mapaOriginal = new Uint8Array(lado * lado);
+          for (let indice = 0; indice < lado * lado; indice += 1) {
+            mapaOriginal[indice] = (alpha[indice * 4 + 3] ?? 255) < limite ? 1 : 0;
+          }
+
+          // Contrae dos píxeles las zonas transparentes antes del flood-fill.
+          // Esto sella microfugas en anillos finos sin alterar el archivo de la corona.
+          const mapaSellado = new Uint8Array(lado * lado);
+          const radio = 2;
+          for (let y = radio; y < lado - radio; y += 1) {
+            for (let x = radio; x < lado - radio; x += 1) {
+              let interior = true;
+              for (let dy = -radio; dy <= radio && interior; dy += 1) {
+                for (let dx = -radio; dx <= radio; dx += 1) {
+                  if (!mapaOriginal[(y + dy) * lado + x + dx]) {
+                    interior = false;
+                    break;
+                  }
+                }
+              }
+              if (interior) mapaSellado[y * lado + x] = 1;
+            }
+          }
+          const transparente = (indice: number) => mapaSellado[indice] === 1;
           const visitado = new Uint8Array(lado * lado);
           const componentes: Array<{ minX: number; maxX: number; minY: number; maxY: number; area: number; lados: number; pixeles: number[] }> = [];
           for (let inicio = 0; inicio < lado * lado; inicio += 1) {
@@ -191,9 +214,9 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
           })[0];
         };
 
-        const huecoCentral = detectar(96) ?? detectar(150) ?? detectar(210);
+        const huecoCentral = detectar(64) ?? detectar(112) ?? detectar(160);
         if (!huecoCentral) {
-          setHueco(fijo);
+          setHueco({ top: 32, right: 32, bottom: 32, left: 32, mascara: "", detectado: false });
           return;
         }
 
