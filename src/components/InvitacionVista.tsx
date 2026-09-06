@@ -247,15 +247,39 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
   const posicionFoto = `${inv.coronaFotoPosX ?? 50}% ${inv.coronaFotoPosY ?? 50}%`;
   const escalaFoto = (inv.coronaFotoEscala ?? 100) / 100;
   const transformarRecorte = `translate(${inv.coronaRecortePosX ?? 0}%, ${inv.coronaRecortePosY ?? 0}%) scale(${(inv.coronaRecorteEscala ?? 100) / 100})`;
-  const formaRecorte = formaFoto === "circular"
-    ? { borderRadius: "50%" }
-    : formaFoto === "ovalada"
-      ? { borderRadius: "50% / 42%" }
-      : formaFoto === "cuadrada"
-        ? { borderRadius: "0" }
-        : formaFoto === "rectangular"
-          ? { borderRadius: "0", top: "22%", right: "10%", bottom: "22%", left: "10%" }
-          : { borderRadius: "50%" };
+  // Todas las formas parten del mismo hueco de la corona para que cambiar de
+  // forma no mueva ni agrande el recorte.
+  const baseHueco = corona
+    ? huecoCorona.detectado
+      ? { top: huecoCorona.top, right: huecoCorona.right, bottom: huecoCorona.bottom, left: huecoCorona.left }
+      : {
+          top: inv.coronaHueco ?? 17,
+          right: inv.coronaHueco ?? 17,
+          bottom: inv.coronaHueco ?? 17,
+          left: inv.coronaHueco ?? 17,
+        }
+    : { top: 0, right: 0, bottom: 0, left: 0 };
+  const esTresCuartos = formaFoto === "ovalada" || formaFoto === "rectangular";
+  const estiloRecorteManual: CSSProperties = {
+    top: `${baseHueco.top}%`,
+    bottom: `${baseHueco.bottom}%`,
+    zIndex: 2,
+    borderRadius: formaFoto === "circular" || formaFoto === "ovalada" ? "50%" : "0",
+    ...(esTresCuartos
+      ? {
+          left: "50%",
+          right: "auto",
+          width: "auto",
+          aspectRatio: "3 / 4",
+          transform: `translateX(-50%) ${transformarRecorte}`,
+        }
+      : {
+          left: `${baseHueco.left}%`,
+          right: `${baseHueco.right}%`,
+          transform: transformarRecorte,
+        }),
+  };
+
   const estiloMedio = {
     objectPosition: posicionFoto,
     transform: `scale(${escalaFoto})`,
