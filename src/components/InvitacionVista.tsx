@@ -259,44 +259,36 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           left: inv.coronaHueco ?? 17,
         }
     : { top: 0, right: 0, bottom: 0, left: 0 };
-  const esVertical = formaFoto === "ovalada" || formaFoto === "rectangular";
-  const esHorizontal = formaFoto === "ovalada-h" || formaFoto === "rectangular-h";
+  // Cada forma se calcula como una caja centrada dentro del hueco real de la
+  // corona, así cambiar de corona nunca deforma la figura elegida.
+  const anchoHueco = Math.max(1, 100 - baseHueco.left - baseHueco.right);
+  const altoHueco = Math.max(1, 100 - baseHueco.top - baseHueco.bottom);
+  const centroX = baseHueco.left + anchoHueco / 2;
+  const centroY = baseHueco.top + altoHueco / 2;
+  const proporciones: Record<string, number> = {
+    circular: 1,
+    cuadrada: 1,
+    ovalada: 3 / 4,
+    rectangular: 3 / 4,
+    "ovalada-h": 4 / 3,
+    "rectangular-h": 4 / 3,
+  };
+  const proporcion = proporciones[formaFoto] ?? 1;
+  const anchoCaja = anchoHueco / altoHueco > proporcion ? altoHueco * proporcion : anchoHueco;
+  const altoCaja = anchoCaja / proporcion;
   const esRedondeada = formaFoto.startsWith("ovalada") || formaFoto === "circular";
   const estiloRecorteManual: CSSProperties = {
     zIndex: 2,
     borderRadius: esRedondeada ? "50%" : "0",
-    ...(esVertical
-      ? {
-          // Formato vertical 3/4, centrado dentro del hueco de la corona
-          top: "50%",
-          left: "50%",
-          right: "auto",
-          bottom: "auto",
-          height: `${100 - baseHueco.top - baseHueco.bottom}%`,
-          width: "auto",
-          aspectRatio: "3 / 4",
-          transform: `translate(-50%, -50%) ${transformarRecorte}`,
-        }
-      : esHorizontal
-        ? {
-            // Formato horizontal 4/3, centrado dentro del hueco de la corona
-            top: "50%",
-            left: "50%",
-            right: "auto",
-            bottom: "auto",
-            width: `${100 - baseHueco.left - baseHueco.right}%`,
-            height: "auto",
-            aspectRatio: "4 / 3",
-            transform: `translate(-50%, -50%) ${transformarRecorte}`,
-          }
-        : {
-          top: `${baseHueco.top}%`,
-          bottom: `${baseHueco.bottom}%`,
-          left: `${baseHueco.left}%`,
-          right: `${baseHueco.right}%`,
-          transform: transformarRecorte,
-        }),
+    top: `${centroY - altoCaja / 2}%`,
+    left: `${centroX - anchoCaja / 2}%`,
+    right: "auto",
+    bottom: "auto",
+    width: `${anchoCaja}%`,
+    height: `${altoCaja}%`,
+    transform: transformarRecorte,
   };
+
 
   const estiloMedio = {
     objectPosition: posicionFoto,
