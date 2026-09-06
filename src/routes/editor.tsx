@@ -395,16 +395,43 @@ function Editor() {
               lista={CORONAS}
               valor={inv.corona}
               onElegir={(id) => {
-                set("corona", id);
-                set("coronaUrl", "");
-                set("coronaEncuadreAuto", true);
+                setInv((prev) => ({
+                  ...prev,
+                  corona: id,
+                  coronaUrl: "",
+                  coronaTamano: 74,
+                  coronaHueco: 17,
+                  coronaGiro: 0,
+                  coronaEncuadreAuto: true,
+                  coronaFotoEscala: 100,
+                  coronaFotoPosX: 50,
+                  coronaFotoPosY: 50,
+                  coronaFotoForma: "automatica",
+                  coronaRecorteEscala: 100,
+                  coronaRecortePosX: 0,
+                  coronaRecortePosY: 0,
+                }));
               }}
             />
             <div className="mb-8">
               <SubirArchivo
                 etiqueta="Subir mi propia corona (PNG)"
                 valor={inv.coronaUrl}
-                onCambio={(v) => set("coronaUrl", v)}
+                onCambio={(v) => setInv((prev) => ({
+                  ...prev,
+                  coronaUrl: v,
+                  coronaTamano: 74,
+                  coronaHueco: 17,
+                  coronaGiro: 0,
+                  coronaEncuadreAuto: true,
+                  coronaFotoEscala: 100,
+                  coronaFotoPosX: 50,
+                  coronaFotoPosY: 50,
+                  coronaFotoForma: "automatica",
+                  coronaRecorteEscala: 100,
+                  coronaRecortePosX: 0,
+                  coronaRecortePosY: 0,
+                }))}
               />
               <div className="mt-4 grid gap-4 sm:grid-cols-3">
                 <label className="flex items-center gap-3 text-sm sm:col-span-3">
