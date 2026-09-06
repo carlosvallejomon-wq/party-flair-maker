@@ -78,6 +78,9 @@ export type Invitacion = {
   coronaFotoPosX?: number; // posición horizontal de la foto (0 a 100)
   coronaFotoPosY?: number; // posición vertical de la foto (0 a 100)
   coronaFotoForma?: "automatica" | "circular" | "ovalada" | "cuadrada" | "rectangular";
+  coronaRecorteEscala?: number; // tamaño del recorte completo dentro de la corona (60 a 140)
+  coronaRecortePosX?: number; // desplazamiento horizontal del recorte (-30 a 30)
+  coronaRecortePosY?: number; // desplazamiento vertical del recorte (-30 a 30)
   textura?: string; // id de TEXTURAS o "ninguno"
   texturaUrl?: string;
   texturaOpacidad?: number; // 0 a 100
@@ -1158,6 +1161,9 @@ const EXTRAS: Partial<Invitacion> = {
   coronaFotoPosX: 50,
   coronaFotoPosY: 50,
   coronaFotoForma: "automatica",
+  coronaRecorteEscala: 100,
+  coronaRecortePosX: 0,
+  coronaRecortePosY: 0,
   dressFotos: [],
   regalos: [
     {

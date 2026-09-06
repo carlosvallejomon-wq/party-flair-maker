@@ -462,7 +462,7 @@ function Editor() {
                 </div>
                 <div>
                   <label className={etiqueta} htmlFor="corona-foto-forma">
-                    Forma de la foto
+                    Forma del recorte
                   </label>
                   <select
                     id="corona-foto-forma"
@@ -476,6 +476,58 @@ function Editor() {
                     <option value="cuadrada">Cuadrada</option>
                     <option value="rectangular">Rectangular</option>
                   </select>
+                </div>
+                <div className="sm:col-span-3">
+                  <p className="border-t border-foreground/10 pt-4 text-xs font-medium text-foreground/80">
+                    Alinear el recorte dentro de la corona
+                  </p>
+                </div>
+                <div>
+                  <label className={etiqueta} htmlFor="corona-recorte-escala">
+                    Tamaño del recorte ({inv.coronaRecorteEscala ?? 100}%)
+                  </label>
+                  <input
+                    id="corona-recorte-escala"
+                    type="range"
+                    min={60}
+                    max={140}
+                    className="w-full accent-[var(--primary)]"
+                    value={inv.coronaRecorteEscala ?? 100}
+                    onChange={(e) => set("coronaRecorteEscala", Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <label className={etiqueta} htmlFor="corona-recorte-x">
+                    Recorte a los lados ({inv.coronaRecortePosX ?? 0})
+                  </label>
+                  <input
+                    id="corona-recorte-x"
+                    type="range"
+                    min={-30}
+                    max={30}
+                    className="w-full accent-[var(--primary)]"
+                    value={inv.coronaRecortePosX ?? 0}
+                    onChange={(e) => set("coronaRecortePosX", Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <label className={etiqueta} htmlFor="corona-recorte-y">
+                    Recorte arriba y abajo ({inv.coronaRecortePosY ?? 0})
+                  </label>
+                  <input
+                    id="corona-recorte-y"
+                    type="range"
+                    min={-30}
+                    max={30}
+                    className="w-full accent-[var(--primary)]"
+                    value={inv.coronaRecortePosY ?? 0}
+                    onChange={(e) => set("coronaRecortePosY", Number(e.target.value))}
+                  />
+                </div>
+                <div className="sm:col-span-3">
+                  <p className="border-t border-foreground/10 pt-4 text-xs font-medium text-foreground/80">
+                    Encuadrar la foto dentro del recorte
+                  </p>
                 </div>
                 <div>
                   <label className={etiqueta} htmlFor="corona-foto-escala">
@@ -493,7 +545,7 @@ function Editor() {
                 </div>
                 <div>
                   <label className={etiqueta} htmlFor="corona-foto-x">
-                    Mover a los lados ({inv.coronaFotoPosX ?? 50}%)
+                    Foto a los lados ({inv.coronaFotoPosX ?? 50}%)
                   </label>
                   <input
                     id="corona-foto-x"
@@ -507,7 +559,7 @@ function Editor() {
                 </div>
                 <div>
                   <label className={etiqueta} htmlFor="corona-foto-y">
-                    Mover arriba y abajo ({inv.coronaFotoPosY ?? 50}%)
+                    Foto arriba y abajo ({inv.coronaFotoPosY ?? 50}%)
                   </label>
                   <input
                     id="corona-foto-y"
@@ -529,6 +581,9 @@ function Editor() {
                       coronaFotoPosX: 50,
                       coronaFotoPosY: 50,
                       coronaFotoForma: "automatica",
+                      coronaRecorteEscala: 100,
+                      coronaRecortePosX: 0,
+                      coronaRecortePosY: 0,
                     }))}
                   >
                     Restablecer foto

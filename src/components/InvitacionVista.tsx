@@ -246,6 +246,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
   const usarMascaraCorona = Boolean(corona && huecoCorona.detectado && formaFoto === "automatica");
   const posicionFoto = `${inv.coronaFotoPosX ?? 50}% ${inv.coronaFotoPosY ?? 50}%`;
   const escalaFoto = (inv.coronaFotoEscala ?? 100) / 100;
+  const transformarRecorte = `translate(${inv.coronaRecortePosX ?? 0}%, ${inv.coronaRecortePosY ?? 0}%) scale(${(inv.coronaRecorteEscala ?? 100) / 100})`;
   const formaRecorte = formaFoto === "circular"
     ? { borderRadius: "50%" }
     : formaFoto === "ovalada"
@@ -407,6 +408,8 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                   style={usarMascaraCorona
                     ? {
                         inset: 0,
+                        zIndex: 2,
+                        transform: transformarRecorte,
                         maskImage: `url(${huecoCorona.mascara})`,
                         WebkitMaskImage: `url(${huecoCorona.mascara})`,
                         maskSize: "100% 100%",
@@ -419,11 +422,12 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                           bottom: `${huecoCorona.bottom}%`,
                           left: `${huecoCorona.left}%`,
                           zIndex: 2,
+                          transform: transformarRecorte,
                           ...formaRecorte,
                         }
                       : corona
-                        ? { inset: `${inv.coronaHueco ?? 17}%`, zIndex: 2, ...formaRecorte }
-                        : { inset: 0, ...formaRecorte }
+                        ? { inset: `${inv.coronaHueco ?? 17}%`, zIndex: 2, transform: transformarRecorte, ...formaRecorte }
+                        : { inset: 0, transform: transformarRecorte, ...formaRecorte }
                   }
                 >
                   {inv.videoPortadaUrl?.trim() ? (
