@@ -6,6 +6,7 @@ import coronaN9Corregida from "@/assets/coronas-fixed/corona-n9.png.asset.json";
 import coronaN10Corregida from "@/assets/coronas-fixed/corona-n10.png.asset.json";
 import coronaN19Corregida from "@/assets/coronas-fixed/corona-n19.png.asset.json";
 import coronaN62Corregida from "@/assets/coronas-fixed/corona-n62.png.asset.json";
+import coronaMorada from "@/assets/coronas/corona-morada.png.asset.json";
 
 export const ADORNOS_CDN: Adorno[] = [
   { id: "adorno-11", nombre: "Adorno 1", src: "/__l5e/assets-v1/154afeaa-d454-455e-9fc2-9b8fe79bb8b7/adorno-11.png" },
@@ -122,6 +123,7 @@ export const ADORNOS_CDN: Adorno[] = [
 
 
 export const CORONAS_NUEVAS_CDN: Adorno[] = [
+  { id: "corona-morada", nombre: "Corona floral morada", src: coronaMorada.url },
   { id: "corona-n1", nombre: "Corona nueva 1", src: "/__l5e/assets-v1/08c08dc1-4728-4ce0-8167-884ea57b82e2/corona-nueva-1.png" },
   { id: "corona-n2", nombre: "Corona nueva 2", src: coronaN2Corregida.url },
   { id: "corona-n3", nombre: "Corona nueva 3", src: "/__l5e/assets-v1/26f1c24d-7953-4412-9260-c9bf32391b36/corona-nueva-3.png" },
