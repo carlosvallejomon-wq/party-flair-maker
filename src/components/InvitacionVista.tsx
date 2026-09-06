@@ -242,6 +242,24 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
     inv.coronaEncuadreAuto !== false,
     inv.coronaHueco ?? 17,
   );
+  const formaFoto = inv.coronaFotoForma ?? "automatica";
+  const usarMascaraCorona = Boolean(corona && huecoCorona.detectado && formaFoto === "automatica");
+  const posicionFoto = `${inv.coronaFotoPosX ?? 50}% ${inv.coronaFotoPosY ?? 50}%`;
+  const escalaFoto = (inv.coronaFotoEscala ?? 100) / 100;
+  const formaRecorte = formaFoto === "circular"
+    ? { borderRadius: "50%" }
+    : formaFoto === "ovalada"
+      ? { borderRadius: "50% / 42%" }
+      : formaFoto === "cuadrada"
+        ? { borderRadius: "0" }
+        : formaFoto === "rectangular"
+          ? { borderRadius: "0", top: "22%", right: "10%", bottom: "22%", left: "10%" }
+          : { borderRadius: "50%" };
+  const estiloMedio = {
+    objectPosition: posicionFoto,
+    transform: `scale(${escalaFoto})`,
+    transformOrigin: posicionFoto,
+  };
   // La foto principal pertenece solamente al arco/corona. Nunca debe heredarse
   // como fondo cuando el usuario todavía no ha subido una imagen de fondo.
   const fondoPortada = inv.fondoUrl?.trim() || botanical;
@@ -385,8 +403,8 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 style={{ width: `${inv.coronaTamano ?? 74}%`, maxWidth: 340 }}
               >
                 <div
-                  className={`absolute overflow-hidden shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)] ${corona && huecoCorona.detectado ? "" : "rounded-full border border-primary/20"}`}
-                  style={corona && huecoCorona.detectado
+                  className={`absolute overflow-hidden shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)] ${usarMascaraCorona ? "" : "border border-primary/20"}`}
+                  style={usarMascaraCorona
                     ? {
                         inset: 0,
                         maskImage: `url(${huecoCorona.mascara})`,
@@ -394,15 +412,18 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                         maskSize: "100% 100%",
                         WebkitMaskSize: "100% 100%",
                       }
-                    : corona
+                    : corona && formaFoto === "automatica"
                       ? {
                           top: `${huecoCorona.top}%`,
                           right: `${huecoCorona.right}%`,
                           bottom: `${huecoCorona.bottom}%`,
                           left: `${huecoCorona.left}%`,
                           zIndex: 2,
+                          ...formaRecorte,
                         }
-                      : { inset: 0 }
+                      : corona
+                        ? { inset: `${inv.coronaHueco ?? 17}%`, zIndex: 2, ...formaRecorte }
+                        : { inset: 0, ...formaRecorte }
                   }
                 >
                   {inv.videoPortadaUrl?.trim() ? (
@@ -412,27 +433,27 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                       loop
                       muted={inv.videoPortadaSonido !== true}
                       playsInline
-                      className={corona && huecoCorona.detectado ? "absolute object-cover object-center" : "h-full w-full object-cover object-center"}
-                      style={corona && huecoCorona.detectado ? {
-                        objectPosition: "50% 50%",
+                      className={usarMascaraCorona ? "absolute object-cover" : "h-full w-full object-cover"}
+                      style={usarMascaraCorona ? {
                         top: `${huecoCorona.top}%`,
                         left: `${huecoCorona.left}%`,
                         width: `${100 - huecoCorona.left - huecoCorona.right}%`,
                         height: `${100 - huecoCorona.top - huecoCorona.bottom}%`,
-                      } : undefined}
+                        ...estiloMedio,
+                      } : estiloMedio}
                     />
                   ) : (
                     <img
                       src={inv.fotoPortadaUrl?.trim() || pareja1}
                       alt={`Foto de ${nombres}`}
-                      className={corona && huecoCorona.detectado ? "absolute object-cover object-center" : "h-full w-full object-cover object-center"}
-                      style={corona && huecoCorona.detectado ? {
-                        objectPosition: "50% 50%",
+                      className={usarMascaraCorona ? "absolute object-cover" : "h-full w-full object-cover"}
+                      style={usarMascaraCorona ? {
                         top: `${huecoCorona.top}%`,
                         left: `${huecoCorona.left}%`,
                         width: `${100 - huecoCorona.left - huecoCorona.right}%`,
                         height: `${100 - huecoCorona.top - huecoCorona.bottom}%`,
-                      } : { objectPosition: "50% 50%" }}
+                        ...estiloMedio,
+                      } : estiloMedio}
                     />
                   )}
                 </div>

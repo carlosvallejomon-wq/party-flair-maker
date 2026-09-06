@@ -74,6 +74,10 @@ export type Invitacion = {
   coronaHueco?: number; // % de inset de la foto dentro de la corona (0 a 35)
   coronaGiro?: number; // giro de la corona en grados
   coronaEncuadreAuto?: boolean; // detecta el hueco transparente y ajusta la foto
+  coronaFotoEscala?: number; // zoom de la foto dentro de la corona (50 a 250)
+  coronaFotoPosX?: number; // posición horizontal de la foto (0 a 100)
+  coronaFotoPosY?: number; // posición vertical de la foto (0 a 100)
+  coronaFotoForma?: "automatica" | "circular" | "ovalada" | "cuadrada" | "rectangular";
   textura?: string; // id de TEXTURAS o "ninguno"
   texturaUrl?: string;
   texturaOpacidad?: number; // 0 a 100
@@ -1150,6 +1154,10 @@ const EXTRAS: Partial<Invitacion> = {
   itinerarioTitulo: "the Itinerary",
   coloresSugeridos: ["#f7f6ef", "#c9a86a", "#8a9a5b", "#3b4232"],
   coronaEncuadreAuto: true,
+  coronaFotoEscala: 100,
+  coronaFotoPosX: 50,
+  coronaFotoPosY: 50,
+  coronaFotoForma: "automatica",
   dressFotos: [],
   regalos: [
     {
