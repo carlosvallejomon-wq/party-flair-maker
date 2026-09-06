@@ -43,8 +43,12 @@ const CORONAS_SIN_HUECO = new Set([
 
 /** Coronas retiradas hasta que Sandra entregue sus reemplazos corregidos. */
 const CORONAS_RETIRADAS = new Set([
+  "adorno-11",
+  "adorno-227",
+  "adorno-51",
+  "adorno-88",
   "adorno-13",
-  "adorno-22",
+
   "adorno-27",
   "adorno-29",
   "adorno-32",
