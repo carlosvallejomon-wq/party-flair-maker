@@ -300,10 +300,10 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
     ? huecoCorona.detectado
       ? { top: huecoCorona.top, right: huecoCorona.right, bottom: huecoCorona.bottom, left: huecoCorona.left }
       : {
-          top: inv.coronaHueco ?? 17,
-          right: inv.coronaHueco ?? 17,
-          bottom: inv.coronaHueco ?? 17,
-          left: inv.coronaHueco ?? 17,
+          top: inv.coronaEncuadreAuto !== false ? 32 : inv.coronaHueco ?? 17,
+          right: inv.coronaEncuadreAuto !== false ? 32 : inv.coronaHueco ?? 17,
+          bottom: inv.coronaEncuadreAuto !== false ? 32 : inv.coronaHueco ?? 17,
+          left: inv.coronaEncuadreAuto !== false ? 32 : inv.coronaHueco ?? 17,
         }
     : { top: 0, right: 0, bottom: 0, left: 0 };
   // Cada forma se calcula como una caja centrada dentro del hueco real de la
