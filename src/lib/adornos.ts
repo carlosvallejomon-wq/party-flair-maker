@@ -5,7 +5,7 @@ import marcoDorado from "@/assets/marco-dorado.png";
 import marcoFloral from "@/assets/marco-floral.png";
 import texturaMarmol from "@/assets/textura-marmol.jpg";
 import texturaPapel from "@/assets/textura-papel.jpg";
-import { ADORNOS_CDN, ESQUINAS_CDN } from "./adornos-cdn";
+import { ADORNOS_CDN, CORONAS_NUEVAS_CDN, ESQUINAS_CDN } from "./adornos-cdn";
 import { MARCOS_SVG, TEXTURAS_SVG } from "./adornos-svg";
 
 export type Adorno = { id: string; nombre: string; src: string };
@@ -105,6 +105,7 @@ export const CORONAS: Adorno[] = [
       id: `c-${a.id}`,
       nombre: `Corona ${a.id.split("-")[1]}`,
     })),
+  ...CORONAS_NUEVAS_CDN,
 ];
 
 
