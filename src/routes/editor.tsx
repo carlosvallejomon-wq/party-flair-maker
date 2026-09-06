@@ -387,15 +387,6 @@ function Editor() {
                     onChange={(e) => set("marcoOpacidad", Number(e.target.value))}
                   />
                 </div>
-                <label className="flex items-center gap-3 text-sm sm:col-span-3">
-                  <input
-                    type="checkbox"
-                    className="size-4 accent-[var(--primary)]"
-                    checked={inv.coronaEncuadreAuto !== false}
-                    onChange={(e) => set("coronaEncuadreAuto", e.target.checked)}
-                  />
-                  Ajustar la foto automáticamente al hueco transparente de la corona
-                </label>
               </div>
             </div>
 
@@ -416,6 +407,15 @@ function Editor() {
                 onCambio={(v) => set("coronaUrl", v)}
               />
               <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                <label className="flex items-center gap-3 text-sm sm:col-span-3">
+                  <input
+                    type="checkbox"
+                    className="size-4 accent-[var(--primary)]"
+                    checked={inv.coronaEncuadreAuto !== false}
+                    onChange={(e) => set("coronaEncuadreAuto", e.target.checked)}
+                  />
+                  Detectar automáticamente el hueco de la corona
+                </label>
                 <div>
                   <label className={etiqueta} htmlFor="corona-tam">
                     Tamaño de la corona ({inv.coronaTamano ?? 74}%)
@@ -459,6 +459,80 @@ function Editor() {
                     <option value={180}>180°</option>
                     <option value={270}>270°</option>
                   </select>
+                </div>
+                <div>
+                  <label className={etiqueta} htmlFor="corona-foto-forma">
+                    Forma de la foto
+                  </label>
+                  <select
+                    id="corona-foto-forma"
+                    className={campo}
+                    value={inv.coronaFotoForma ?? "automatica"}
+                    onChange={(e) => set("coronaFotoForma", e.target.value as NonNullable<Invitacion["coronaFotoForma"]>)}
+                  >
+                    <option value="automatica">Automática según la corona</option>
+                    <option value="circular">Circular</option>
+                    <option value="ovalada">Ovalada</option>
+                    <option value="cuadrada">Cuadrada</option>
+                    <option value="rectangular">Rectangular</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={etiqueta} htmlFor="corona-foto-escala">
+                    Tamaño de la foto ({inv.coronaFotoEscala ?? 100}%)
+                  </label>
+                  <input
+                    id="corona-foto-escala"
+                    type="range"
+                    min={50}
+                    max={250}
+                    className="w-full accent-[var(--primary)]"
+                    value={inv.coronaFotoEscala ?? 100}
+                    onChange={(e) => set("coronaFotoEscala", Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <label className={etiqueta} htmlFor="corona-foto-x">
+                    Mover a los lados ({inv.coronaFotoPosX ?? 50}%)
+                  </label>
+                  <input
+                    id="corona-foto-x"
+                    type="range"
+                    min={0}
+                    max={100}
+                    className="w-full accent-[var(--primary)]"
+                    value={inv.coronaFotoPosX ?? 50}
+                    onChange={(e) => set("coronaFotoPosX", Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <label className={etiqueta} htmlFor="corona-foto-y">
+                    Mover arriba y abajo ({inv.coronaFotoPosY ?? 50}%)
+                  </label>
+                  <input
+                    id="corona-foto-y"
+                    type="range"
+                    min={0}
+                    max={100}
+                    className="w-full accent-[var(--primary)]"
+                    value={inv.coronaFotoPosY ?? 50}
+                    onChange={(e) => set("coronaFotoPosY", Number(e.target.value))}
+                  />
+                </div>
+                <div className="flex items-end">
+                  <button
+                    type="button"
+                    className="w-full rounded-lg border border-foreground/15 bg-card px-3 py-2 text-sm transition-colors hover:border-primary"
+                    onClick={() => setInv((prev) => ({
+                      ...prev,
+                      coronaFotoEscala: 100,
+                      coronaFotoPosX: 50,
+                      coronaFotoPosY: 50,
+                      coronaFotoForma: "automatica",
+                    }))}
+                  >
+                    Restablecer foto
+                  </button>
                 </div>
               </div>
             </div>
