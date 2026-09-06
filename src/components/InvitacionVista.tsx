@@ -261,19 +261,23 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
     : { top: 0, right: 0, bottom: 0, left: 0 };
   const esTresCuartos = formaFoto === "ovalada" || formaFoto === "rectangular";
   const estiloRecorteManual: CSSProperties = {
-    top: `${baseHueco.top}%`,
-    bottom: `${baseHueco.bottom}%`,
     zIndex: 2,
     borderRadius: formaFoto === "circular" || formaFoto === "ovalada" ? "50%" : "0",
     ...(esTresCuartos
       ? {
+          // Formato horizontal 4/3, centrado dentro del hueco de la corona
+          top: "50%",
           left: "50%",
           right: "auto",
-          width: "auto",
-          aspectRatio: "3 / 4",
-          transform: `translateX(-50%) ${transformarRecorte}`,
+          bottom: "auto",
+          width: `${100 - baseHueco.left - baseHueco.right}%`,
+          height: "auto",
+          aspectRatio: "4 / 3",
+          transform: `translate(-50%, -50%) ${transformarRecorte}`,
         }
       : {
+          top: `${baseHueco.top}%`,
+          bottom: `${baseHueco.bottom}%`,
           left: `${baseHueco.left}%`,
           right: `${baseHueco.right}%`,
           transform: transformarRecorte,
