@@ -199,6 +199,12 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
                 cola.push(vecino);
               }
             }
+            // La erosión elimina los píxeles del borde exterior. Considera que
+            // un componente aún toca ese borde si llega hasta el radio erosionado.
+            izq ||= minX <= radio;
+            der ||= maxX >= lado - 1 - radio;
+            arriba ||= minY <= radio;
+            abajo ||= maxY >= lado - 1 - radio;
             const lados = Number(izq) + Number(der) + Number(arriba) + Number(abajo);
             componentes.push({ minX, maxX, minY, maxY, area: cola.length, lados, pixeles: cola });
           }
