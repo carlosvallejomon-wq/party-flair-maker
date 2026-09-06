@@ -97,6 +97,20 @@ const CORONAS_RETIRADAS = new Set([
   "adorno-486",
 ]);
 
+/** Coronas nuevas retiradas porque el hueco no encuadra la foto. */
+const CORONAS_NUEVAS_RETIRADAS = new Set([
+  "corona-n5",
+  "corona-n11",
+  "corona-n19",
+  "corona-n24",
+  "corona-n26",
+  "corona-n27",
+  "corona-n28",
+  "corona-n31",
+  "corona-n32",
+  "corona-n46",
+]);
+
 /** Coronas (marcos circulares) para la foto o el video de portada. */
 export const CORONAS: Adorno[] = [
   { id: "flores", nombre: "Corona de flores", src: coronaFlores },
@@ -109,7 +123,8 @@ export const CORONAS: Adorno[] = [
       id: `c-${a.id}`,
       nombre: `Corona ${a.id.split("-")[1]}`,
     })),
-  ...CORONAS_NUEVAS_CDN,
+  ...CORONAS_NUEVAS_CDN.filter((a) => !CORONAS_NUEVAS_RETIRADAS.has(a.id)),
+
 ];
 
 
