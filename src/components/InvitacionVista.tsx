@@ -94,6 +94,8 @@ function useCuentaRegresiva(iso: string) {
 
 type HuecoCorona = { top: number; right: number; bottom: number; left: number; mascara: string; detectado: boolean };
 
+const cacheHuecosCorona = new Map<string, HuecoCorona>();
+
 /** Encuentra el área transparente cerrada del centro sin confundirla con el exterior. */
 function useHuecoCorona(src: string, automatico: boolean, manual: number) {
   const [hueco, setHueco] = useState<HuecoCorona>({
@@ -112,9 +114,14 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
     if (!src || !automatico) {
       return;
     }
+    const cacheado = cacheHuecosCorona.get(src);
+    if (cacheado) {
+      setHueco(cacheado);
+      return;
+    }
     const imagen = new Image();
     imagen.onload = () => {
-      const lado = 240;
+      const lado = 400;
       const canvas = document.createElement("canvas");
       canvas.width = lado;
       canvas.height = lado;
@@ -174,7 +181,7 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
           }
           const total = lado * lado;
           // El fondo exterior toca 3 o 4 bordes; el hueco interior toca 2 o menos.
-          const candidatos = componentes.filter((c) => c.lados <= 2 && c.area > total * 0.015 && c.area < total * 0.85);
+          const candidatos = componentes.filter((c) => c.lados <= 2 && c.area > total * 0.06 && c.area < total * 0.85);
           const conCentro = candidatos.find((c) => c.pixeles.includes(indiceCentro));
           if (conCentro) return conCentro;
           return candidatos.sort((a, b) => {
@@ -208,14 +215,16 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
           mascaraDatos.data[salida + 3] = 255;
         }
         mascaraCtx.putImageData(mascaraDatos, 0, 0);
-        setHueco({
+        const detectado = {
           top: Math.max(0, (huecoCentral.minY + seguridad) / lado * 100),
           right: Math.max(0, (lado - huecoCentral.maxX + seguridad) / lado * 100),
           bottom: Math.max(0, (lado - huecoCentral.maxY + seguridad) / lado * 100),
           left: Math.max(0, (huecoCentral.minX + seguridad) / lado * 100),
           mascara: mascaraCanvas.toDataURL("image/png"),
           detectado: true,
-        });
+        };
+        cacheHuecosCorona.set(src, detectado);
+        setHueco(detectado);
       } catch {
         setHueco(fijo);
       }
