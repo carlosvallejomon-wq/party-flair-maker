@@ -259,23 +259,37 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           left: inv.coronaHueco ?? 17,
         }
     : { top: 0, right: 0, bottom: 0, left: 0 };
-  const esTresCuartos = formaFoto === "ovalada" || formaFoto === "rectangular";
+  const esVertical = formaFoto === "ovalada" || formaFoto === "rectangular";
+  const esHorizontal = formaFoto === "ovalada-h" || formaFoto === "rectangular-h";
+  const esRedondeada = formaFoto.startsWith("ovalada") || formaFoto === "circular";
   const estiloRecorteManual: CSSProperties = {
     zIndex: 2,
-    borderRadius: formaFoto === "circular" || formaFoto === "ovalada" ? "50%" : "0",
-    ...(esTresCuartos
+    borderRadius: esRedondeada ? "50%" : "0",
+    ...(esVertical
       ? {
-          // Formato horizontal 4/3, centrado dentro del hueco de la corona
+          // Formato vertical 3/4, centrado dentro del hueco de la corona
           top: "50%",
           left: "50%",
           right: "auto",
           bottom: "auto",
-          width: `${100 - baseHueco.left - baseHueco.right}%`,
-          height: "auto",
-          aspectRatio: "4 / 3",
+          height: `${100 - baseHueco.top - baseHueco.bottom}%`,
+          width: "auto",
+          aspectRatio: "3 / 4",
           transform: `translate(-50%, -50%) ${transformarRecorte}`,
         }
-      : {
+      : esHorizontal
+        ? {
+            // Formato horizontal 4/3, centrado dentro del hueco de la corona
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            width: `${100 - baseHueco.left - baseHueco.right}%`,
+            height: "auto",
+            aspectRatio: "4 / 3",
+            transform: `translate(-50%, -50%) ${transformarRecorte}`,
+          }
+        : {
           top: `${baseHueco.top}%`,
           bottom: `${baseHueco.bottom}%`,
           left: `${baseHueco.left}%`,

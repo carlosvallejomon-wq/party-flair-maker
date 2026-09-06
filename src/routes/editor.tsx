@@ -472,9 +472,11 @@ function Editor() {
                   >
                     <option value="automatica">Automática según la corona</option>
                     <option value="circular">Circular</option>
-                    <option value="ovalada">Ovalada</option>
+                    <option value="ovalada">Ovalada vertical (3/4)</option>
+                    <option value="ovalada-h">Ovalada horizontal (4/3)</option>
                     <option value="cuadrada">Cuadrada</option>
-                    <option value="rectangular">Rectangular</option>
+                    <option value="rectangular">Rectangular vertical (3/4)</option>
+                    <option value="rectangular-h">Rectangular horizontal (4/3)</option>
                   </select>
                 </div>
                 <div className="sm:col-span-3">
