@@ -129,52 +129,67 @@ function useHuecoCorona(src: string, automatico: boolean, manual: number) {
         ctx.clearRect(0, 0, lado, lado);
         ctx.drawImage(imagen, offsetX, offsetY, ancho, alto);
         const alpha = ctx.getImageData(0, 0, lado, lado).data;
-        // Incluye los píxeles casi transparentes de acuarelas y PNG suavizados.
-        const transparente = (indice: number) => (alpha[indice * 4 + 3] ?? 255) < 96;
-        const visitado = new Uint8Array(lado * lado);
-        const componentes: Array<{ minX: number; maxX: number; minY: number; maxY: number; area: number; borde: boolean; pixeles: number[] }> = [];
-        for (let inicio = 0; inicio < lado * lado; inicio += 1) {
-          if (visitado[inicio] || !transparente(inicio)) continue;
-          const cola = [inicio];
-          visitado[inicio] = 1;
-          let cursor = 0;
-          let minX = lado;
-          let maxX = 0;
-          let minY = lado;
-          let maxY = 0;
-          let borde = false;
-          while (cursor < cola.length) {
-            const actual = cola[cursor];
-            cursor += 1;
-            if (actual === undefined) continue;
-            const x = actual % lado;
-            const y = Math.floor(actual / lado);
-            minX = Math.min(minX, x); maxX = Math.max(maxX, x);
-            minY = Math.min(minY, y); maxY = Math.max(maxY, y);
-            if (x === 0 || y === 0 || x === lado - 1 || y === lado - 1) borde = true;
-            const vecinos = [actual - 1, actual + 1, actual - lado, actual + lado];
-            for (const vecino of vecinos) {
-              if (vecino < 0 || vecino >= lado * lado || visitado[vecino]) continue;
-              const vx = vecino % lado;
-              if (Math.abs(vx - x) > 1 || !transparente(vecino)) continue;
-              visitado[vecino] = 1;
-              cola.push(vecino);
-            }
-          }
-          componentes.push({ minX, maxX, minY, maxY, area: cola.length, borde, pixeles: cola });
-        }
         const centro = lado / 2;
-        const huecoCentral = componentes
-          .filter((c) => !c.borde && c.area > lado * lado * 0.02)
-          .sort((a, b) => {
+        const indiceCentro = Math.floor(centro) * lado + Math.floor(centro);
+
+        // Busca el hueco con varios niveles de transparencia: así también se
+        // detectan acuarelas y bordes suavizados que antes quedaban fuera.
+        const detectar = (limite: number) => {
+          const transparente = (indice: number) => (alpha[indice * 4 + 3] ?? 255) < limite;
+          const visitado = new Uint8Array(lado * lado);
+          const componentes: Array<{ minX: number; maxX: number; minY: number; maxY: number; area: number; lados: number; pixeles: number[] }> = [];
+          for (let inicio = 0; inicio < lado * lado; inicio += 1) {
+            if (visitado[inicio] || !transparente(inicio)) continue;
+            const cola = [inicio];
+            visitado[inicio] = 1;
+            let cursor = 0;
+            let minX = lado;
+            let maxX = 0;
+            let minY = lado;
+            let maxY = 0;
+            let arriba = false, abajo = false, izq = false, der = false;
+            while (cursor < cola.length) {
+              const actual = cola[cursor];
+              cursor += 1;
+              if (actual === undefined) continue;
+              const x = actual % lado;
+              const y = Math.floor(actual / lado);
+              minX = Math.min(minX, x); maxX = Math.max(maxX, x);
+              minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+              if (x === 0) izq = true;
+              if (y === 0) arriba = true;
+              if (x === lado - 1) der = true;
+              if (y === lado - 1) abajo = true;
+              const vecinos = [actual - 1, actual + 1, actual - lado, actual + lado];
+              for (const vecino of vecinos) {
+                if (vecino < 0 || vecino >= lado * lado || visitado[vecino]) continue;
+                const vx = vecino % lado;
+                if (Math.abs(vx - x) > 1 || !transparente(vecino)) continue;
+                visitado[vecino] = 1;
+                cola.push(vecino);
+              }
+            }
+            const lados = Number(izq) + Number(der) + Number(arriba) + Number(abajo);
+            componentes.push({ minX, maxX, minY, maxY, area: cola.length, lados, pixeles: cola });
+          }
+          const total = lado * lado;
+          // El fondo exterior toca 3 o 4 bordes; el hueco interior toca 2 o menos.
+          const candidatos = componentes.filter((c) => c.lados <= 2 && c.area > total * 0.015 && c.area < total * 0.85);
+          const conCentro = candidatos.find((c) => c.pixeles.includes(indiceCentro));
+          if (conCentro) return conCentro;
+          return candidatos.sort((a, b) => {
             const da = Math.abs((a.minX + a.maxX) / 2 - centro) + Math.abs((a.minY + a.maxY) / 2 - centro);
             const db = Math.abs((b.minX + b.maxX) / 2 - centro) + Math.abs((b.minY + b.maxY) / 2 - centro);
             return da - db || b.area - a.area;
           })[0];
+        };
+
+        const huecoCentral = detectar(96) ?? detectar(150) ?? detectar(210);
         if (!huecoCentral) {
           setHueco(fijo);
           return;
         }
+
         const seguridad = 2;
         const mascaraCanvas = document.createElement("canvas");
         mascaraCanvas.width = lado;
@@ -259,44 +274,36 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
           left: inv.coronaHueco ?? 17,
         }
     : { top: 0, right: 0, bottom: 0, left: 0 };
-  const esVertical = formaFoto === "ovalada" || formaFoto === "rectangular";
-  const esHorizontal = formaFoto === "ovalada-h" || formaFoto === "rectangular-h";
+  // Cada forma se calcula como una caja centrada dentro del hueco real de la
+  // corona, así cambiar de corona nunca deforma la figura elegida.
+  const anchoHueco = Math.max(1, 100 - baseHueco.left - baseHueco.right);
+  const altoHueco = Math.max(1, 100 - baseHueco.top - baseHueco.bottom);
+  const centroX = baseHueco.left + anchoHueco / 2;
+  const centroY = baseHueco.top + altoHueco / 2;
+  const proporciones: Record<string, number> = {
+    circular: 1,
+    cuadrada: 1,
+    ovalada: 3 / 4,
+    rectangular: 3 / 4,
+    "ovalada-h": 4 / 3,
+    "rectangular-h": 4 / 3,
+  };
+  const proporcion = proporciones[formaFoto] ?? 1;
+  const anchoCaja = anchoHueco / altoHueco > proporcion ? altoHueco * proporcion : anchoHueco;
+  const altoCaja = anchoCaja / proporcion;
   const esRedondeada = formaFoto.startsWith("ovalada") || formaFoto === "circular";
   const estiloRecorteManual: CSSProperties = {
     zIndex: 2,
     borderRadius: esRedondeada ? "50%" : "0",
-    ...(esVertical
-      ? {
-          // Formato vertical 3/4, centrado dentro del hueco de la corona
-          top: "50%",
-          left: "50%",
-          right: "auto",
-          bottom: "auto",
-          height: `${100 - baseHueco.top - baseHueco.bottom}%`,
-          width: "auto",
-          aspectRatio: "3 / 4",
-          transform: `translate(-50%, -50%) ${transformarRecorte}`,
-        }
-      : esHorizontal
-        ? {
-            // Formato horizontal 4/3, centrado dentro del hueco de la corona
-            top: "50%",
-            left: "50%",
-            right: "auto",
-            bottom: "auto",
-            width: `${100 - baseHueco.left - baseHueco.right}%`,
-            height: "auto",
-            aspectRatio: "4 / 3",
-            transform: `translate(-50%, -50%) ${transformarRecorte}`,
-          }
-        : {
-          top: `${baseHueco.top}%`,
-          bottom: `${baseHueco.bottom}%`,
-          left: `${baseHueco.left}%`,
-          right: `${baseHueco.right}%`,
-          transform: transformarRecorte,
-        }),
+    top: `${centroY - altoCaja / 2}%`,
+    left: `${centroX - anchoCaja / 2}%`,
+    right: "auto",
+    bottom: "auto",
+    width: `${anchoCaja}%`,
+    height: `${altoCaja}%`,
+    transform: transformarRecorte,
   };
+
 
   const estiloMedio = {
     objectPosition: posicionFoto,
