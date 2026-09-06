@@ -258,24 +258,14 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
     inv.coronaHueco ?? 17,
   );
   const formaFoto = inv.coronaFotoForma ?? "automatica";
-  // Esta corona es deliberadamente asimétrica y su abertura comunica con el
-  // exterior. La detección por transparencia interpreta esa abertura como
-  // fondo, así que conservamos su encuadre real como parte del propio diseño.
-  const huecoCoronaEspecial = inv.corona === "corona-morada"
-    ? { top: 19, right: 20, bottom: 31, left: 30 }
-    : null;
-  const usarMascaraCorona = Boolean(
-    corona && huecoCorona.detectado && formaFoto === "automatica" && !huecoCoronaEspecial,
-  );
+  const usarMascaraCorona = Boolean(corona && huecoCorona.detectado && formaFoto === "automatica");
   const posicionFoto = `${inv.coronaFotoPosX ?? 50}% ${inv.coronaFotoPosY ?? 50}%`;
   const escalaFoto = (inv.coronaFotoEscala ?? 100) / 100;
   const transformarRecorte = `translate(${inv.coronaRecortePosX ?? 0}%, ${inv.coronaRecortePosY ?? 0}%) scale(${(inv.coronaRecorteEscala ?? 100) / 100})`;
   // Todas las formas parten del mismo hueco de la corona para que cambiar de
   // forma no mueva ni agrande el recorte.
   const baseHueco = corona
-    ? huecoCoronaEspecial
-      ? huecoCoronaEspecial
-      : huecoCorona.detectado
+    ? huecoCorona.detectado
       ? { top: huecoCorona.top, right: huecoCorona.right, bottom: huecoCorona.bottom, left: huecoCorona.left }
       : {
           top: inv.coronaHueco ?? 17,
@@ -476,10 +466,10 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                       }
                     : corona && formaFoto === "automatica"
                       ? {
-                          top: `${baseHueco.top}%`,
-                          right: `${baseHueco.right}%`,
-                          bottom: `${baseHueco.bottom}%`,
-                          left: `${baseHueco.left}%`,
+                          top: `${huecoCorona.top}%`,
+                          right: `${huecoCorona.right}%`,
+                          bottom: `${huecoCorona.bottom}%`,
+                          left: `${huecoCorona.left}%`,
                           zIndex: 2,
                           transform: transformarRecorte,
                           borderRadius: "50%",
