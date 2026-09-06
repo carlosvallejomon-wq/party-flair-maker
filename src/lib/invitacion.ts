@@ -77,7 +77,7 @@ export type Invitacion = {
   coronaFotoEscala?: number; // zoom de la foto dentro de la corona (50 a 250)
   coronaFotoPosX?: number; // posición horizontal de la foto (0 a 100)
   coronaFotoPosY?: number; // posición vertical de la foto (0 a 100)
-  coronaFotoForma?: "automatica" | "circular" | "ovalada" | "cuadrada" | "rectangular";
+  coronaFotoForma?: "automatica" | "circular" | "ovalada" | "ovalada-h" | "cuadrada" | "rectangular" | "rectangular-h";
   coronaRecorteEscala?: number; // tamaño del recorte completo dentro de la corona (60 a 140)
   coronaRecortePosX?: number; // desplazamiento horizontal del recorte (-30 a 30)
   coronaRecortePosY?: number; // desplazamiento vertical del recorte (-30 a 30)
