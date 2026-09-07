@@ -65,7 +65,7 @@ export type Invitacion = {
   // Adornos: marcos, coronas y texturas (galería + subida propia)
   marco?: string; // id de MARCOS o "ninguno"
   marcoUrl?: string; // PNG propio subido
-  marcoAjuste?: "estirar" | "contener"; // cómo se distribuye el marco en la portada
+  marcoAjuste?: "natural" | "estirar" | "contener"; // cómo se distribuye el marco en la portada
   marcoMargen?: number; // % de separación del borde (0 a 12)
   marcoOpacidad?: number; // 0 a 100
   corona?: string; // id de CORONAS o "ninguno"
