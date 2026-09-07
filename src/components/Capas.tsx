@@ -196,8 +196,33 @@ export function Textura({ inv }: { inv: Invitacion }) {
 export function Marco({ inv }: { inv: Invitacion }) {
   const src = marcoDe(inv);
   if (!src) return null;
-  const estirar = (inv.marcoAjuste ?? "estirar") === "estirar";
+  const ajuste = inv.marcoAjuste ?? "natural";
   const margen = `${inv.marcoMargen ?? 3}%`;
+  const opacidad = (inv.marcoOpacidad ?? 85) / 100;
+
+  // "natural": border-image conserva las esquinas del diseño y solo extiende
+  // los laterales, así un marco cuadrado no se deforma en una tarjeta alargada.
+  if (ajuste === "natural") {
+    return (
+      <div
+        aria-hidden
+        className="pointer-events-none absolute z-[6]"
+        style={{
+          inset: margen,
+          borderStyle: "solid",
+          borderWidth: 1,
+          borderColor: "transparent",
+          borderImageSource: `url("${src}")`,
+          borderImageSlice: "30%",
+          borderImageWidth: "12%",
+          borderImageRepeat: "stretch",
+          opacity: opacidad,
+        }}
+      />
+    );
+  }
+
+  const estirar = ajuste === "estirar";
   return (
     <img
       src={src}
@@ -209,7 +234,7 @@ export function Marco({ inv }: { inv: Invitacion }) {
         inset: margen,
         width: `calc(100% - 2 * ${margen})`,
         height: `calc(100% - 2 * ${margen})`,
-        opacity: (inv.marcoOpacidad ?? 85) / 100,
+        opacity: opacidad,
       }}
     />
   );
