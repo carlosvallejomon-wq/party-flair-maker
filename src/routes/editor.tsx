@@ -350,11 +350,12 @@ function Editor() {
                   <select
                     id="marco-ajuste"
                     className={campo}
-                    value={inv.marcoAjuste ?? "estirar"}
+                    value={inv.marcoAjuste ?? "natural"}
                     onChange={(e) =>
                       set("marcoAjuste", e.target.value as NonNullable<Invitacion["marcoAjuste"]>)
                     }
                   >
+                    <option value="natural">Sin deformar (recomendado)</option>
                     <option value="estirar">Estirar al borde</option>
                     <option value="contener">Mantener proporción</option>
                   </select>
