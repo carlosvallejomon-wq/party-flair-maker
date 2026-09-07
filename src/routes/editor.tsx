@@ -355,8 +355,8 @@ function Editor() {
                       set("marcoAjuste", e.target.value as NonNullable<Invitacion["marcoAjuste"]>)
                     }
                   >
-                    <option value="estirar">Estirar al borde (recomendado)</option>
-                    <option value="natural">Sin deformar</option>
+                    <option value="estirar">Llenar sin deformar (recomendado)</option>
+                    <option value="natural">Repartir por bordes</option>
                     <option value="contener">Mantener proporción</option>
                   </select>
                 </div>

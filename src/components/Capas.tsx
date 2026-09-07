@@ -222,18 +222,22 @@ export function Marco({ inv }: { inv: Invitacion }) {
     );
   }
 
-  const estirar = ajuste === "estirar";
+  // Los marcos nuevos vienen en lienzos cuadrados, pero el dibujo visible ya
+  // tiene proporción vertical. `cover` conserva esa proporción y recorta solo
+  // el espacio transparente lateral, en vez de ensanchar el dibujo.
+  const llenarSinDeformar = ajuste === "estirar";
   return (
     <img
       src={src}
       alt=""
       aria-hidden
       loading="lazy"
-      className={`pointer-events-none absolute z-[6] ${estirar ? "object-fill" : "object-contain"}`}
+      className={`pointer-events-none absolute z-[6] ${llenarSinDeformar ? "object-cover" : "object-contain"}`}
       style={{
         inset: margen,
         width: `calc(100% - 2 * ${margen})`,
         height: `calc(100% - 2 * ${margen})`,
+        objectPosition: "center",
         opacity: opacidad,
       }}
     />
