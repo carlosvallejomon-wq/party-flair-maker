@@ -196,7 +196,7 @@ export function Textura({ inv }: { inv: Invitacion }) {
 export function Marco({ inv }: { inv: Invitacion }) {
   const src = marcoDe(inv);
   if (!src) return null;
-  const ajuste = inv.marcoAjuste ?? "natural";
+  const ajuste = inv.marcoAjuste ?? "estirar";
   const margen = `${inv.marcoMargen ?? 3}%`;
   const opacidad = (inv.marcoOpacidad ?? 85) / 100;
 
