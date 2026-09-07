@@ -6,6 +6,7 @@ import marcoFloral from "@/assets/marco-floral.png";
 import texturaMarmol from "@/assets/textura-marmol.jpg";
 import texturaPapel from "@/assets/textura-papel.jpg";
 import { ADORNOS_CDN, CORONAS_NUEVAS_CDN, ESQUINAS_CDN } from "./adornos-cdn";
+import { MARCOS_CDN, TEXTURAS_CDN } from "./adornos-mtn";
 import { MARCOS_SVG, TEXTURAS_SVG } from "./adornos-svg";
 
 export type Adorno = { id: string; nombre: string; src: string };
@@ -18,6 +19,7 @@ export const MARCOS: Adorno[] = [
   ...MARCOS_SVG,
   { id: "floral", nombre: "Acuarela natural", src: marcoFloral },
   { id: "dorado", nombre: "Filigrana dorada", src: marcoDorado },
+  ...MARCOS_CDN,
 ];
 
 
@@ -133,6 +135,7 @@ export const TEXTURAS: Adorno[] = [
   { id: "papel", nombre: "Papel de algodón", src: texturaPapel },
   { id: "marmol", nombre: "Mármol y oro", src: texturaMarmol },
   ...TEXTURAS_SVG,
+  ...TEXTURAS_CDN,
 ];
 
 
