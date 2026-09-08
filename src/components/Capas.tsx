@@ -199,11 +199,13 @@ export function Marco({ inv }: { inv: Invitacion }) {
   const ajuste = inv.marcoAjuste ?? "estirar";
   const margen = `${inv.marcoMargen ?? 3}%`;
   const opacidad = (inv.marcoOpacidad ?? 85) / 100;
+
   const esMarcoVerticalNuevo = /^marco-n-\d+$/.test(inv.marco ?? "");
 
-  // "natural": border-image conserva las esquinas del diseño y solo extiende
-  // los laterales, así un marco cuadrado no se deforma en una tarjeta alargada.
-  if (ajuste === "natural") {
+  // En portadas mucho más largas que el archivo original, el marco se divide
+  // en bordes: las esquinas mantienen su forma y los tramos laterales se
+  // repiten para cubrir todo el alto sin ampliar la ilustración completa.
+  if (ajuste === "natural" || esMarcoVerticalNuevo) {
     return (
       <div
         aria-hidden
@@ -211,12 +213,12 @@ export function Marco({ inv }: { inv: Invitacion }) {
         style={{
           inset: margen,
           borderStyle: "solid",
-          borderWidth: 1,
+          borderWidth: "clamp(18px, 7vw, 34px)",
           borderColor: "transparent",
           borderImageSource: `url("${src}")`,
-          borderImageSlice: "30%",
-          borderImageWidth: "12%",
-          borderImageRepeat: "stretch",
+          borderImageSlice: "115",
+          borderImageWidth: "1",
+          borderImageRepeat: "round",
           opacity: opacidad,
         }}
       />
@@ -226,10 +228,7 @@ export function Marco({ inv }: { inv: Invitacion }) {
   // Los marcos nuevos vienen en lienzos cuadrados, pero el dibujo visible ya
   // tiene proporción vertical. `cover` conserva esa proporción y recorta solo
   // el espacio transparente lateral, en vez de ensanchar el dibujo.
-  // Los marcos verticales nuevos ya traen su proporción final. Nunca deben
-  // heredar el modo de relleno de marcos anteriores: se muestran completos,
-  // sin ampliar ni recortar sus lados para forzarlos al alto de la portada.
-  const llenarSinDeformar = ajuste === "estirar" && !esMarcoVerticalNuevo;
+  const llenarSinDeformar = ajuste === "estirar";
   return (
     <img
       src={src}
@@ -241,7 +240,7 @@ export function Marco({ inv }: { inv: Invitacion }) {
         inset: margen,
         width: `calc(100% - 2 * ${margen})`,
         height: `calc(100% - 2 * ${margen})`,
-        objectPosition: esMarcoVerticalNuevo ? "center top" : "center",
+        objectPosition: "center",
         opacity: opacidad,
       }}
     />
