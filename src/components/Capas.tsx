@@ -199,6 +199,7 @@ export function Marco({ inv }: { inv: Invitacion }) {
   const ajuste = inv.marcoAjuste ?? "estirar";
   const margen = `${inv.marcoMargen ?? 3}%`;
   const opacidad = (inv.marcoOpacidad ?? 85) / 100;
+  const esMarcoVerticalNuevo = /^m-n\d+$/.test(inv.marco);
 
   // "natural": border-image conserva las esquinas del diseño y solo extiende
   // los laterales, así un marco cuadrado no se deforma en una tarjeta alargada.
@@ -225,7 +226,10 @@ export function Marco({ inv }: { inv: Invitacion }) {
   // Los marcos nuevos vienen en lienzos cuadrados, pero el dibujo visible ya
   // tiene proporción vertical. `cover` conserva esa proporción y recorta solo
   // el espacio transparente lateral, en vez de ensanchar el dibujo.
-  const llenarSinDeformar = ajuste === "estirar";
+  // Los marcos verticales nuevos ya traen su proporción final. Nunca deben
+  // heredar el modo de relleno de marcos anteriores: se muestran completos,
+  // sin ampliar ni recortar sus lados para forzarlos al alto de la portada.
+  const llenarSinDeformar = ajuste === "estirar" && !esMarcoVerticalNuevo;
   return (
     <img
       src={src}
@@ -237,7 +241,7 @@ export function Marco({ inv }: { inv: Invitacion }) {
         inset: margen,
         width: `calc(100% - 2 * ${margen})`,
         height: `calc(100% - 2 * ${margen})`,
-        objectPosition: "center",
+        objectPosition: esMarcoVerticalNuevo ? "center top" : "center",
         opacity: opacidad,
       }}
     />
