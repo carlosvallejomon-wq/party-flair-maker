@@ -199,7 +199,7 @@ export function Marco({ inv }: { inv: Invitacion }) {
   const ajuste = inv.marcoAjuste ?? "estirar";
   const margen = `${inv.marcoMargen ?? 3}%`;
   const opacidad = (inv.marcoOpacidad ?? 85) / 100;
-  const esMarcoVerticalNuevo = /^m-n\d+$/.test(inv.marco);
+  const esMarcoVerticalNuevo = /^marco-n-\d+$/.test(inv.marco ?? "");
 
   // "natural": border-image conserva las esquinas del diseño y solo extiende
   // los laterales, así un marco cuadrado no se deforma en una tarjeta alargada.

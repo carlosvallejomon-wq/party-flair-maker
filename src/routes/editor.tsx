@@ -337,7 +337,7 @@ function Editor() {
                 setInv((actual) => ({
                   ...actual,
                   marco: id,
-                  marcoAjuste: /^m-n\d+$/.test(id) ? "contener" : actual.marcoAjuste,
+                  marcoAjuste: /^marco-n-\d+$/.test(id) ? "contener" : (actual.marcoAjuste ?? "estirar"),
                 }));
               }}
             />
