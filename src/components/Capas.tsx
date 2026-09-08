@@ -200,9 +200,12 @@ export function Marco({ inv }: { inv: Invitacion }) {
   const margen = `${inv.marcoMargen ?? 3}%`;
   const opacidad = (inv.marcoOpacidad ?? 85) / 100;
 
-  // "natural": border-image conserva las esquinas del diseño y solo extiende
-  // los laterales, así un marco cuadrado no se deforma en una tarjeta alargada.
-  if (ajuste === "natural") {
+  const esMarcoVerticalNuevo = /^marco-n-\d+$/.test(inv.marco ?? "");
+
+  // En portadas mucho más largas que el archivo original, el marco se divide
+  // en bordes: las esquinas mantienen su forma y los tramos laterales se
+  // repiten para cubrir todo el alto sin ampliar la ilustración completa.
+  if (ajuste === "natural" || esMarcoVerticalNuevo) {
     return (
       <div
         aria-hidden
@@ -210,12 +213,12 @@ export function Marco({ inv }: { inv: Invitacion }) {
         style={{
           inset: margen,
           borderStyle: "solid",
-          borderWidth: 1,
+          borderWidth: "clamp(18px, 7vw, 34px)",
           borderColor: "transparent",
           borderImageSource: `url("${src}")`,
-          borderImageSlice: "30%",
-          borderImageWidth: "12%",
-          borderImageRepeat: "stretch",
+          borderImageSlice: "115",
+          borderImageWidth: "1",
+          borderImageRepeat: "round",
           opacity: opacidad,
         }}
       />

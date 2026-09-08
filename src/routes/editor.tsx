@@ -333,7 +333,13 @@ function Editor() {
               titulo="Marco de la invitación"
               lista={MARCOS}
               valor={inv.marco}
-              onElegir={(id) => set("marco", id)}
+              onElegir={(id) => {
+                setInv((actual) => ({
+                  ...actual,
+                  marco: id,
+                  marcoAjuste: /^marco-n-\d+$/.test(id) ? "natural" : (actual.marcoAjuste ?? "estirar"),
+                }));
+              }}
             />
             <div className="mb-8">
               <SubirArchivo
