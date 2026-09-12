@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import botanical from "@/assets/botanical-hero.jpg";
+import quinceArco from "@/assets/quince-arco.jpg";
 import { Reveal } from "@/components/Reveal";
 import { PLANTILLAS, TEMAS } from "@/lib/invitacion";
 
@@ -56,12 +57,12 @@ function Plantillas() {
               <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-foreground/10">
                 <div className="relative">
                   <img
-                    src={botanical}
+                    src={p.disposicionPortada === "arco-xv" ? quinceArco : botanical}
                     alt={`Vista previa de la plantilla ${p.plantilla}`}
                     loading="lazy"
                     width={864}
                     height={1600}
-                    className="h-36 w-full object-cover opacity-70"
+                    className={`h-36 w-full object-cover ${p.disposicionPortada === "arco-xv" ? "object-top" : "opacity-70"}`}
                   />
                   <span className="absolute right-3 bottom-3 flex gap-1">
                     {TEMAS[p.tema].swatch.map((c) => (
