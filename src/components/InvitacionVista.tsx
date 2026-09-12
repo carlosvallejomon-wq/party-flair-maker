@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   ChevronDown,
   Clock3,
+  Crown,
   CreditCard,
   ExternalLink,
   Eye,
@@ -27,6 +28,7 @@ import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
 import botanical from "@/assets/botanical-hero.jpg";
 import pareja1 from "@/assets/pareja-1.jpg";
 import pareja2 from "@/assets/pareja-2.jpg";
+import quinceArco from "@/assets/quince-arco.jpg";
 import { DecoracionPropia, Esquinas, Marco, Textura, coronaDe, marcoDe } from "@/components/Capas";
 import { Divisor } from "@/components/Divisor";
 import { Muro } from "@/components/Muro";
@@ -371,6 +373,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
   };
 
   const tieneDos = inv.nombre2.trim().length > 0;
+  const esArcoXV = inv.disposicionPortada === "arco-xv";
 
   const accesos = [
     { id: "ubicacion", Icono: MapPin, texto: "Cómo llegar" },
@@ -444,17 +447,28 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
 
           <div
             key={`${inv.animacionPortada}-${abierto}`}
-            className={`z-10 flex flex-1 flex-col justify-center py-4 ${ANIM[inv.animacionPortada]}`}
+            className={`z-10 flex flex-1 flex-col justify-center py-4 ${esArcoXV ? "portada-arco-xv" : ""} ${ANIM[inv.animacionPortada]}`}
           >
+            {esArcoXV && (
+              <div className="mb-4 flex flex-col items-center text-primary" aria-hidden>
+                <Crown size={34} strokeWidth={1} />
+                <span className="mt-2 h-px w-20 bg-primary/40" />
+              </div>
+            )}
             {/* Foto o video de portada, encuadrado automáticamente dentro de la corona */}
             {(corona || inv.videoPortadaUrl?.trim() || inv.fotoPortadaUrl?.trim()) && (
               <div
-                className="relative mx-auto mb-6 aspect-square"
-                style={{ width: `${inv.coronaTamano ?? 74}%`, maxWidth: 340 }}
+                className={`relative mx-auto mb-6 ${esArcoXV && !corona ? "aspect-[4/5]" : "aspect-square"}`}
+                style={{ width: `${inv.coronaTamano ?? (esArcoXV ? 78 : 74)}%`, maxWidth: esArcoXV ? 300 : 340 }}
               >
+                {esArcoXV && !corona && (
+                  <span className="pointer-events-none absolute inset-0 translate-x-2 translate-y-2 rounded-t-full border border-primary/50" aria-hidden />
+                )}
                 <div
-                  className={`absolute overflow-hidden shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)] ${usarMascaraCorona ? "" : "border border-primary/20"}`}
-                  style={usarMascaraCorona
+                  className={`absolute overflow-hidden shadow-xl ${esArcoXV && !corona ? "inset-0 rounded-t-full border-[6px] border-card" : usarMascaraCorona ? "" : "border border-primary/20"}`}
+                  style={esArcoXV && !corona
+                    ? { zIndex: 2 }
+                    : usarMascaraCorona
                     ? {
                         inset: 0,
                         zIndex: 2,
@@ -485,8 +499,8 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                       loop
                       muted={inv.videoPortadaSonido !== true}
                       playsInline
-                      className={usarMascaraCorona ? "absolute object-cover" : "h-full w-full object-cover"}
-                      style={usarMascaraCorona ? {
+                      className={usarMascaraCorona && !esArcoXV ? "absolute object-cover" : "h-full w-full object-cover"}
+                      style={usarMascaraCorona && !esArcoXV ? {
                         top: `${huecoCorona.top}%`,
                         left: `${huecoCorona.left}%`,
                         width: `${100 - huecoCorona.left - huecoCorona.right}%`,
@@ -496,10 +510,12 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                     />
                   ) : (
                     <img
-                      src={inv.fotoPortadaUrl?.trim() || pareja1}
+                      src={inv.fotoPortadaUrl?.trim() || (esArcoXV ? quinceArco : pareja1)}
                       alt={`Foto de ${nombres}`}
-                      className={usarMascaraCorona ? "absolute object-cover" : "h-full w-full object-cover"}
-                      style={usarMascaraCorona ? {
+                      width={1024}
+                      height={1280}
+                      className={usarMascaraCorona && !esArcoXV ? "absolute object-cover" : "h-full w-full object-cover"}
+                      style={usarMascaraCorona && !esArcoXV ? {
                         top: `${huecoCorona.top}%`,
                         left: `${huecoCorona.left}%`,
                         width: `${100 - huecoCorona.left - huecoCorona.right}%`,
@@ -518,6 +534,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                     style={{ transform: `rotate(${inv.coronaGiro ?? 0}deg)` }}
                   />
                 )}
+                {esArcoXV && !corona && (
+                  <span className="absolute -bottom-3 left-1/2 z-[3] -translate-x-1/2 whitespace-nowrap border border-primary/15 bg-card px-7 py-2 text-[8px] tracking-[0.35em] text-olive uppercase shadow-md">
+                    Mis XV años
+                  </span>
+                )}
               </div>
             )}
 
@@ -527,11 +548,11 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
                 {inv.familia}
               </p>
             )}
-            <span className="mb-4 block text-[10px] tracking-[0.35em] text-olive uppercase">
+            <span className={`${esArcoXV ? "mb-2" : "mb-4"} block text-[10px] tracking-[0.35em] text-olive uppercase`}>
               {inv.frase}
             </span>
             <h1
-              className={`mb-4 font-display text-5xl leading-none sm:text-6xl ${relieve ? "texto-relieve" : ""}`}
+              className={`mb-4 font-display leading-none ${esArcoXV ? "text-6xl text-primary italic sm:text-7xl" : "text-5xl sm:text-6xl"} ${relieve ? "texto-relieve" : ""}`}
             >
               {inv.nombre1}
               {tieneDos && (
@@ -545,7 +566,7 @@ export function InvitacionVista({ inv, embebido = false }: { inv: Invitacion; em
             </h1>
 
             {/* Fecha en formato editorial: MES · DÍA · AÑO */}
-            <div className="mx-auto mt-6 flex w-fit items-stretch gap-4 border-y border-primary/30 px-5 py-2">
+            <div className={`mx-auto flex w-fit items-stretch gap-4 border-y border-primary/30 px-5 ${esArcoXV ? "mt-3 py-3" : "mt-6 py-2"}`}>
               <div className="self-center text-center text-[9px] leading-tight tracking-[0.25em] uppercase opacity-70">
                 {partes.diaSemana}
                 <br />

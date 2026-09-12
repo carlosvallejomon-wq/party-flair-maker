@@ -43,6 +43,7 @@ export type Melodia = "romantica" | "vals" | "alegre" | "serena";
 
 export type Invitacion = {
   plantilla: string;
+  disposicionPortada?: "clasica" | "arco-xv";
   evento: string;
   nombre1: string;
   nombre2: string;
@@ -403,6 +404,7 @@ export const PLANTILLAS: (Invitacion & { slug: string; descripcion: string })[] 
     slug: "rosa-ceremonial",
     descripcion: "Portada con vals, corona de flores y lista de chambelanes.",
     plantilla: "Rosa Ceremonial",
+    disposicionPortada: "arco-xv",
     evento: "XV Años",
     nombre1: "Camila",
     nombre2: "",
@@ -426,9 +428,10 @@ export const PLANTILLAS: (Invitacion & { slug: string; descripcion: string })[] 
     tema: "rosa",
     melodia: "vals",
     animacionPortada: "zoom",
-    marco: "rosas",
-    corona: "flores",
+    marco: "ninguno",
+    corona: "ninguno",
     textura: "papel",
+    familia: "Con la bendición de sus padres",
   },
   {
     slug: "lino-sereno",
