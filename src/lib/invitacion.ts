@@ -432,7 +432,6 @@ export const PLANTILLAS: (Invitacion & { slug: string; descripcion: string })[] 
     corona: "ninguno",
     textura: "papel",
     familia: "Con la bendición de sus padres",
-    fotoPortadaUrl: "/src/assets/quince-arco.jpg",
   },
   {
     slug: "lino-sereno",
